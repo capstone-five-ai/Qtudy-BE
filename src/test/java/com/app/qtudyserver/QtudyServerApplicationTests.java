@@ -1,14 +1,13 @@
-package com.app;
+package com.app.qtudyserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class SpringApiAppApplicationTest {
+class QtudyServerApplicationTests {
 
-    @Test
-    void contextLoads() {
-
-    }
+	@Test
+	void contextLoads() {
+	}
 
 }
