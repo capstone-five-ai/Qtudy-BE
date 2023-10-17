@@ -1,0 +1,23 @@
+[33mcommit 87bb2b978a4ff9b629352735de43236358534b97[m[33m ([m[1;36mHEAD -> [m[1;32myechan[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: jungdonggyu <1013as@naver.com>
+Date:   Mon Oct 16 12:29:01 2023 +0900
+
+    Fix: "템플릿 프로젝트 불필요한 내용 삭제 및 수정"
+
+[33mcommit 040a8300dfe0c141c351374e0f3d3661cb37fd92[m
+Author: jungdonggyu <1013as@naver.com>
+Date:   Mon Oct 16 12:28:29 2023 +0900
+
+    Fix: "템플릿 프로젝트 불필요한 내용 삭제 및 수정"
+
+[33mcommit 331f25ee0df65009937fbf86fbf17b7775b16930[m
+Author: jungdonggyu <1013as@naver.com>
+Date:   Mon Oct 16 10:58:49 2023 +0900
+
+    First Commit
+
+[33mcommit f8627eb21351ee0d63b6821f91fe8b07daee2dc7[m
+Author: googoo9918 <102513932+googoo9918@users.noreply.github.com>
+Date:   Mon Oct 16 10:41:33 2023 +0900
+
+    Initial commit
