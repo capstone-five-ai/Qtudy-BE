@@ -1,5 +1,6 @@
-package com.app.domain.aicreate.summary;
+package com.app.domain.aicreate.summary.controller;
 
+import com.app.domain.aicreate.summary.service.SummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

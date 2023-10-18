@@ -1,4 +1,4 @@
-package com.app.domain.aicreate.summary;
+package com.app.domain.aicreate.summary.service;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;

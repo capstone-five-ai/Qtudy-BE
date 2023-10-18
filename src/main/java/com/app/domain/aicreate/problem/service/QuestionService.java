@@ -1,4 +1,4 @@
-package com.app.domain.aicreate.question;
+package com.app.domain.aicreate.problem.service;
 
 import com.app.domain.aicreate.ENUM.GptType;
 import com.example.demo.aicreate.ENUM.GptType;
@@ -9,8 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.io.IOException;
 
 @Service
 public class QuestionService {
