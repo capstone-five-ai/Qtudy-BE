@@ -1,12 +1,11 @@
-package com.app.domain.aicreate.question;
+package com.app.domain.aicreate.problem.controller;
 
 import com.app.domain.aicreate.ENUM.GptType;
-import com.app.domain.aicreate.dto.QuestionDto;
+import com.app.domain.aicreate.problem.dto.ProblemDto;
+import com.app.domain.aicreate.problem.service.QuestionService;
 import com.example.demo.aicreate.ENUM.GptType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/ai")
@@ -15,7 +14,7 @@ public class QuestionController {
     QuestionService questionService;
 
     @PostMapping("/createQuestion")
-    public String createQuestion(@RequestBody QuestionDto qeustionDto) {
+    public String createQuestion(@RequestBody ProblemDto qeustionDto) {
         return questionService.createQuestion(questionDto);
     }
 

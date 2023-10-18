@@ -1,8 +1,7 @@
-package com.app.domain.aicreate.dto;
+package com.app.domain.aicreate.summary.dto;
 
-import com.app.domain.aicreate.ENUM.Difficulty;
-import com.app.domain.aicreate.ENUM.Amount;
-import com.app.domain.aicreate.ENUM.QuestionType;
+import com.app.domain.aicreate.common.ENUM.Difficulty;
+import com.app.domain.aicreate.common.ENUM.Amount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class QuestionDto {
+public class SummaryDto {
     private String text;
-    private QuestionType type;
     private Amount amount;
     private Difficulty difficulty;
-
 }
