@@ -6,13 +6,38 @@ server:
     context-path: /
 
 
+
+
+#spring:
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2
+#  datasource:
+#    url: jdbc:h2:mem:test
 spring:
   h2:
     console:
       enabled: true
       path: /h2
+      settings:
+        web-allow-others: true
   datasource:
     url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  mvc: #Swagger URL 패턴 매칭
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+aws: #AWS S3 설정
+  region: ap-northeast-2
+  s3:
+    bucket: q-study-bucket
+
+
+
 
 
   jpa:
@@ -53,6 +78,8 @@ token:
   access-token-expiration-time: 900000  # 15분 1000(ms) x 60(s) x 15(m)
   refresh-token-expiration-time: 1209600000 # 2주 1000(ms) x 60 (s) x 60(m) x 24(h) x 14(d)
 
+
 #jasypt:
 #  password: ${PASSWORD}
 #  vmoption에 지정됨
+

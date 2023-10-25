@@ -1,25 +1,30 @@
-package com.app.domain.aicreate.problem.service;
+package com.app.domain.file.problem.service;
 
-import com.app.domain.aicreate.ENUM.GptType;
-import com.example.demo.aicreate.ENUM.GptType;
+import com.app.domain.file.problem.dto.AiGenerateDto;
+import com.app.domain.file.problem.entity.ProblemFiles;
+import com.app.global.error.ErrorCode;
+import com.app.global.error.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-public class QuestionService {
+public class AiGenerateService {
+
     @Autowired
     private RestTemplate restTemplate;
 
 
-    public String createQuestion(QuestionDto qeustionDto) {
-        String url = null;
+    public ResponseEntity<String> AiGenerateProblem(AiGenerateDto aiGenerateDto) {
+        String url;
 
-        switch (type) {
+        ProblemFiles problemFiles = aiGenerateDto.toEntity(); // DTO -> ENTITY 변환
+
+        switch (problemFiles.getProblemType()) {  //Problem 타입 체크
             case MCQ:
                 url = "http://localhost:7000/mcq";
                 break;
@@ -34,9 +39,14 @@ public class QuestionService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String jsonBody = String.format("{\"text\": \"%s\"}", text);
+        String jsonBody = String.format("{\"text\": \"%s\"}", aiGenerateDto.getText());
         HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
 
-        return restTemplate.postForObject(url, request, String.class);
+        String result = restTemplate.postForObject(url, request, String.class);
+        if (result == null)// GPT 문제 생성 검사
+            throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
+
+
+        return ResponseEntity.ok("Success");
     }
 }

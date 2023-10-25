@@ -26,7 +26,12 @@ public enum ErrorCode {
 
 
     // 문제
-    NOT_GENERATE_PROBLEM(HttpStatus.NO_CONTENT,"P-001","문제를 생성하지 못하였습니다.")
+    NOT_GENERATE_PROBLEM(HttpStatus.NO_CONTENT,"P-001","문제를 생성하지 못하였습니다."),
+
+
+
+    //요약 정리
+    NOT_GENERATE_SUMMARY(HttpStatus.NO_CONTENT,"S-001","요약정리를 생성하지 못하였습니다."),
     ;
 
     ErrorCode(HttpStatus httpStatus, String errorCode, String message) {

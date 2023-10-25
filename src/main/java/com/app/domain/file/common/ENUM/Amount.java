@@ -1,4 +1,4 @@
-package com.app.domain.aicreate.common.ENUM;
+package com.app.domain.file.common.ENUM;
 
 public enum Amount { // 문제량
     FEW,

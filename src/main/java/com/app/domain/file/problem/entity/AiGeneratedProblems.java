@@ -1,12 +1,16 @@
-package com.app.domain.aicreate.problem.model;
+package com.app.domain.file.problem.entity;
 
-import org.springframework.data.annotation.Id;
+import lombok.*;
 
 import javax.persistence.*;
 
 
 @Entity
-@Table(schema = "Qtudy",name = "aigeneratedproblem")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AiGeneratedProblems {
 
     @Id
@@ -14,20 +18,20 @@ public class AiGeneratedProblems {
     private int aiGeneratedProblemId;
 
     @ManyToOne
-    @JoinColumn(name = "fileId")
+    @JoinColumn(name = "file_id")
     private ProblemFiles problemFiles;
 
 
 
 
-    @Column(name = "problemname", length = 100)
+    @Column(name = "problem_name", length = 100)
     private String problemName;
 
-    @Column(name = "problemcontent", length = 300, nullable = true)
+    @Column(name = "problem_content", length = 300, nullable = true)
     private String problemContent;
 
     @Lob // TEXT 형식 변환
-    @Column(name = "problemanswer")
+    @Column(name = "problem_answer")
     private String problemAnswer;
 
 
