@@ -1,7 +1,7 @@
 package com.app.domain.file.problem.entity;
 
 import com.app.domain.file.common.ENUM.Amount;
-import com.app.domain.file.common.ENUM.Difficulty;
+import com.app.domain.file.common.ENUM.ProblemDifficulty;
 import com.app.domain.file.common.ENUM.ProblemType;
 import com.app.domain.file.common.entity.Files;
 import lombok.*;
@@ -25,9 +25,9 @@ public class ProblemFiles extends Files {
 
 
 
-    @Column(name = "difficulty")
+    @Column(name = "problem_difficulty")
     @Enumerated(EnumType.STRING)
-    private Difficulty difficulty;
+    private ProblemDifficulty problemDifficulty;
 
     @Column(name = "problem_amount")
     @Enumerated(EnumType.STRING)

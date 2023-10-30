@@ -30,6 +30,9 @@ public class AiGeneratedProblems {
     @Column(name = "problem_content", length = 300, nullable = true)
     private String problemContent;
 
+    @Column(name = "problem_user_answer",length = 100, nullable = true)
+    private String problemUserAnswer;
+
     @Lob // TEXT 형식 변환
     @Column(name = "problem_answer")
     private String problemAnswer;

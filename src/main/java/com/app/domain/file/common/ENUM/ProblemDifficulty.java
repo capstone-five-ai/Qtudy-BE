@@ -1,6 +1,6 @@
 package com.app.domain.file.common.ENUM;
 
-public enum Difficulty { //난이도
+public enum ProblemDifficulty { //난이도
     EASY,
     MODERATE,
     HARD

@@ -38,6 +38,7 @@ dependencies {
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4' //yml 파일 암호화
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' //jwt 라이브러리 의존성 추가
+	implementation 'org.springframework:spring-test:5.3.30'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'

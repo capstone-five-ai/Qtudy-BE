@@ -27,6 +27,8 @@ public enum ErrorCode {
 
     // 문제
     NOT_GENERATE_PROBLEM(HttpStatus.NO_CONTENT,"P-001","문제를 생성하지 못하였습니다."),
+    NOT_UPLOAD_PROBLEM(HttpStatus.INTERNAL_SERVER_ERROR,"P-002","문제를 업로드하지 못하였습니다."),
+
 
 
 

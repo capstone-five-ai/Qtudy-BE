@@ -1,7 +1,6 @@
 package com.app.domain.file.summary.dto;
 
 import com.app.domain.file.common.ENUM.DType;
-import com.app.domain.file.common.ENUM.Difficulty;
 import com.app.domain.file.common.ENUM.Amount;
 import com.app.domain.file.summary.entity.SummaryFiles;
 import lombok.AllArgsConstructor;
