@@ -17,7 +17,7 @@ public class AiProblemChoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ai_problem_choice_id")
-    private int aiProblemChoiceId;
+    private int aiProblemChoiceId;//
 
     @ManyToOne
     @JoinColumn(name = "ai_generated_problem_id")
