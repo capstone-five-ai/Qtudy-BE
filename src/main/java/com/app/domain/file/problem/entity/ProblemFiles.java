@@ -25,15 +25,15 @@ public class ProblemFiles extends Files {
 
 
 
-    @Column(name = "problem_difficulty")
+    @Column(name = "problem_difficulty",nullable = false)
     @Enumerated(EnumType.STRING)
     private ProblemDifficulty problemDifficulty;
 
-    @Column(name = "problem_amount")
+    @Column(name = "problem_amount",nullable = false)
     @Enumerated(EnumType.STRING)
     private Amount problemAmount;
 
-    @Column(name = "problem_type")
+    @Column(name = "problem_type",nullable = false)
     @Enumerated(EnumType.STRING)
     private ProblemType problemType;
 }

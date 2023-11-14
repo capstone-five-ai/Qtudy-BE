@@ -3,6 +3,7 @@ package com.app.domain.file.problem.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -15,6 +16,7 @@ public class AiGeneratedProblems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ai_generated_problem_id")
     private int aiGeneratedProblemId;
 
     @ManyToOne
@@ -24,18 +26,18 @@ public class AiGeneratedProblems {
 
 
 
-    @Column(name = "problem_name", length = 100)
+    @Column(name = "problem_name", length = 100,nullable = false)
     private String problemName;
 
-    @Column(name = "problem_content", length = 300, nullable = true)
-    private String problemContent;
+    @OneToMany(mappedBy = "aiGeneratedProblems")
+    private List<AiProblemChoice> problemChoices;
 
-    @Column(name = "problem_user_answer",length = 100, nullable = true)
-    private String problemUserAnswer;
-
-    @Lob // TEXT 형식 변환
-    @Column(name = "problem_answer")
+    @Column(name = "problem_answer", length = 300)
     private String problemAnswer;
+
+    @Column(name = "problem_commentary", columnDefinition = "TEXT", nullable = false)
+    private String problemCommentary;
+
 
 
 }

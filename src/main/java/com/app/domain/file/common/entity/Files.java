@@ -2,13 +2,18 @@ package com.app.domain.file.common.entity;
 
 import com.app.domain.file.common.ENUM.DType;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -16,7 +21,7 @@ import java.time.LocalDateTime;
 public class Files {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
     private int fileId;
 
@@ -33,6 +38,7 @@ public class Files {
     private String fileUrl;
 
     @Column(name = "file_date")
+    @CreationTimestamp
     private LocalDateTime fileDate;
 
     @Column(name = "dtype")

@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiGenerateDto {
+public class AiProblemDto {
     private String text;
     private ProblemType type;
     private Amount amount;
@@ -25,8 +25,6 @@ public class AiGenerateDto {
                 .problemAmount(amount)
                 .problemType(type)
                 .build();
-
-
     }
 
 }
