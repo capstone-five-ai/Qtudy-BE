@@ -1,10 +1,9 @@
 package com.app.domain.file.problem.service;
 
 import com.app.domain.file.common.ENUM.DType;
-import com.app.domain.file.common.entity.Files;
 import com.app.domain.file.common.service.S3Service;
 import com.app.domain.file.problem.dto.AiProblemDto;
-import com.app.domain.file.problem.dto.AiResponseDto;
+import com.app.domain.file.problem.dto.AiProblemResponseDto;
 import com.app.domain.file.problem.entity.AiGeneratedProblems;
 import com.app.domain.file.problem.entity.AiProblemChoice;
 import com.app.domain.file.problem.entity.ProblemFiles;
@@ -17,7 +16,6 @@ import com.app.global.error.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,9 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AiGenerateService {
@@ -53,16 +49,14 @@ public class AiGenerateService {
 
     public ResponseEntity<String> AiGenerateProblem(AiProblemDto aiproblemDto) {
         String url ;
-        String content;
-        AiResponseDto[] aiResponseDto;
-        Optional<List<String>> problemChoices;
+        AiProblemResponseDto[] aiProblemResponseDto;
 
         switch (aiproblemDto.getType()){  //Problem 타입 체크
             case MCQ:
-                url = "http://localhost:5000/mcq";
+                url = "http://localhost:5000/create/problem/mcq";
                 break;
             case SAQ:
-                url = "http://localhost:5000/saq";
+                url = "http://localhost:5000/create/problem/saq";
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
@@ -79,7 +73,7 @@ public class AiGenerateService {
             jsonBody = objectMapper.writeValueAsString(aiproblemDto); //HTTP BODY 생성
 
             HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
-            aiResponseDto  = restTemplate.postForObject(url, request, AiResponseDto[].class); // http 응답 받아옴
+            aiProblemResponseDto = restTemplate.postForObject(url, request, AiProblemResponseDto[].class); // http 응답 받아옴
         } catch (JsonProcessingException e) {
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
@@ -89,45 +83,38 @@ public class AiGenerateService {
 
         File tempFile = null;
 
-        //if(aiResponseDto) { // 응답값이 존재할시에 시작
-            AiResponseDto[] aiResponseDtoArray = aiResponseDto;//.//get();
-            try {
+        AiProblemResponseDto[] aiProblemResponseDtoArray = aiProblemResponseDto;//.//get();
+        try {
 
-                String fileName = aiResponseDtoArray[0].getProblemName().substring(0,5);// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-                tempFile = CreateTempFile(fileName,aiResponseDtoArray); // 파일 생성
+            String fileName = aiProblemResponseDtoArray[0].getProblemName().substring(0,5);// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            tempFile = CreateTempFile(fileName, aiProblemResponseDtoArray); // 파일 생성
 
-                // 파일을 MultipartFile로 변환
-                FileSystemResource resource = new FileSystemResource(tempFile);
-                MultipartFile multipartFile = new MockMultipartFile(fileName, resource.getFilename(), "application/pdf", resource.getInputStream());
+            // 파일을 MultipartFile로 변환
+            FileSystemResource resource = new FileSystemResource(tempFile);
+            MultipartFile multipartFile = new MockMultipartFile(fileName, resource.getFilename(), "application/pdf", resource.getInputStream());
 
-                //생성된 파일을 S3에 업로드
-                S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
+            //생성된 파일을 S3에 업로드
+            S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
-                ProblemFiles problemFile = SaveProblemFile(fileInfo,aiproblemDto); //PROBLEM_FILE 테이블 저장
+            ProblemFiles problemFile = SaveProblemFile(fileInfo,aiproblemDto); //PROBLEM_FILE 테이블 저장
 
-                SaveProblems(problemFile,aiResponseDtoArray); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+            SaveProblems(problemFile, aiProblemResponseDtoArray); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
-
-
-
-
-
-            } catch (IOException e) {
-                throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
-            } finally {
-                if (tempFile != null) {
-                    tempFile.delete();  // 방금 생성한 파일 삭제
-                }
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+        } finally {
+            if (tempFile != null) {
+                tempFile.delete();  // 방금 생성한 파일 삭제
             }
-       // }
+        }
 
 
         return ResponseEntity.ok("Success");
     }
 
-    private File CreateTempFile(String fileName,AiResponseDto[] aiResponseDtoArray)  throws IOException{ // String 기반으로 File 생성
+    private File CreateTempFile(String fileName, AiProblemResponseDto[] aiProblemResponseDtoArray)  throws IOException{ // String 기반으로 File 생성
         File tempFile = File.createTempFile(fileName, ".pdf");
-        String content = ConvertToString(aiResponseDtoArray); //파일 내용 변환
+        String content = ConvertToString(aiProblemResponseDtoArray); //파일 내용 변환
 
         try (FileWriter writer = new FileWriter(tempFile)) {
             writer.write(content);
@@ -136,8 +123,8 @@ public class AiGenerateService {
     }
 
 
-    public static String ConvertToString(AiResponseDto[] aiResponseDtoArray) { // 파일의 내용 변환 함수
-        if (aiResponseDtoArray == null || aiResponseDtoArray.length == 0) {
+    public static String ConvertToString(AiProblemResponseDto[] aiProblemResponseDtoArray) { // 파일의 내용 변환 함수
+        if (aiProblemResponseDtoArray == null || aiProblemResponseDtoArray.length == 0) {
             return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
         }
 
@@ -145,7 +132,7 @@ public class AiGenerateService {
 
         int problemNumber =1;
 
-        for (AiResponseDto aiDto : aiResponseDtoArray) {
+        for (AiProblemResponseDto aiDto : aiProblemResponseDtoArray) {
             stringBuffer.append(problemNumber++).append(aiDto.getProblemName()).append("\n");   //문제 이름
 
             List<String> choices = aiDto.getProblemChoices(); // 문제 보기
@@ -178,8 +165,8 @@ public class AiGenerateService {
         return problemFiles;
     }
 
-    public void SaveProblems (ProblemFiles problemFiles, AiResponseDto[] aiResponseDtoArray){
-        for(AiResponseDto aiDto : aiResponseDtoArray){
+    public void SaveProblems (ProblemFiles problemFiles, AiProblemResponseDto[] aiProblemResponseDtoArray){
+        for(AiProblemResponseDto aiDto : aiProblemResponseDtoArray){
             AiGeneratedProblems aiGeneratedProblems = AiGeneratedProblems.builder() // 문제생성
                     .problemFiles(problemFiles)
                     .problemName(aiDto.getProblemName())
@@ -188,7 +175,7 @@ public class AiGenerateService {
 
             aiGeneratedProblemsRepository.save(aiGeneratedProblems);
 
-            if(!aiDto.getProblemChoices().isEmpty()) { // 객관식 보기가 존재 할때만 실행.
+            if(aiDto.getProblemChoices() != null) { // 객관식 보기가 존재 할때만 실행.
                 for (int i = 0; i < aiDto.getProblemChoices().size(); i++) {  //객관식 보기 생성
                     AiProblemChoice aiProblemChoice = AiProblemChoice.builder()
                             .aiGeneratedProblems(aiGeneratedProblems)
@@ -198,7 +185,6 @@ public class AiGenerateService {
                     aiProblemChoiceRepository.save(aiProblemChoice);
                 }
             }
-
         }
     }
 

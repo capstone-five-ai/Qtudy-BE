@@ -23,10 +23,12 @@ public class AiGeneratedSummarys {
     private SummaryFiles summaryFiles;
 
 
+    @Column(name = "summary_title", nullable = false)
+    private String summaryTitle;
 
 
     @Lob // TEXT 형식 변환
-    @Column(name = "summary_content")
+    @Column(name = "summary_content", nullable = false)
     private String summaryContent;
 
 }

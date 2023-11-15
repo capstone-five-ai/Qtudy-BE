@@ -24,7 +24,7 @@ public class AiProblemChoice {
     private AiGeneratedProblems aiGeneratedProblems;
 
 
-    @Column(name = "ai_problem_choice_content", length = 100,nullable = false)
+    @Column(name = "ai_problem_choice_content", length = 100, nullable = false)
     private String aiProblemChoiceContent;
 
 
