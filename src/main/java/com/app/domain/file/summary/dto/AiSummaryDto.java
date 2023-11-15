@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class SummaryDto {
+public class AiSummaryDto {
     private String text;
     private Amount amount;
 

@@ -11,13 +11,25 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class S3Config {
 
-    @Value("${aws.region}")
+
+    @Value("${cloud.aws.credentials.accessKey}")
+    private String accessKey;
+
+    @Value("${cloud.aws.credentials.secretKey}")
+    private String secretKey;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String s3Bucket;
+    // https://[bucket이름].s3.amazonaws.com/
+
+    @Value("${cloud.aws.region.static}")
     private String region;
 
     @Bean
-    public S3Client s3Client() {
+    public S3Client s3Client() {  //S3클라이언트 생성 (region설정 및 자격증명)
         return S3Client.builder()
                 .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .build();
     }
 }

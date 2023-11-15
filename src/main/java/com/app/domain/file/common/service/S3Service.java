@@ -36,11 +36,14 @@ public class S3Service {
                 .key(file.getOriginalFilename()) // 파일 이름
                 .build();
 
-        // 실제로 S3에 파일을 업로드
+        // 설정된 S3클라이언트에 파일을 업로드
         s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize())); // 파일 내용,크기 기반 업로드
         String fileUrl = "https://" + BUCKET_NAME + ".s3.amazonaws.com/" + file.getOriginalFilename();
         return new S3FileInformation(BUCKET_NAME, file.getOriginalFilename(),fileUrl);
     }
+
+
+
 
     /**
      * S3에서 파일을 다운로드하는 메서드
@@ -67,6 +70,9 @@ public class S3Service {
         }
     }
 
+
+
+
     /**
      * S3 버킷의 모든 파일 목록을 조회하는 메서드
      *
@@ -82,6 +88,9 @@ public class S3Service {
                 .map(S3Object::key)
                 .collect(Collectors.toList());
     }
+
+
+
 
     /**
      * S3에서 특정 파일을 삭제하는 메서드
