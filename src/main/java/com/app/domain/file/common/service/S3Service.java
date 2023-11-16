@@ -30,16 +30,22 @@ public class S3Service {
      * @param file 스프링의 MultipartFile 객체, 업로드할 파일
      */
     public S3FileInformation uploadFile(MultipartFile file) throws IOException{
+
+        ListObjectsV2Response listObjectsResponse = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(BUCKET_NAME).build());
+        List<S3Object> objects = listObjectsResponse.contents();
+        int fileCounter = objects.size() + 1;
+        String fileName = "test" + fileCounter;  // 현재 파일 개수기반으로 filename 설정 (추후 변경예정)
+
             // S3에 업로드할 객체의 정보를 설정
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME) // 버킷 이름
-                .key(file.getOriginalFilename()) // 파일 이름
+                .key(fileName) // 파일 이름
                 .build();
 
         // 설정된 S3클라이언트에 파일을 업로드
         s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize())); // 파일 내용,크기 기반 업로드
-        String fileUrl = "https://" + BUCKET_NAME + ".s3.amazonaws.com/" + file.getOriginalFilename();
-        return new S3FileInformation(BUCKET_NAME, file.getOriginalFilename(),fileUrl);
+        String fileUrl = "https://" + BUCKET_NAME + ".s3.amazonaws.com/" + fileName;
+        return new S3FileInformation(BUCKET_NAME, fileName, fileUrl);
     }
 
 

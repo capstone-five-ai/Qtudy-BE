@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping("/problem")
 public class AiProblemController {
     @Autowired
     AiGenerateService aiGenerateService;
 
-    @PostMapping("/generateQuestion")
-    public ResponseEntity<String> createQuestion(@Valid @RequestBody AiProblemDto aiproblemDto) {
+    @PostMapping("/generateProblem")
+    public ResponseEntity<String> AiGenerateProblem(@Valid @RequestBody AiProblemDto aiproblemDto) {
         return aiGenerateService.AiGenerateProblem(aiproblemDto);
     }
 

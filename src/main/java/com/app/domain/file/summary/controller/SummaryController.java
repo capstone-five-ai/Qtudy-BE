@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping("/summary")
 public class SummaryController {
 
     @Autowired
     SummaryService summaryService;
 
     @PostMapping("/generateSummary")
-    public ResponseEntity<String> generateContent(@Valid @RequestBody AiSummaryDto aiSummaryDto){
+    public ResponseEntity<String> generateSummary(@Valid @RequestBody AiSummaryDto aiSummaryDto){
         return summaryService.generateSummary(aiSummaryDto);
     }
 
