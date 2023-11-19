@@ -1,4 +1,4 @@
-package com.app.domain.file.common.entity;
+package com.app.domain.file.file.entity;
 
 import com.app.domain.file.common.ENUM.DType;
 import lombok.AllArgsConstructor;
@@ -29,13 +29,13 @@ public class Files {
 
 
     @Column(name = "member_id") //추후에 Members 엔티티와 연결
-    private int memberId;
+    private String memberId;
 
-    @Column(name = "file_name", length = 100)
+    @Column(name = "file_name", length = 100, unique = true)
     private String fileName;
 
-    @Column(name = "file_url", length = 100)
-    private String fileUrl;
+    @Column(name = "file_key", length = 100, unique = true)
+    private String fileKey;
 
     @Column(name = "file_date")
     @CreationTimestamp
