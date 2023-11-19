@@ -16,11 +16,4 @@ public class AiSummaryDto {
     private String text;
     private Amount amount;
 
-    public SummaryFiles toEntity() {
-        return SummaryFiles.builder()
-                .memberId(1)
-                .dtype(DType.SUMMARY)
-                .summaryAmount(amount)
-                .build();
-    }
 }

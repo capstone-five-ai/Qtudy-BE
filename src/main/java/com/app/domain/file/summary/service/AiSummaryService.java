@@ -29,7 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Service
-public class SummaryService {
+public class AiSummaryService {
 
 
     @Autowired
@@ -41,7 +41,7 @@ public class SummaryService {
     @Autowired
     private S3Service s3Service;
 
-    public ResponseEntity<String> generateSummary(AiSummaryDto aiSummaryDto) {
+    public ResponseEntity<String> generateSummary(String token, AiSummaryDto aiSummaryDto) {
 
         String url = "http://localhost:5000/create/summary" ;
         AiSummaryResponseDto aiSummaryResponseDto;
@@ -77,7 +77,7 @@ public class SummaryService {
             //생성된 파일을 S3에 업로드
             S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
-            SummaryFiles summaryFiles = SaveSummaryFile(fileInfo,aiSummaryDto); //PROBLEM_FILE 테이블 저장
+            SummaryFiles summaryFiles = SaveSummaryFile(token, fileInfo, aiSummaryDto); //PROBLEM_FILE 테이블 저장
 
             SaveSummarys(summaryFiles, aiSummaryResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
@@ -116,11 +116,11 @@ public class SummaryService {
     }
 
 
-    public SummaryFiles SaveSummaryFile(S3FileInformation fileInfo , AiSummaryDto aisummaryDto){
+    public SummaryFiles SaveSummaryFile(String token, S3FileInformation fileInfo , AiSummaryDto aisummaryDto){
         SummaryFiles summaryFiles = SummaryFiles.builder()
-                .memberId(1)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
+                .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(fileInfo.getFileKey()) //추후에 member가 지정한 이름으로 변경해야함.
-                .fileUrl(fileInfo.getFileUrl())
+                .fileKey(fileInfo.getFileKey())
                 .dtype(DType.SUMMARY)
                 .summaryAmount(aisummaryDto.getAmount())
                 .build();

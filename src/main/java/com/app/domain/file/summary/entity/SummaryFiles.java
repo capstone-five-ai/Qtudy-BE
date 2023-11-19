@@ -1,7 +1,7 @@
 package com.app.domain.file.summary.entity;
 
 import com.app.domain.file.common.ENUM.Amount;
-import com.app.domain.file.common.entity.Files;
+import com.app.domain.file.file.entity.Files;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
