@@ -20,6 +20,4 @@ public class AiSummaryController {
         return aiSummaryService.generateSummary(token, aiSummaryDto);
     }
 
-
-
 }

@@ -1,4 +1,4 @@
-package com.app.domain.file.file.dto;
+package com.app.domain.file.problem.dto.Problem;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UpdateFileDto {
-    int fileId;
-    String newFileName;
+public class FileNameDto {
+    private String fileName;
 }

@@ -1,4 +1,4 @@
-package com.app.domain.file.problem.dto;
+package com.app.domain.file.problem.dto.ProblemFile;
 
 import com.app.domain.file.common.ENUM.DType;
 import com.app.domain.file.common.ENUM.ProblemDifficulty;
@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiProblemDto {
+public class AiGenerateProblemDto {
     private String text;
     private ProblemType type;
     private Amount amount;

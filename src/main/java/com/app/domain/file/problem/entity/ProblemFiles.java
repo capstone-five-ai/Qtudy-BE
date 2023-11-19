@@ -3,7 +3,7 @@ package com.app.domain.file.problem.entity;
 import com.app.domain.file.common.ENUM.Amount;
 import com.app.domain.file.common.ENUM.ProblemDifficulty;
 import com.app.domain.file.common.ENUM.ProblemType;
-import com.app.domain.file.common.entity.Files;
+import com.app.domain.file.file.entity.Files;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @SuperBuilder
 public class ProblemFiles extends Files {
 
-    @OneToMany(mappedBy = "problemFiles")
+    @OneToMany(mappedBy = "problemFiles", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AiGeneratedProblems> aiQuestions;
 
 

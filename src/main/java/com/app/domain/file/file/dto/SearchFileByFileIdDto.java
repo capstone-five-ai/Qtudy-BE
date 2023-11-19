@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UpdateFileDto {
+public class SearchFileByFileIdDto {
     int fileId;
-    String newFileName;
+    String fileName;
 }

@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service  // 스프링의 Service 빈으로 등록
@@ -54,13 +55,13 @@ public class S3Service {
     /**
      * S3에서 파일을 다운로드하는 메서드
      *
-     * @param fileName 다운로드할 파일의 이름
+     * @param fileKey 다운로드할 파일의 이름
      * @return 파일의 바이트 배열
      */
-    public byte[] downloadFile(String fileName) {
+    public byte[] downloadFile(String fileKey) {
         try (ResponseInputStream<GetObjectResponse> objectData = s3Client.getObject(GetObjectRequest.builder() // 파일 다운로드
                 .bucket(BUCKET_NAME) // 버킷 이름
-                .key(fileName) // 파일 이름
+                .key(fileKey) // 파일 이름
                 .build());
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
@@ -84,16 +85,20 @@ public class S3Service {
      *
      * @return 파일 이름의 리스트
      */
-    public List<String> listFiles() {
+    public Optional<List<String>> listFiles(String token) {
         ListObjectsResponse listObjectsResponse = s3Client.listObjects(ListObjectsRequest.builder() // 파일 리스트 받아오기
                 .bucket(BUCKET_NAME)
                 .build());
 
         // 객체 목록에서 파일 이름만 추출하여 반환
-        return listObjectsResponse.contents().stream()
+        List<String> fileList = listObjectsResponse.contents().stream()
                 .map(S3Object::key)
+                .filter(key -> key.contains(token))
                 .collect(Collectors.toList());
+
+        return Optional.ofNullable(fileList.isEmpty() ? null : fileList); // 아무것도 없으면 null 반환
     }
+
 
 
 

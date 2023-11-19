@@ -11,11 +11,11 @@ import java.util.Optional;
 @Repository
 public interface FilesRepository extends JpaRepository<Files, Integer> {
 
-    List<String> findFileNameByMemberId(String memberId);
-    List<String> findFileNameByMemberIdAndFileNameContains(String memberId, String FileName);
+    List<Files> findByMemberId(String memberId);
+    List<Files> findByMemberIdAndFileNameContains(String memberId, String FileName);
 
-    Optional<Files> findFileNameByMemberIdAndFileName(String memberId, String FileName);
+    Optional<Files> findByFileId(int FileId);
 
-    Optional<String> findFileKeyByMemberIdAndFileName(String memberId, String FileName);
+    Optional<String> findFileKeyByFileId(int fileId);
 
 }

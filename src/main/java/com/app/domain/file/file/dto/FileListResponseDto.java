@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class UpdateFileDto {
+public class FileListResponseDto {
     int fileId;
-    String newFileName;
+    String fileName;
+    LocalDateTime fileDate;
 }

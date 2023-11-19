@@ -21,7 +21,7 @@ public class AiProblemChoice {
 
     @ManyToOne
     @JoinColumn(name = "ai_generated_problem_id")
-    private AiGeneratedProblems aiGeneratedProblems;
+    private AiGeneratedProblems aiGeneratedProblemId;
 
 
     @Column(name = "ai_problem_choice_content", length = 100, nullable = false)

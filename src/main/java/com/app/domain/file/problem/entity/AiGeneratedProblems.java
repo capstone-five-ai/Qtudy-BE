@@ -29,7 +29,7 @@ public class AiGeneratedProblems {
     @Column(name = "problem_name", length = 100,nullable = false)
     private String problemName;
 
-    @OneToMany(mappedBy = "aiGeneratedProblems")
+    @OneToMany(mappedBy = "aiGeneratedProblems", cascade=CascadeType.ALL, orphanRemoval=true)
     private List<AiProblemChoice> problemChoices;
 
     @Column(name = "problem_answer", length = 300)
