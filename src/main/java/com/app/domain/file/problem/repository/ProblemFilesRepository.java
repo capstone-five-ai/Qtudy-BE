@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProblemFilesRepository extends JpaRepository<ProblemFiles, Integer> {
 
-    String findFileIdByMemberIdAndFileName(String MemberId, String FileName);
+    ProblemFiles findByMemberIdAndFileName(String MemberId, String FileName);
 
 }

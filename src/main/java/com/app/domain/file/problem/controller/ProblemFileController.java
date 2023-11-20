@@ -1,7 +1,7 @@
 package com.app.domain.file.problem.controller;
 
-import com.app.domain.file.problem.dto.ProblemFile.AiGenerateProblemDto;
-import com.app.domain.file.problem.dto.ProblemFile.DeleteProblemFileDto;
+import com.app.domain.file.problem.dto.ProblemFile.Request.AiGenerateProblemDto;
+import com.app.domain.file.problem.dto.ProblemFile.Request.DeleteProblemFileDto;
 import com.app.domain.file.problem.service.ProblemFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

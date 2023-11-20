@@ -1,11 +1,10 @@
 package com.app.domain.file.file.controller;
 
-import com.app.domain.file.file.dto.FileListResponseDto;
-import com.app.domain.file.file.dto.SearchFileByFileIdDto;
-import com.app.domain.file.file.dto.SearchFileByNameDto;
-import com.app.domain.file.file.dto.UpdateFileDto;
+import com.app.domain.file.file.dto.Response.FileListResponseDto;
+import com.app.domain.file.file.dto.Request.SearchFileByFileIdRequestDto;
+import com.app.domain.file.file.dto.Request.SearchFileByNameRequestDto;
+import com.app.domain.file.file.dto.Request.UpdateFileRequestDto;
 import com.app.domain.file.file.service.FileService;
-import com.app.domain.file.problem.dto.ProblemFile.AiGenerateProblemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,26 +30,26 @@ public class FileController {
     }
 
     @PostMapping("/searchFile") //사용자가 생성한 특정 파일 리스트 가져오기
-    public ResponseEntity<List<FileListResponseDto>> searchFileList(@RequestHeader("Authorization") String token, @Valid @RequestBody SearchFileByNameDto searchFileByNameDto){
-        List<FileListResponseDto> fileList = fileService.searchFileList(token, searchFileByNameDto);
+    public ResponseEntity<List<FileListResponseDto>> searchFileList(@RequestHeader("Authorization") String token, @Valid @RequestBody SearchFileByNameRequestDto searchFileByNameRequestDto){
+        List<FileListResponseDto> fileList = fileService.searchFileList(token, searchFileByNameRequestDto);
 
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
 
     @PostMapping("/updateFile") //사용자가 생성한 특정 파일 이름 update
-    public ResponseEntity updateFile(@RequestHeader("Authorization") String token,@Valid @RequestBody UpdateFileDto updateFileDto){
-        fileService.updateFile(token,updateFileDto);
+    public ResponseEntity updateFile(@RequestHeader("Authorization") String token,@Valid @RequestBody UpdateFileRequestDto updateFileRequestDto){
+        fileService.updateFile(token, updateFileRequestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/downloadProblemFile") // 문제 파일 다운로드
-    public ResponseEntity<byte[]> downloadFile(@RequestHeader("Authorization") String token, @Valid @RequestBody SearchFileByFileIdDto searchFileByFileIdDto) {
-        byte[] fileContent = fileService.downloadFile(token, searchFileByFileIdDto);
+    public ResponseEntity<byte[]> downloadFile(@RequestHeader("Authorization") String token, @Valid @RequestBody SearchFileByFileIdRequestDto searchFileByFileIdRequestDto) {
+        byte[] fileContent = fileService.downloadFile(token, searchFileByFileIdRequestDto);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", searchFileByFileIdDto.getFileName());
+        headers.setContentDispositionFormData("attachment", searchFileByFileIdRequestDto.getFileName());
 
         return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
     }

@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface AiProblemChoiceRepository extends JpaRepository<AiProblemChoice, Integer> {
 
-    List<AiProblemChoice> findByAiGeneratedProblemId(int aiGeneratedProblemId);
+    List<AiProblemChoice> findByAiGeneratedProblems_AiGeneratedProblemId(int aiGeneratedProblemId);
 }

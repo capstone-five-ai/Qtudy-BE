@@ -1,6 +1,7 @@
 package com.app.domain.file.problem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,9 +20,10 @@ public class AiProblemChoice {
     @Column(name = "ai_problem_choice_id")
     private int aiProblemChoiceId;//
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "ai_generated_problem_id")
-    private AiGeneratedProblems aiGeneratedProblemId;
+    private AiGeneratedProblems aiGeneratedProblems;
 
 
     @Column(name = "ai_problem_choice_content", length = 100, nullable = false)

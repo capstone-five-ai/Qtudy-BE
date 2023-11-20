@@ -2,14 +2,9 @@ package com.app.domain.file.problem.service;
 
 import com.app.domain.file.common.ENUM.DType;
 import com.app.domain.file.common.service.S3Service;
-import com.app.domain.file.problem.dto.Problem.FileNameDto;
-import com.app.domain.file.problem.dto.ProblemChoice.AddChoiceDto;
-import com.app.domain.file.problem.dto.ProblemChoice.DeleteChoiceDto;
-import com.app.domain.file.problem.dto.ProblemChoice.ProblemIdDto;
-import com.app.domain.file.problem.dto.ProblemChoice.UpdateChoiceDto;
-import com.app.domain.file.problem.dto.ProblemFile.AiGenerateProblemDto;
-import com.app.domain.file.problem.dto.ProblemFile.AiGenerateProblemResponseDto;
-import com.app.domain.file.problem.dto.ProblemFile.DeleteProblemFileDto;
+import com.app.domain.file.problem.dto.ProblemFile.Request.AiGenerateProblemDto;
+import com.app.domain.file.problem.dto.ProblemFile.Response.AiGenerateProblemResponseDto;
+import com.app.domain.file.problem.dto.ProblemFile.Request.DeleteProblemFileDto;
 import com.app.domain.file.problem.entity.AiGeneratedProblems;
 import com.app.domain.file.problem.entity.AiProblemChoice;
 import com.app.domain.file.problem.entity.ProblemFiles;
@@ -181,7 +176,7 @@ public class ProblemFileService { //Service 추후 분할 예정
             if(aiDto.getProblemChoices() != null) { // 객관식 보기가 존재 할때만 실행.
                 for (int i = 0; i < aiDto.getProblemChoices().size(); i++) {  //객관식 보기 생성
                     AiProblemChoice aiProblemChoice = AiProblemChoice.builder()
-                            .aiGeneratedProblemId(aiGeneratedProblems)
+                            .aiGeneratedProblems (aiGeneratedProblems)
                             .aiProblemChoiceContent(aiDto.getProblemChoices().get(i))
                             .build();
 

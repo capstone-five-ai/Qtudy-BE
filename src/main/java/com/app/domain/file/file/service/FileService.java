@@ -2,10 +2,10 @@ package com.app.domain.file.file.service;
 
 
 import com.app.domain.file.common.service.S3Service;
-import com.app.domain.file.file.dto.FileListResponseDto;
-import com.app.domain.file.file.dto.SearchFileByFileIdDto;
-import com.app.domain.file.file.dto.SearchFileByNameDto;
-import com.app.domain.file.file.dto.UpdateFileDto;
+import com.app.domain.file.file.dto.Response.FileListResponseDto;
+import com.app.domain.file.file.dto.Request.SearchFileByFileIdRequestDto;
+import com.app.domain.file.file.dto.Request.SearchFileByNameRequestDto;
+import com.app.domain.file.file.dto.Request.UpdateFileRequestDto;
 import com.app.domain.file.file.entity.Files;
 import com.app.domain.file.file.repository.FilesRepository;
 import com.app.global.error.ErrorCode;
@@ -40,8 +40,8 @@ public class FileService {
         return fileListResponseDtoList;
     }
 
-    public List<FileListResponseDto> searchFileList(String token, SearchFileByNameDto searchFileByNameDto){ //사용자가 생성한 특정 파일 리스트 가져오기
-        String fileName = searchFileByNameDto.getFileName();
+    public List<FileListResponseDto> searchFileList(String token, SearchFileByNameRequestDto searchFileByNameRequestDto){ //사용자가 생성한 특정 파일 리스트 가져오기
+        String fileName = searchFileByNameRequestDto.getFileName();
 
         List<Files> fileList = FilesRepository.findByMemberIdAndFileNameContains(token,fileName);
 
@@ -55,9 +55,9 @@ public class FileService {
         return fileListResponseDtoList;
     }
 
-    public void updateFile(String token, UpdateFileDto updateFileDto){
-        int fileId = updateFileDto.getFileId();
-        String newFileName = updateFileDto.getNewFileName();
+    public void updateFile(String token, UpdateFileRequestDto updateFileRequestDto){
+        int fileId = updateFileRequestDto.getFileId();
+        String newFileName = updateFileRequestDto.getNewFileName();
 
 
         Optional<Files> file = FilesRepository.findByFileId(fileId);
@@ -69,9 +69,9 @@ public class FileService {
         file.ifPresent(FilesRepository::save);
     }
 
-    public byte[] downloadFile(String token, SearchFileByFileIdDto searchFileByFileIdDto){
-        int fileId = searchFileByFileIdDto.getFileId();
-        String fileName = searchFileByFileIdDto.getFileName();
+    public byte[] downloadFile(String token, SearchFileByFileIdRequestDto searchFileByFileIdRequestDto){
+        int fileId = searchFileByFileIdRequestDto.getFileId();
+        String fileName = searchFileByFileIdRequestDto.getFileName();
 
         Optional<String> key = FilesRepository.findFileKeyByFileId(fileId);
         String fileKey = key.orElseThrow(() -> new BusinessException(ErrorCode.NOT_DOWNLOAD_FILE)); // KEY가 없으면 에러발생

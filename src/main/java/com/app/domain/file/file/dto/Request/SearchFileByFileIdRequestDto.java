@@ -1,4 +1,4 @@
-package com.app.domain.file.problem.dto.ProblemChoice;
+package com.app.domain.file.file.dto.Request;
 
 
 import lombok.AllArgsConstructor;
@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class ProblemIdDto {
-    private int aiGeneratedProblemId;
+public class SearchFileByFileIdRequestDto {
+    int fileId;
+    String fileName;
 }

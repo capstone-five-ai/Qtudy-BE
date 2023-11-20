@@ -1,4 +1,4 @@
-package com.app.domain.file.file.dto;
+package com.app.domain.file.file.dto.Request;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class SearchFileByFileIdDto {
-    int fileId;
+public class SearchFileByNameRequestDto {
     String fileName;
 }

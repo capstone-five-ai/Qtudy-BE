@@ -1,4 +1,4 @@
-package com.app.domain.file.problem.dto.ProblemFile;
+package com.app.domain.file.problem.dto.ProblemFile.Request;
 
 import com.app.domain.file.common.ENUM.DType;
 import com.app.domain.file.common.ENUM.ProblemDifficulty;

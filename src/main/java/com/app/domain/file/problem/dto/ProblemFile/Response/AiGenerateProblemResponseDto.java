@@ -1,4 +1,4 @@
-package com.app.domain.file.problem.dto.ProblemFile;
+package com.app.domain.file.problem.dto.ProblemFile.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

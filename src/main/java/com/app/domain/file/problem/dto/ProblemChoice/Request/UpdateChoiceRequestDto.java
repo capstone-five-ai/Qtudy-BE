@@ -1,4 +1,4 @@
-package com.app.domain.file.problem.dto.ProblemChoice;
+package com.app.domain.file.problem.dto.ProblemChoice.Request;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UpdateChoiceDto {
+public class UpdateChoiceRequestDto {
     private int aiProblemChoiceId;
-    private String content;
+    private String newContent;
 }

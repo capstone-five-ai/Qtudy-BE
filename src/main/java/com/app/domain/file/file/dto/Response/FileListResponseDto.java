@@ -1,4 +1,4 @@
-package com.app.domain.file.file.dto;
+package com.app.domain.file.file.dto.Response;
 
 
 import lombok.AllArgsConstructor;
@@ -6,10 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class SearchFileByNameDto {
+public class FileListResponseDto {
+    int fileId;
     String fileName;
+    LocalDateTime fileDate;
 }

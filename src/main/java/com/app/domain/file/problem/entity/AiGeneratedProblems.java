@@ -1,5 +1,7 @@
 package com.app.domain.file.problem.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +21,8 @@ public class AiGeneratedProblems {
     @Column(name = "ai_generated_problem_id")
     private int aiGeneratedProblemId;
 
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "file_id")
     private ProblemFiles problemFiles;
