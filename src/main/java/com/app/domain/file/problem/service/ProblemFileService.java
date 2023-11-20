@@ -1,8 +1,11 @@
 package com.app.domain.file.problem.service;
 
 import com.app.domain.file.common.ENUM.DType;
+import com.app.domain.file.common.ENUM.FileType;
 import com.app.domain.file.common.service.S3Service;
-import com.app.domain.file.problem.dto.ProblemFile.Request.AiGenerateProblemDto;
+import com.app.domain.file.problem.dto.ProblemFile.AiRequest.TypeConvertDto;
+import com.app.domain.file.problem.dto.ProblemFile.Request.AiGenerateProblemByFileDto;
+import com.app.domain.file.problem.dto.ProblemFile.Request.AiGenerateProblemByTextDto;
 import com.app.domain.file.problem.dto.ProblemFile.Response.AiGenerateProblemResponseDto;
 import com.app.domain.file.problem.dto.ProblemFile.Request.DeleteProblemFileDto;
 import com.app.domain.file.problem.entity.AiGeneratedProblems;
@@ -16,6 +19,8 @@ import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -30,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,11 +54,11 @@ public class ProblemFileService { //Service 추후 분할 예정
     private S3Service s3Service;
 
 
-    public void AiGenerateProblemFile(String token, AiGenerateProblemDto aiproblemDtoGenerate) {
-        String url ;
+    public void AiGenerateProblemFileByText(String token, AiGenerateProblemByTextDto aiGenerateProblemByTextDto) {
+        String url;
         AiGenerateProblemResponseDto[] aiGenerateProblemResponseDto;
 
-        switch (aiproblemDtoGenerate.getType()){  //Problem 타입 체크
+        switch (aiGenerateProblemByTextDto.getType()){  //Problem 타입 체크
             case MCQ:
                 url = "http://localhost:5000/create/problem/mcq";
                 break;
@@ -71,24 +77,105 @@ public class ProblemFileService { //Service 추후 분할 예정
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
-            jsonBody = objectMapper.writeValueAsString(aiproblemDtoGenerate); //HTTP BODY 생성
+            jsonBody = objectMapper.writeValueAsString(aiGenerateProblemByTextDto); //HTTP BODY 생성
 
             HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
             aiGenerateProblemResponseDto = restTemplate.postForObject(url, request, AiGenerateProblemResponseDto[].class); // http 응답 받아옴
         } catch (JsonProcessingException e) {
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
-        //String jsonBody = String.format("{\"text\": \"%s\"}", aiproblemDto.getText());
+
+        UploadS3AndSaveFile(aiGenerateProblemResponseDto, token, aiGenerateProblemByTextDto.toTextDto2());
+
+
+    }
+
+
+    public void AiGenerateProblemFileByFile(String token, AiGenerateProblemByFileDto aiGenerateProblemByFileDto, FileType fileType) {
+        String url;
+        AiGenerateProblemResponseDto[] aiGenerateProblemResponseDto;
+
+        switch (aiGenerateProblemByFileDto.getType()){  //Problem 타입 체크
+            case MCQ:
+                url = "http://localhost:5000/create/problem/mcq/";
+                break;
+            case SAQ:
+                url = "http://localhost:5000/create/problem/saq";
+                break;
+            default:
+                throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
+        }
+
+        switch (fileType){  //File 타입 체크
+            case PDF: // PDF 타입일경우
+                MultipartFile pdfFile = aiGenerateProblemByFileDto.getFile();
+                try {
+                    String pdfText = convertPdfToString(pdfFile);
+                    String jsonBody;   // AI 문제 DTO를 JSON 문자열로 변환
+
+                    HttpHeaders headers = new HttpHeaders();  // HTTP 요청 헤더 설정
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+
+                    ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
+                    jsonBody = objectMapper.writeValueAsString(aiGenerateProblemByFileDto.toTextDto(pdfText)); //HTTP BODY 생성 (FILE -> TEXT Dto 변환)
+
+                    HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
+                    aiGenerateProblemResponseDto = restTemplate.postForObject(url, request, AiGenerateProblemResponseDto[].class); // http 응답 받아옴
+
+                    UploadS3AndSaveFile(aiGenerateProblemResponseDto, token, aiGenerateProblemByFileDto.toTextDto2());
+                } catch (JsonProcessingException e) {
+                    throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
+                } catch (IOException e) {
+                    throw new RuntimeException(e); // 추후 변경예정 (convertPdf)
+                }
+            case JPG: // JPG 타입일경우
+                try {
+                    url+="/jpg";
+                    String jsonBody;   // AI 문제 DTO를 JSON 문자열로 변환
+                    HttpHeaders headers = new HttpHeaders();  // HTTP 요청 헤더 설정
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+
+                    ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
+                    jsonBody = objectMapper.writeValueAsString(aiGenerateProblemByFileDto); //HTTP BODY 생성 (FILE -> TEXT Dto 변환)
+
+                    HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
+                    aiGenerateProblemResponseDto = restTemplate.postForObject(url, request, AiGenerateProblemResponseDto[].class); // http 응답 받아옴
+
+                    UploadS3AndSaveFile(aiGenerateProblemResponseDto, token, aiGenerateProblemByFileDto.toTextDto2());
+                }catch (JsonProcessingException e) {
+                throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
+            }
+                break;
+            default:
+                throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
+        }
+
+
+    }
 
 
 
+
+
+
+    public static String convertPdfToString(MultipartFile pdfFile) throws IOException {
+        try (InputStream is = pdfFile.getInputStream()) {
+            PDDocument document = PDDocument.load(is);
+            PDFTextStripper textStripper = new PDFTextStripper();
+            String text = textStripper.getText(document);
+            document.close();
+            return text;
+        }
+    }
+
+
+    public void UploadS3AndSaveFile(AiGenerateProblemResponseDto[] aiGenerateProblemResponseDto, String token, TypeConvertDto typeConvertDto) {
         File tempFile = null;
 
-        AiGenerateProblemResponseDto[] aiGenerateProblemResponseDtoArray = aiGenerateProblemResponseDto;//.//get();
         try {
 
-            String fileName = aiGenerateProblemResponseDtoArray[0].getProblemName().substring(0,5);// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-            tempFile = CreateTempFile(fileName, aiGenerateProblemResponseDtoArray); // 파일 생성
+            String fileName = aiGenerateProblemResponseDto[0].getProblemName().substring(0,5);// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            tempFile = CreateTempFile(fileName, aiGenerateProblemResponseDto); // 파일 생성
 
             // 파일을 MultipartFile로 변환
             FileSystemResource resource = new FileSystemResource(tempFile);
@@ -97,9 +184,9 @@ public class ProblemFileService { //Service 추후 분할 예정
             //생성된 파일을 S3에 업로드
             S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
-            ProblemFiles problemFile = SaveProblemFile(token, fileInfo, aiproblemDtoGenerate); //PROBLEM_FILE 테이블 저장
+            ProblemFiles problemFile = SaveProblemFile(token, fileInfo, typeConvertDto); //PROBLEM_FILE 테이블 저장
 
-            SaveProblems(problemFile, aiGenerateProblemResponseDtoArray); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+            SaveProblems(problemFile, aiGenerateProblemResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
@@ -148,15 +235,15 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public ProblemFiles SaveProblemFile(String token, S3FileInformation fileInfo , AiGenerateProblemDto aiproblemDtoGenerate){
+    public ProblemFiles SaveProblemFile(String token, S3FileInformation fileInfo , TypeConvertDto typeConvertDto){
         ProblemFiles problemFiles = ProblemFiles.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(fileInfo.getFileKey()) //추후에 member가 지정한 이름으로 변경해야함.
                 .fileKey(fileInfo.getFileKey())
                 .dtype(DType.PROBLEM)
-                .problemDifficulty(aiproblemDtoGenerate.getDifficulty())
-                .problemAmount(aiproblemDtoGenerate.getAmount())
-                .problemType(aiproblemDtoGenerate.getType())
+                .problemDifficulty(typeConvertDto.getDifficulty())
+                .problemAmount(typeConvertDto.getAmount())
+                .problemType(typeConvertDto.getType())
                 .build();
 
         problemFilesRepository.save(problemFiles);
