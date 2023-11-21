@@ -69,15 +69,19 @@ public class FileService {
         file.ifPresent(FilesRepository::save);
     }
 
-    public byte[] downloadFile(String token, SearchFileByFileIdRequestDto searchFileByFileIdRequestDto){
+    public String downloadFile(String token, SearchFileByFileIdRequestDto searchFileByFileIdRequestDto){
         int fileId = searchFileByFileIdRequestDto.getFileId();
         String fileName = searchFileByFileIdRequestDto.getFileName();
 
         Optional<String> key = FilesRepository.findFileKeyByFileId(fileId);
         String fileKey = key.orElseThrow(() -> new BusinessException(ErrorCode.NOT_DOWNLOAD_FILE)); // KEY가 없으면 에러발생
-        byte[] fileData = s3Service.downloadFile(fileKey); //KEY를 사용해 파일 Download
+        String fileUrl=ConvertUrlByKey(fileKey);
 
-        return fileData;
+        return fileUrl;
+    }
+
+    public String ConvertUrlByKey(String fileKey){
+        return "https://q-study-bucket.s3.amazonaws.com/"+fileKey;
     }
 
 

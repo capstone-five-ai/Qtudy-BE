@@ -4,6 +4,7 @@ import com.app.domain.file.file.dto.Response.FileListResponseDto;
 import com.app.domain.file.file.dto.Request.SearchFileByFileIdRequestDto;
 import com.app.domain.file.file.dto.Request.SearchFileByNameRequestDto;
 import com.app.domain.file.file.dto.Request.UpdateFileRequestDto;
+import com.app.domain.file.file.dto.Response.SearchFileByFileIdResponseDto;
 import com.app.domain.file.file.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -44,14 +45,10 @@ public class FileController {
     }
 
     @PostMapping("/downloadProblemFile") // 문제 파일 다운로드
-    public ResponseEntity<byte[]> downloadFile(@RequestHeader("Authorization") String token, @Valid @RequestBody SearchFileByFileIdRequestDto searchFileByFileIdRequestDto) {
-        byte[] fileContent = fileService.downloadFile(token, searchFileByFileIdRequestDto);
+    public ResponseEntity<SearchFileByFileIdResponseDto> downloadFile(@RequestHeader("Authorization") String token, @Valid @RequestBody SearchFileByFileIdRequestDto searchFileByFileIdRequestDto) {
+        String fileUrl = fileService.downloadFile(token, searchFileByFileIdRequestDto);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", searchFileByFileIdRequestDto.getFileName());
-
-        return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+        return new ResponseEntity<>(new SearchFileByFileIdResponseDto(fileUrl), HttpStatus.OK);
     }
 
 
