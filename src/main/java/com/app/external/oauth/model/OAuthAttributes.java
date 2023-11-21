@@ -17,7 +17,7 @@ public class OAuthAttributes {
 
     private String name;
     private String email;
-    private String profile;
+//    private String profile;
     //프로필 사진 주소 저장
     private MemberType memberType;
 
@@ -26,7 +26,7 @@ public class OAuthAttributes {
                 .memberName(name)
                 .email(email)
                 .memberType(memberType)
-                .profile(profile)
+//                .profile(profile)
                 .role(role)
                 .build();
     }
