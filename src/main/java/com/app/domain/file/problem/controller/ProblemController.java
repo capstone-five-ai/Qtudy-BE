@@ -1,5 +1,6 @@
 package com.app.domain.file.problem.controller;
 
+import com.app.domain.file.problem.dto.Problem.Request.CommentaryRequestDto;
 import com.app.domain.file.problem.dto.Problem.Request.FileNameRequestDto;
 import com.app.domain.file.problem.dto.Problem.Response.FileNameResponseDto;
 import com.app.domain.file.problem.entity.AiGeneratedProblems;
@@ -27,6 +28,13 @@ public class ProblemController { // Controller 추후 분할 예정
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(problems);
+    }
+
+    @PostMapping("/updateProblemCommentary")
+    public ResponseEntity<String> UpdateProblemCommentary(@RequestHeader("Authorization") String token, @Valid @RequestBody CommentaryRequestDto commentaryRequestDto) {
+        problemService.UpdateProblemCommentary(token, commentaryRequestDto);
+
+        return ResponseEntity.ok("Sucess");
     }
 
 
