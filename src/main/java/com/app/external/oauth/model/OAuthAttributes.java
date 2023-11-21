@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.UUID;
+
 /**
  * 소셜 플랫폼에서 가져오는 회원 정보의 반환 형태가 다 다르니
  * 하나로 통일하여 회원가입 할 때 이 정보를 이용해 회원가입을 할 수 있게 진행함
@@ -22,8 +24,9 @@ public class OAuthAttributes {
     private MemberType memberType;
 
     public Member toMemberEntity(MemberType memberType, Role role) {
+        String uniqueName = name + "_" + UUID.randomUUID();
         return Member.builder()
-                .memberName(name)
+                .nickName(uniqueName)
                 .email(email)
                 .memberType(memberType)
 //                .profile(profile)
