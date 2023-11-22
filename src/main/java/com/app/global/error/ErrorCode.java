@@ -22,6 +22,22 @@ public enum ErrorCode {
     INVALID_MEMBER_TYPE(HttpStatus.BAD_REQUEST, "M-001", "잘못된 회원 타입 입니다.(memberType : KAKAO)"),
     ALREADY_REGISTERED_MEMBER(HttpStatus.BAD_REQUEST, "M-002", "이미 가입된 회원 입니다."),
     MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "M-003", "해당 회원은 존재하지 않습니다."),
+
+
+
+
+    //AI 서버 통신 문제
+    NOT_SENT_HTTP(HttpStatus.NO_CONTENT,"H-001","HTTP 메세지를 생성하지 못하였습니다."),
+
+    //파일
+    NOT_DOWNLOAD_FILE(HttpStatus.NOT_FOUND,"F-001","해당 파일이 존재하지 않습니다."),
+
+    // 문제
+    NOT_GENERATE_PROBLEM(HttpStatus.NO_CONTENT,"P-001","문제를 생성하지 못하였습니다."),
+    NOT_UPLOAD_PROBLEM(HttpStatus.INTERNAL_SERVER_ERROR,"P-002","문제를 업로드하지 못하였습니다."),
+    NOT_EXIST_PROBLEM(HttpStatus.NOT_FOUND,"P-003","해당 문제가 존재하지 않습니다."),
+    //요약 정리
+    NOT_GENERATE_SUMMARY(HttpStatus.NO_CONTENT,"S-001","요약정리를 생성하지 못하였습니다."),
     ;
 
     ErrorCode(HttpStatus httpStatus, String errorCode, String message) {
