@@ -1,9 +1,7 @@
 package com.app.domain.memberSavedProblem.entity;
 
-import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
-import com.app.domain.memberProblemChoice.entity.MemberProblemChoice;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +30,9 @@ public class MemberSavedProblem extends BaseEntity {
     @Column(name = "PROBLEM_COMMENTARY", columnDefinition = "TEXT")
     private String problemCommentary;
 
-    @OneToMany(mappedBy = "memberSavedProblem")
-    private List<MemberProblemChoice> problemChoices;
+    @ElementCollection
+    @CollectionTable(name = "PROBLEM_CHOCIE", joinColumns = @JoinColumn(name = "MEMBER_SAVED_PROBLEM_ID"))
+    @Column(name = "CHOICE_CONTETN")
+    private List<String> problemChocies;
 
 }
