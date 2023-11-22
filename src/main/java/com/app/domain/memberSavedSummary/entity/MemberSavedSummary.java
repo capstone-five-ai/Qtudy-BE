@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberSavedSummary extends BaseEntity {
     @Id
-    @Column(name = "MEMBER_SAVED_SUMMARYS_ID")
-    private Long memberSavedSummarysId;
+    @Column(name = "MEMBER_SAVED_SUMMARY_ID")
+    private Long memberSavedSummaryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID", nullable = false)

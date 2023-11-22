@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class CategorizedProblem extends BaseEntity {
     @Id
     @Column(name = "CATEGORIZED_PROBLEM_ID")
-    private Integer categorizedProblemId;
+    private Long categorizedProblemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID", nullable = false)

@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class MemberProblemChoice extends BaseEntity {
     @Id
     @Column(name = "AI_PROBLEM_CHOICE_ID")
-    private Integer aiProblemChoiceId;
+    private Long aiProblemChoiceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_SAVED_PROBLEM_ID", nullable = false)
