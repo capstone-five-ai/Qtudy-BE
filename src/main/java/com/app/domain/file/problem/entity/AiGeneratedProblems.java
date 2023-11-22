@@ -42,6 +42,4 @@ public class AiGeneratedProblems {
     @Column(name = "problem_commentary", columnDefinition = "TEXT", nullable = false)
     private String problemCommentary;
 
-
-
 }
