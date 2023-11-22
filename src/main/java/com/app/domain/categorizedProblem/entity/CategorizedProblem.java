@@ -3,18 +3,19 @@ package com.app.domain.categorizedProblem.entity;
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class CategorizedProblem extends BaseEntity {
     @Id
     @Column(name = "CATEGORIZED_PROBLEM_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categorizedProblemId;
 
     @ManyToOne(fetch = FetchType.LAZY)

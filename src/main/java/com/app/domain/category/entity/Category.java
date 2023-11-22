@@ -4,9 +4,7 @@ import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.categorizedSummary.entity.CategorizedSummary;
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,9 +12,12 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Category extends BaseEntity {
     @Id
     @Column(name = "CATEGORY_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
