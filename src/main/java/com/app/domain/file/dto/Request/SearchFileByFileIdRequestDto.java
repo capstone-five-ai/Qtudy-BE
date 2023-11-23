@@ -12,5 +12,4 @@ import lombok.Setter;
 @Getter
 public class SearchFileByFileIdRequestDto {
     int fileId;
-    String fileName;
 }

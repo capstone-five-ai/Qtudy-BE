@@ -86,7 +86,6 @@ public class FileService {
 
     public String downloadFile(String token, SearchFileByFileIdRequestDto searchFileByFileIdRequestDto , PdfType pdfType){
         int fileId = searchFileByFileIdRequestDto.getFileId();
-        String fileName = searchFileByFileIdRequestDto.getFileName();
         String UrlKey = null;
 
         Optional<Files> optionalFiles = FilesRepository.findByFileId(fileId);
@@ -94,13 +93,13 @@ public class FileService {
             Files files = optionalFiles.get();
             switch(pdfType){
                 case PROBLEM: //문제PDF
-                    UrlKey = ConvertUrlByKey(files.getFileKey()+"_PROBLEM");
+                    UrlKey = ConvertUrlByKey(files.getFileKey() + "_PROBLEM.pdf");
                     break;
                 case ANSWER: //정답PDF
-                    UrlKey = ConvertUrlByKey(files.getFileKey()+"_ANSWER");
+                    UrlKey = ConvertUrlByKey(files.getFileKey() + "_ANSWER.pdf");
                     break;
                 case SUMMARY: //요점정리PDF
-                    UrlKey = ConvertUrlByKey(files.getFileKey()+"_SUMMARY");
+                    UrlKey = ConvertUrlByKey(files.getFileKey() + "_SUMMARY.pdf");
                     break;
             }
         }else{
