@@ -4,15 +4,19 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@SuperBuilder
 @Builder
 public class CategorizedProblem extends BaseEntity {
+
+//    protected CategorizedProblem(){super();}
     @Id
     @Column(name = "CATEGORIZED_PROBLEM_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
