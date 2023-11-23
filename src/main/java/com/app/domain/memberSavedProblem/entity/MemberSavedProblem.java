@@ -2,17 +2,16 @@ package com.app.domain.memberSavedProblem.entity;
 
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
-import com.app.domain.memberSavedProblem.constant.ProblemType;
+import com.app.global.config.ENUM.ProblemType;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@SuperBuilder
 public class MemberSavedProblem extends BaseEntity {
     @Id
     @Column(name = "MEMBER_SAVED_PROBLEM_ID")

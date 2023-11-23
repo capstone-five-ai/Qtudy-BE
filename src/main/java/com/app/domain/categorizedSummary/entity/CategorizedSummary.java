@@ -4,14 +4,13 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
 import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@SuperBuilder
 public class CategorizedSummary extends BaseEntity {
     @Id
     @Column(name = "CATEGORIZED_SUMMARY_ID")
