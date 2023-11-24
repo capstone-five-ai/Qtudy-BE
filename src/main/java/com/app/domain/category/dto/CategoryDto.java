@@ -1,5 +1,6 @@
 package com.app.domain.category.dto;
 
+import com.app.domain.category.contsant.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,6 +12,8 @@ public class CategoryDto {
     public static class RequestDto{
         @NotBlank
         private String categoryName;
+
+        private CategoryType categoryType;
     }
 
     @Getter
@@ -19,6 +22,8 @@ public class CategoryDto {
         private Long categoryId;
 
         private String categoryName;
+
+        private CategoryType categoryType;
     }
 
 
