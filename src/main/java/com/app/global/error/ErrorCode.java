@@ -21,6 +21,9 @@ public enum ErrorCode {
 
     // 자체 생성 문제
     PROBLEM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "P-001", "해당 문제는 존재하지 않습니다."),
+
+    //카테고리
+    CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "C-001", "해당 카테고리는 존재하지 않습니다"),
     // 회원
     INVALID_MEMBER_TYPE(HttpStatus.BAD_REQUEST, "M-001", "잘못된 회원 타입 입니다.(memberType : KAKAO)"),
     ALREADY_REGISTERED_MEMBER(HttpStatus.BAD_REQUEST, "M-002", "이미 가입된 회원 입니다."),
