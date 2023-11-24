@@ -2,7 +2,9 @@ package com.app.domain.category.entity;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.common.BaseEntity;
+import com.app.domain.member.constant.MemberType;
 import com.app.domain.member.entity.Member;
 import lombok.*;
 
@@ -26,6 +28,10 @@ public class Category extends BaseEntity {
 
     @Column(name = "CATEGORY_NAME")
     private String categoryName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private CategoryType categoryType;
 
     @OneToMany(mappedBy = "category")
     private List<CategorizedSummary> categorizedSummaries;
