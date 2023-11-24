@@ -27,9 +27,17 @@ public class Category extends BaseEntity {
     @Column(name = "CATEGORY_NAME")
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category")
     private List<CategorizedSummary> categorizedSummaries;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category")
     private List<CategorizedProblem> categorizedProblems;
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+
+    public void updateCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }
