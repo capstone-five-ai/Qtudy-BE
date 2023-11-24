@@ -1,10 +1,10 @@
-package com.app.domain.problem.dto.ProblemFile.Request;
+package com.app.domain.summary.dto.SummaryFile.Request;
 
 import com.app.domain.problem.dto.ProblemFile.AiRequest.RequestProblemToAiByTextDto;
 import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertProblemDto;
+import com.app.domain.summary.dto.SummaryFile.AiRequest.RequestSummaryToAiByTextDto;
+import com.app.domain.summary.dto.SummaryFile.AiRequest.TypeConvertSummaryDto;
 import com.app.global.config.ENUM.Amount;
-import com.app.global.config.ENUM.ProblemDifficulty;
-import com.app.global.config.ENUM.ProblemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,27 +14,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiGenerateProblemByFileDto {
-    private ProblemType type;
+public class AiGenerateSummaryByFileDto {
     private Amount amount;
-    private ProblemDifficulty difficulty;
     private String fileName;
 
-    public RequestProblemToAiByTextDto toTextDto(String text) {
-        RequestProblemToAiByTextDto textDto = new RequestProblemToAiByTextDto();
+    public RequestSummaryToAiByTextDto toTextDto(String text) {
+        RequestSummaryToAiByTextDto textDto = new RequestSummaryToAiByTextDto();
         textDto.setText(text); // Assuming you have a method to convert MultipartFile to text
-        textDto.setType(this.type);
         textDto.setAmount(this.amount);
-        textDto.setDifficulty(this.difficulty);
         textDto.setFileName(this.fileName);
         return textDto;
     }
 
-    public TypeConvertProblemDto toTextDto2(){
-        TypeConvertProblemDto textDto = new TypeConvertProblemDto();
-        textDto.setType(this.type);
+    public TypeConvertSummaryDto toTextDto2(){
+        TypeConvertSummaryDto textDto = new TypeConvertSummaryDto();
         textDto.setAmount(this.amount);
-        textDto.setDifficulty(this.difficulty);
         textDto.setFileName(this.fileName);
         return textDto;
     }

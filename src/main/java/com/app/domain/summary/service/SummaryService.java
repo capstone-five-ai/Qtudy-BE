@@ -4,7 +4,6 @@ import com.app.domain.summary.dto.AiSummaryDto;
 import com.app.global.config.ENUM.DType;
 import com.app.global.config.S3.S3Service;
 import com.app.domain.problem.value.S3FileInformation;
-import com.app.domain.summary.dto.AiSummaryResponseDto;
 import com.app.domain.summary.entity.AiGeneratedSummarys;
 import com.app.domain.summary.entity.SummaryFiles;
 import com.app.domain.summary.repository.AiGeneratedSummarysRepository;
@@ -29,7 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 @Service
-public class AiSummaryService {
+public class SummaryService {
 
 
     @Autowired

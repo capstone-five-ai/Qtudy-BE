@@ -3,7 +3,7 @@ package com.app.domain.problem.dto.ProblemFile.Request;
 import com.app.global.config.ENUM.ProblemDifficulty;
 import com.app.global.config.ENUM.Amount;
 import com.app.global.config.ENUM.ProblemType;
-import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertDto;
+import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertProblemDto;
 import lombok.*;
 
 @AllArgsConstructor
@@ -18,8 +18,8 @@ public class AiGenerateProblemByTextDto {
 
     private String fileName;
 
-    public TypeConvertDto toTextDto2(){
-        TypeConvertDto textDto = new TypeConvertDto();
+    public TypeConvertProblemDto toTextDto2(){
+        TypeConvertProblemDto textDto = new TypeConvertProblemDto();
         textDto.setType(this.type);
         textDto.setAmount(this.amount);
         textDto.setDifficulty(this.difficulty);

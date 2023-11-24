@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class RequestToAiByTextDto {
+public class RequestProblemToAiByTextDto {
     private String text;
     private ProblemType type;
     private Amount amount;

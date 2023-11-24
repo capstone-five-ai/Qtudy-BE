@@ -4,7 +4,6 @@ import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByFileDto
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByTextDto;
 import com.app.global.config.ENUM.FileType;
 import com.app.domain.problem.service.ProblemFileService;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
