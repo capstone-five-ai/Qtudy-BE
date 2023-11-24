@@ -6,15 +6,15 @@ import com.app.domain.member.constant.Role;
 import com.app.global.jwt.dto.JwtTokenDto;
 import com.app.global.util.DateTimeUtils;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+
+@SuperBuilder
 public class Member extends BaseEntity {
 
     @Id
@@ -44,7 +44,7 @@ public class Member extends BaseEntity {
     // 리프레쉬 토큰
     private LocalDateTime tokenExpirationTime;
     // 토큰 만료 시간
-    @Builder
+    /*@Builder
     public Member(MemberType memberType, String email, String password, String nickName,
                   String profile, Role role) {
         this.memberType = memberType;
@@ -53,7 +53,7 @@ public class Member extends BaseEntity {
         this.nickName = nickName;
 //        this.profile = profile;
         this.role = role;
-    }
+    }*/
 
     public void updateRefreshToken(JwtTokenDto jwtTokenDto) {
         this.refreshToken = jwtTokenDto.getRefreshToken();

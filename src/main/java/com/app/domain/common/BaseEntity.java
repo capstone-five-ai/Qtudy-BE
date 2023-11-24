@@ -1,6 +1,8 @@
 package com.app.domain.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -12,6 +14,8 @@ import javax.persistence.MappedSuperclass;
 
 @EntityListeners(value = {AuditingEntityListener.class})
 @MappedSuperclass
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 @Getter
 public abstract class BaseEntity extends BaseTimeEntity {

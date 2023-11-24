@@ -40,11 +40,14 @@ public enum ErrorCode {
 
     //파일
     NOT_DOWNLOAD_FILE(HttpStatus.NOT_FOUND,"F-001","해당 파일이 존재하지 않습니다."),
+    ALREADY_EXISTS_NAME(HttpStatus.CONFLICT,"H-002","이미 존재하는 파일 이름입니다."),
 
     // 문제
     NOT_GENERATE_PROBLEM(HttpStatus.NO_CONTENT,"P-001","문제를 생성하지 못하였습니다."),
     NOT_UPLOAD_PROBLEM(HttpStatus.INTERNAL_SERVER_ERROR,"P-002","문제를 업로드하지 못하였습니다."),
-    NOT_EXIST_PROBLEM(HttpStatus.NOT_FOUND,"P-003","해당 문제가 존재하지 않습니다."),
+    NOT_UPLOAD_ANSWER(HttpStatus.INTERNAL_SERVER_ERROR,"P-003","정답을 업로드하지 못하였습니다."),
+    NOT_EXIST_PROBLEM(HttpStatus.NOT_FOUND,"P-004","해당 문제가 존재하지 않습니다."),
+
     //요약 정리
     NOT_GENERATE_SUMMARY(HttpStatus.NO_CONTENT,"S-001","요약정리를 생성하지 못하였습니다."),
     ;
