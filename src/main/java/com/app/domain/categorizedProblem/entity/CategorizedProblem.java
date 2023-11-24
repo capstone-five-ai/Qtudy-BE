@@ -10,9 +10,13 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-
-@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@SuperBuilder
+@Builder
 public class CategorizedProblem extends BaseEntity {
+
+//    protected CategorizedProblem(){super();}
     @Id
     @Column(name = "CATEGORIZED_PROBLEM_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

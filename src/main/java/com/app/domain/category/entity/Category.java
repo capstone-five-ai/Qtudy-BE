@@ -2,7 +2,9 @@ package com.app.domain.category.entity;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.common.BaseEntity;
+import com.app.domain.member.constant.MemberType;
 import com.app.domain.member.entity.Member;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,9 +28,21 @@ public class Category extends BaseEntity {
     @Column(name = "CATEGORY_NAME")
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private CategoryType categoryType;
+
+    @OneToMany(mappedBy = "category")
     private List<CategorizedSummary> categorizedSummaries;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category")
     private List<CategorizedProblem> categorizedProblems;
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+
+    public void updateCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }

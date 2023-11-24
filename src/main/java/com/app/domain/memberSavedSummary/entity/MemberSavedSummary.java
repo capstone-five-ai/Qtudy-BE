@@ -27,4 +27,16 @@ public class MemberSavedSummary extends BaseEntity {
 
     @Column(name = "SUMMARY_CONTENT", columnDefinition = "TEXT")
     private String summaryContent;
+
+    public void updateMember(Member member) {
+        this.member = member;
+    }
+
+    public void updateSummaryTitle(String summaryTitle) {
+        this.summaryTitle = summaryTitle;
+    }
+
+    public void updateSummaryContent(String summaryContent) {
+        this.summaryContent = summaryContent;
+    }
 }

@@ -18,6 +18,15 @@ public enum ErrorCode {
     NOT_ACCESS_TOKEN_TYPE(HttpStatus.UNAUTHORIZED, "A-007", "해당 토큰은 ACCESS TOKEN이 아닙니다."),
     FORBIDDEN_ADMIN(HttpStatus.FORBIDDEN, "A-008", "관리자 Role이 아닙니다."),
 
+
+    // 자체 생성 문제
+    PROBLEM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "P-001", "해당 문제는 존재하지 않습니다."),
+
+    // 자체 생성 요약정리
+    SUMMARY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "S-001", "해당 요약정리는 존재하지 않습니다"),
+
+    //카테고리
+    CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "C-001", "해당 카테고리는 존재하지 않습니다"),
     // 회원
     INVALID_MEMBER_TYPE(HttpStatus.BAD_REQUEST, "M-001", "잘못된 회원 타입 입니다.(memberType : KAKAO)"),
     ALREADY_REGISTERED_MEMBER(HttpStatus.BAD_REQUEST, "M-002", "이미 가입된 회원 입니다."),
