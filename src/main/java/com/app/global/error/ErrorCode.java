@@ -22,6 +22,9 @@ public enum ErrorCode {
     // 자체 생성 문제
     PROBLEM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "P-001", "해당 문제는 존재하지 않습니다."),
 
+    // 자체 생성 요약정리
+    SUMMARY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "S-001", "해당 요약정리는 존재하지 않습니다"),
+
     //카테고리
     CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "C-001", "해당 카테고리는 존재하지 않습니다"),
     // 회원
