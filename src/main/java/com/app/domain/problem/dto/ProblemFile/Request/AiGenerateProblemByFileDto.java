@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @Getter
 public class AiGenerateProblemByFileDto {
-    private MultipartFile file;
     private ProblemType type;
     private Amount amount;
     private ProblemDifficulty difficulty;

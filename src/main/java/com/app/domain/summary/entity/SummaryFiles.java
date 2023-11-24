@@ -23,7 +23,7 @@ public class SummaryFiles extends Files {
     @OneToMany(mappedBy = "summaryFiles")
     private List<AiGeneratedSummarys> aiQuestions;
 
-    @Column(name = "summary_amount", nullable = false)
+    @Column(name = "SUMMARY_AMOUNT", nullable = false)
     @Enumerated(EnumType.STRING)
     private Amount summaryAmount;
 }

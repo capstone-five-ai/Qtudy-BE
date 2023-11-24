@@ -15,20 +15,20 @@ public class AiGeneratedSummarys {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="ai_generated_summary_id")
+    @Column(name="AI_GENERATED_SUMMARY_ID")
     private int aiGeneratedSummaryId;
 
     @ManyToOne
-    @JoinColumn(name = "file_id")
+    @JoinColumn(name = "FILE_ID")
     private SummaryFiles summaryFiles;
 
 
-    @Column(name = "summary_title", nullable = false)
+    @Column(name = "SUMMARY_TITLE", nullable = false)
     private String summaryTitle;
 
 
     @Lob // TEXT 형식 변환
-    @Column(name = "summary_content", nullable = false)
+    @Column(name = "SUMMARY_CONTENT", nullable = false)
     private String summaryContent;
 
 }

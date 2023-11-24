@@ -13,6 +13,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 public class ProblemFiles extends Files {
 
@@ -24,15 +26,15 @@ public class ProblemFiles extends Files {
 
 
 
-    @Column(name = "problem_difficulty",nullable = false)
+    @Column(name = "PROBLEM_DIFFICULTY",nullable = false)
     @Enumerated(EnumType.STRING)
     private ProblemDifficulty problemDifficulty;
 
-    @Column(name = "problem_amount",nullable = false)
+    @Column(name = "PROBLEM_AMOUNT",nullable = false)
     @Enumerated(EnumType.STRING)
     private Amount problemAmount;
 
-    @Column(name = "problem_type",nullable = false)
+    @Column(name = "PROBLEM_TYPE",nullable = false)
     @Enumerated(EnumType.STRING)
     private ProblemType problemType;
 }
