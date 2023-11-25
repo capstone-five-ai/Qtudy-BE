@@ -1,7 +1,6 @@
 package com.app.domain.problem.entity;
 
 import com.app.domain.common.BaseEntity;
-import com.app.domain.common.BaseTimeEntity;
 import com.app.global.config.ENUM.ProblemType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -17,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class AiGeneratedProblems extends BaseEntity {
+public class AiGeneratedProblem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,7 @@ public class AiGeneratedProblems extends BaseEntity {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "FILE_ID")
-    private ProblemFiles problemFiles;
+    private ProblemFile problemFile;
 
 
 

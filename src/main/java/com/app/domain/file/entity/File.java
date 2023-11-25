@@ -1,7 +1,6 @@
 package com.app.domain.file.entity;
 
 import com.app.domain.common.BaseEntity;
-import com.app.domain.common.BaseTimeEntity;
 import com.app.global.config.ENUM.DType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,12 +15,12 @@ import javax.persistence.*;
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table( // MemberId와 fileName을 섞어 Unique 조건 생성
-        name = "FILES",
+        name = "FILE",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_member_id_file_name", columnNames = {"MEMBER_ID", "FILE_NAME"})
         }
 )
-public class Files extends BaseEntity {
+public class File extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

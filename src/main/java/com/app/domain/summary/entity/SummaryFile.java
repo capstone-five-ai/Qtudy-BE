@@ -1,6 +1,6 @@
 package com.app.domain.summary.entity;
 
-import com.app.domain.file.entity.Files;
+import com.app.domain.file.entity.File;
 import com.app.global.config.ENUM.Amount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,10 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class SummaryFiles extends Files {
+public class SummaryFile extends File {
 
     @OneToMany(mappedBy = "summaryFiles")
-    private List<AiGeneratedSummarys> aiQuestions;
+    private List<AiGeneratedSummary> aiQuestions;
 
     @Column(name = "SUMMARY_AMOUNT", nullable = false)
     @Enumerated(EnumType.STRING)

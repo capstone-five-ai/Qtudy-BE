@@ -2,14 +2,14 @@ package com.app.domain.summary.service;
 
 
 import com.app.domain.problem.value.S3FileInformation;
-import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByFileDto;
+import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByFileRequestDto;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.TypeConvertSummaryDto;
-import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByTextDto;
-import com.app.domain.summary.dto.SummaryFile.Response.AiGenerateSummaryResponseDto;
-import com.app.domain.summary.entity.AiGeneratedSummarys;
-import com.app.domain.summary.entity.SummaryFiles;
-import com.app.domain.summary.repository.AiGeneratedSummarysRepository;
-import com.app.domain.summary.repository.SummaryFilesRepository;
+import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByTextRequestDto;
+import com.app.domain.summary.dto.SummaryFile.AiRequest.AiGenerateSummaryResponseDto;
+import com.app.domain.summary.entity.AiGeneratedSummary;
+import com.app.domain.summary.entity.SummaryFile;
+import com.app.domain.summary.repository.AiGeneratedSummaryRepository;
+import com.app.domain.summary.repository.SummaryFileRepository;
 import com.app.global.config.ENUM.*;
 import com.app.global.config.S3.S3Service;
 import com.app.global.error.ErrorCode;
@@ -44,22 +44,22 @@ public class SummaryFileService { //Service 추후 분할 예정
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
-    private SummaryFilesRepository summaryFilesRepository;
+    private SummaryFileRepository summaryFileRepository;
     @Autowired
-    private AiGeneratedSummarysRepository aiGeneratedSummarysRepository;
+    private AiGeneratedSummaryRepository aiGeneratedSummaryRepository;
     @Autowired
     private S3Service s3Service;
 
 
-    public void AiGenerateSummaryFileByText(String token, AiGenerateSummaryByTextDto aiGenerateSummaryByTextDto) {
-        String text = aiGenerateSummaryByTextDto.getText();
-        Amount amount = aiGenerateSummaryByTextDto.getAmount();
-        String fileName = aiGenerateSummaryByTextDto.getFileName();
+    public AiGeneratedSummary AiGenerateSummaryFileByText(String token, AiGenerateSummaryByTextRequestDto aiGenerateSummaryByTextRequestDto) {
+        String text = aiGenerateSummaryByTextRequestDto.getText();
+        Amount amount = aiGenerateSummaryByTextRequestDto.getAmount();
+        String fileName = aiGenerateSummaryByTextRequestDto.getFileName();
 
         String url = "http://localhost:5000/create/summary/mcq";;
         AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto;
 
-        if(summaryFilesRepository.findByFileName(fileName).isPresent()){ // 이미 파일이름이 존재하는 경우 에러
+        if(summaryFileRepository.findByFileName(fileName).isPresent()){ // 이미 파일이름이 존재하는 경우 에러
             throw new BusinessException(ErrorCode.ALREADY_EXISTS_NAME);
         }
 
@@ -70,7 +70,7 @@ public class SummaryFileService { //Service 추후 분할 예정
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
-            jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryByTextDto); //HTTP BODY 생성
+            jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryByTextRequestDto); //HTTP BODY 생성
 
             HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
             aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
@@ -78,15 +78,16 @@ public class SummaryFileService { //Service 추후 분할 예정
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
 
-        UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByTextDto.toTextDto2());
+        return UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByTextRequestDto.toTextDto2());
 
 
     }
 
 
-    public void AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryByFileDto aiGenerateSummaryByFileDto, FileType fileType) {
+    public AiGeneratedSummary AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryByFileRequestDto aiGenerateSummaryByFileRequestDto, FileType fileType) {
         String url = "http://localhost:5000/create/summary/mcq";
         AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto;
+        AiGeneratedSummary aiGeneratedSummary = null;
 
 
         switch (fileType){  //File 타입 체크
@@ -99,12 +100,12 @@ public class SummaryFileService { //Service 추후 분할 예정
                     headers.setContentType(MediaType.APPLICATION_JSON);
 
                     ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
-                    jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryByFileDto.toTextDto(pdfText)); //HTTP BODY 생성 (FILE -> TEXTDto 변환)
+                    jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryByFileRequestDto.toTextDto(pdfText)); //HTTP BODY 생성 (FILE -> TEXTDto 변환)
 
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
 
-                    UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileDto.toTextDto2());
+                    UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileRequestDto.toTextDto2());
                 } catch (JsonProcessingException e) {
                     throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
                 } catch (IOException e) {
@@ -119,7 +120,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
                 MultiValueMap<String, Object> jsonBody = new LinkedMultiValueMap<>();
 
-                jsonBody.add("amount",aiGenerateSummaryByFileDto.getAmount());
+                jsonBody.add("amount", aiGenerateSummaryByFileRequestDto.getAmount());
 
                 for(MultipartFile file : File)
                     jsonBody.add("file",file);
@@ -127,12 +128,12 @@ public class SummaryFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                 aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
 
-                UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileDto.toTextDto2());
+                aiGeneratedSummary = UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileRequestDto.toTextDto2());
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
         }
-
+        return aiGeneratedSummary;
 
     }
 
@@ -152,7 +153,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public void UploadS3AndSaveFile(AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto, String token, TypeConvertSummaryDto typeConvertSummaryDto) {
+    public AiGeneratedSummary UploadS3AndSaveFile(AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto, String token, TypeConvertSummaryDto typeConvertSummaryDto) {
         File tempFile = null;
 
         try { // 문제 PDF 생성
@@ -197,9 +198,9 @@ public class SummaryFileService { //Service 추후 분할 예정
             }
         }
 
-        SummaryFiles summaryFile = SaveSummaryFile(token, typeConvertSummaryDto); //PROBLEM_FILE 테이블 저장
+        SummaryFile summaryFile = SaveSummaryFile(token, typeConvertSummaryDto); //PROBLEM_FILE 테이블 저장
 
-        SaveSummarys(summaryFile, aiGenerateSummaryResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+        return SaveSummarys(summaryFile, aiGenerateSummaryResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
     }
 
     private File CreateTempFile(String fileName, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDtoArray,PdfType pdfType)  throws IOException { // String 기반으로 File 생성
@@ -266,8 +267,8 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public SummaryFiles SaveSummaryFile(String token , TypeConvertSummaryDto typeConvertSummaryDto){
-        SummaryFiles summaryFiles = SummaryFiles.builder()
+    public SummaryFile SaveSummaryFile(String token , TypeConvertSummaryDto typeConvertSummaryDto){
+        SummaryFile summaryFile = SummaryFile.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(typeConvertSummaryDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
                 .fileKey(typeConvertSummaryDto.getFileName())
@@ -275,18 +276,19 @@ public class SummaryFileService { //Service 추후 분할 예정
                 .summaryAmount(typeConvertSummaryDto.getAmount())
                 .build();
 
-        summaryFilesRepository.save(summaryFiles);
-        return summaryFiles;
+        summaryFileRepository.save(summaryFile);
+        return summaryFile;
     }
 
-    public void SaveSummarys (SummaryFiles summaryFiles, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto){
-        AiGeneratedSummarys aiGeneratedSummarys = AiGeneratedSummarys.builder() // 문제생성
-                .summaryFiles(summaryFiles)
+    public AiGeneratedSummary SaveSummarys (SummaryFile summaryFile, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto){
+        AiGeneratedSummary aiGeneratedSummary = AiGeneratedSummary.builder() // 문제생성
+                .summaryFile(summaryFile)
                 .summaryTitle(aiGenerateSummaryResponseDto.getSummaryName())
                 .summaryContent(aiGenerateSummaryResponseDto.getSummaryCommentary())
                 .build();
 
-        aiGeneratedSummarysRepository.save(aiGeneratedSummarys);
+        aiGeneratedSummaryRepository.save(aiGeneratedSummary);
 
+        return aiGeneratedSummary;
         }
 }

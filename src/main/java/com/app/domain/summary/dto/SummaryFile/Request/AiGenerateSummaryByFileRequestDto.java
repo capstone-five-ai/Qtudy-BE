@@ -1,7 +1,5 @@
 package com.app.domain.summary.dto.SummaryFile.Request;
 
-import com.app.domain.problem.dto.ProblemFile.AiRequest.RequestProblemToAiByTextDto;
-import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertProblemDto;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.RequestSummaryToAiByTextDto;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.TypeConvertSummaryDto;
 import com.app.global.config.ENUM.Amount;
@@ -14,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiGenerateSummaryByFileDto {
+public class AiGenerateSummaryByFileRequestDto {
     private Amount amount;
     private String fileName;
 

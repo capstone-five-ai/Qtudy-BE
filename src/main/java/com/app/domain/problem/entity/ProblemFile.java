@@ -1,6 +1,6 @@
 package com.app.domain.problem.entity;
 
-import com.app.domain.file.entity.Files;
+import com.app.domain.file.entity.File;
 import com.app.global.config.ENUM.Amount;
 import com.app.global.config.ENUM.ProblemDifficulty;
 import com.app.global.config.ENUM.ProblemType;
@@ -16,11 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ProblemFiles extends Files {
+public class ProblemFile extends File {
 
 
     @OneToMany(mappedBy = "problemFiles", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AiGeneratedProblems> aiQuestions;
+    private List<AiGeneratedProblem> aiQuestions;
 
 
 

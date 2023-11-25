@@ -14,6 +14,8 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 public class Category extends BaseEntity {
     @Id

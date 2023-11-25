@@ -1,4 +1,4 @@
-package com.app.domain.summary.dto.SummaryFile.Response;
+package com.app.domain.summary.dto.SummaryFile.AiRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

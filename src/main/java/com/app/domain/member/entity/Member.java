@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-
-@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member extends BaseEntity {
 
     @Id

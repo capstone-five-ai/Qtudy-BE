@@ -1,8 +1,10 @@
 package com.app.domain.summary.entity;
 
 
-import com.app.global.config.ENUM.ProblemType;
+import com.app.domain.common.BaseEntity;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import net.bytebuddy.implementation.bind.annotation.Super;
 
 import javax.persistence.*;
 
@@ -11,8 +13,8 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class AiGeneratedSummarys {
+@SuperBuilder
+public class AiGeneratedSummary extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +23,7 @@ public class AiGeneratedSummarys {
 
     @ManyToOne
     @JoinColumn(name = "FILE_ID")
-    private SummaryFiles summaryFiles;
+    private SummaryFile summaryFile;
 
 
     @Column(name = "SUMMARY_TITLE", nullable = false)
@@ -29,12 +31,9 @@ public class AiGeneratedSummarys {
 
 
     @Lob // TEXT 형식 변환
-    @Column(name = "SUMMARY_CONTENT", nullable = false)
+    @Column(name = "SUMMARY_CONTENT", columnDefinition = "TEXT", nullable = false)
     private String summaryContent;
 
 
-    @Column(name = "PROBLEM_TYPE",nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProblemType problemType;
 
 }
