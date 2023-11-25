@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/summary")
+@RequestMapping("/api/summaryFile")
 public class SummaryFileController {
 
     @Autowired

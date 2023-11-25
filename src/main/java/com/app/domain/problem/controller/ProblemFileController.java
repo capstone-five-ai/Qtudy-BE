@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/problem")
+@RequestMapping("/api/problemFile")
 public class ProblemFileController { // Controller 추후 분할 예정
     @Autowired
     ProblemFileService problemFileService;

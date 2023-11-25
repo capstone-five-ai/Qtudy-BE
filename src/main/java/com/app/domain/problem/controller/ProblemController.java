@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/problem")
+@RequestMapping("/api/problem")
 public class ProblemController { // Controller 추후 분할 예정
     @Autowired
     ProblemService problemService;
@@ -59,6 +59,7 @@ public class ProblemController { // Controller 추후 분할 예정
                 .problemAnswer(aiGeneratedProblem.getProblemAnswer())
                 .problemCommentary(aiGeneratedProblem.getProblemCommentary())
                 .build();
+
         return ResponseEntity.ok(updateProblemResponseDto);
     }
 
