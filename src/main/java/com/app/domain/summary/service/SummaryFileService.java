@@ -85,7 +85,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
 
     public AiGeneratedSummary AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryByFileRequestDto aiGenerateSummaryByFileRequestDto, FileType fileType) {
-        String url = "http://localhost:5000/create/summary/mcq";
+        String url = "http://localhost:5000/create/summary";
         AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto;
         AiGeneratedSummary aiGeneratedSummary = null;
 
@@ -105,7 +105,7 @@ public class SummaryFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
 
-                    UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileRequestDto.toTextDto2());
+                    aiGeneratedSummary = UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileRequestDto.toTextDto2());
                 } catch (JsonProcessingException e) {
                     throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
                 } catch (IOException e) {
