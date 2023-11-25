@@ -1,14 +1,14 @@
 package com.app.domain.problem.service;
 
 
-import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertDto;
+import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertProblemDto;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByFileDto;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByTextDto;
 import com.app.domain.problem.dto.ProblemFile.Response.AiGenerateProblemResponseDto;
-import com.app.domain.problem.entity.AiGeneratedProblems;
-import com.app.domain.problem.entity.ProblemFiles;
-import com.app.domain.problem.repository.AiGeneratedProblemsRepository;
-import com.app.domain.problem.repository.ProblemFilesRepository;
+import com.app.domain.problem.entity.AiGeneratedProblem;
+import com.app.domain.problem.entity.ProblemFile;
+import com.app.domain.problem.repository.AiGeneratedProblemRepository;
+import com.app.domain.problem.repository.ProblemFileRepository;
 import com.app.domain.problem.value.S3FileInformation;
 import com.app.global.config.ENUM.*;
 import com.app.global.config.S3.S3Service;
@@ -37,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -46,9 +45,9 @@ public class ProblemFileService { //Service 추후 분할 예정
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
-    private ProblemFilesRepository problemFilesRepository;
+    private ProblemFileRepository problemFileRepository;
     @Autowired
-    private AiGeneratedProblemsRepository aiGeneratedProblemsRepository;
+    private AiGeneratedProblemRepository aiGeneratedProblemRepository;
     @Autowired
     private S3Service s3Service;
 
@@ -63,7 +62,7 @@ public class ProblemFileService { //Service 추후 분할 예정
         String url;
         AiGenerateProblemResponseDto[] aiGenerateProblemResponseDto;
 
-        if(problemFilesRepository.findByFileName(fileName).isPresent()){ // 이미 파일이름이 존재하는 경우 에러
+        if(problemFileRepository.findByFileName(fileName).isPresent()){ // 이미 파일이름이 존재하는 경우 에러
             throw new BusinessException(ErrorCode.ALREADY_EXISTS_NAME);
         }
 
@@ -179,11 +178,11 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public void UploadS3AndSaveFile(AiGenerateProblemResponseDto[] aiGenerateProblemResponseDto, String token, TypeConvertDto typeConvertDto) {
+    public void UploadS3AndSaveFile(AiGenerateProblemResponseDto[] aiGenerateProblemResponseDto, String token, TypeConvertProblemDto typeConvertProblemDto) {
         File tempFile = null;
 
         try { // 문제 PDF 생성
-            String fileName = token+"_"+typeConvertDto.getFileName()+"_problem.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            String fileName = token+"_"+ typeConvertProblemDto.getFileName()+"_problem.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
             tempFile = CreateTempFile(fileName, aiGenerateProblemResponseDto,PdfType.PROBLEM); // 파일 생성
 
             // 파일을 MultipartFile로 변환
@@ -206,7 +205,7 @@ public class ProblemFileService { //Service 추후 분할 예정
 
 
         try { // 정답 PDF 생성
-            String fileName = token+"_"+typeConvertDto.getFileName()+"_answer.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            String fileName = token+"_"+ typeConvertProblemDto.getFileName()+"_answer.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
             tempFile = CreateTempFile(fileName, aiGenerateProblemResponseDto,PdfType.ANSWER); // 파일 생성
 
             // 파일을 MultipartFile로 변환
@@ -224,7 +223,7 @@ public class ProblemFileService { //Service 추후 분할 예정
             }
         }
 
-        ProblemFiles problemFile = SaveProblemFile(token, typeConvertDto); //PROBLEM_FILE 테이블 저장
+        ProblemFile problemFile = SaveProblemFile(token, typeConvertProblemDto); //PROBLEM_FILE 테이블 저장
 
         SaveProblems(problemFile, aiGenerateProblemResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
     }
@@ -332,32 +331,32 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public ProblemFiles SaveProblemFile(String token , TypeConvertDto typeConvertDto){
-        ProblemFiles problemFiles = ProblemFiles.builder()
+    public ProblemFile SaveProblemFile(String token , TypeConvertProblemDto typeConvertProblemDto){
+        ProblemFile problemFile = ProblemFile.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
-                .fileName(typeConvertDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
-                .fileKey(typeConvertDto.getFileName())
+                .fileName(typeConvertProblemDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
+                .fileKey(typeConvertProblemDto.getFileName())
                 .dtype(DType.PROBLEM)
-                .problemDifficulty(typeConvertDto.getDifficulty())
-                .problemAmount(typeConvertDto.getAmount())
-                .problemType(typeConvertDto.getType())
+                .problemDifficulty(typeConvertProblemDto.getDifficulty())
+                .problemAmount(typeConvertProblemDto.getAmount())
+                .problemType(typeConvertProblemDto.getType())
                 .build();
 
-        problemFilesRepository.save(problemFiles);
-        return problemFiles;
+        problemFileRepository.save(problemFile);
+        return problemFile;
     }
 
-    public void SaveProblems (ProblemFiles problemFiles, AiGenerateProblemResponseDto[] aiGenerateProblemResponseDtoArray){
+    public void SaveProblems (ProblemFile problemFile, AiGenerateProblemResponseDto[] aiGenerateProblemResponseDtoArray){
         for(AiGenerateProblemResponseDto aiDto : aiGenerateProblemResponseDtoArray){
-            AiGeneratedProblems aiGeneratedProblems = AiGeneratedProblems.builder() // 문제생성
-                    .problemFiles(problemFiles)
+            AiGeneratedProblem aiGeneratedProblem = AiGeneratedProblem.builder() // 문제생성
+                    .problemFile(problemFile)
                     .problemName(aiDto.getProblemName())
                     .problemChoices(aiDto.getProblemChoices())
                     .problemCommentary(aiDto.getProblemCommentary())
-                    .problemType(problemFiles.getProblemType())
+                    .problemType(problemFile.getProblemType())
                     .build();
 
-            aiGeneratedProblemsRepository.save(aiGeneratedProblems);
+            aiGeneratedProblemRepository.save(aiGeneratedProblem);
 
         }
     }

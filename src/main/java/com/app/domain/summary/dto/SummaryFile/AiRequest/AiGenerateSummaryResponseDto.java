@@ -1,4 +1,4 @@
-package com.app.domain.summary.dto;
+package com.app.domain.summary.dto.SummaryFile.AiRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiSummaryResponseDto {
-
+public class AiGenerateSummaryResponseDto {
+    private String fileName;
     private String summaryTitle;
     private String summaryContent;
 }

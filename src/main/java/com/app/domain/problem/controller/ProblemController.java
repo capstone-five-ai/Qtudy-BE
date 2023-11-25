@@ -4,7 +4,7 @@ import com.app.domain.problem.dto.Problem.Request.CommentaryRequestDto;
 import com.app.domain.problem.dto.Problem.Request.FileNameRequestDto;
 import com.app.domain.problem.dto.Problem.Request.UpdateProblemChoicesRequestDto;
 import com.app.domain.problem.dto.Problem.Response.FileNameResponseDto;
-import com.app.domain.problem.entity.AiGeneratedProblems;
+import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.problem.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +20,9 @@ public class ProblemController { // Controller 추후 분할 예정
     @Autowired
     ProblemService problemService;
 
-    @PostMapping("/getFileProblems") // 파일의 문제리스트 가져옴
+    @PostMapping("/getFileProblems") // 파일의 문제리스트 가져옴 //(추후 삭제해도될듯....??)
     public ResponseEntity<List<FileNameResponseDto>> GetFileProblems(@RequestHeader("Authorization") String token, @Valid @RequestBody FileNameRequestDto fileNameRequestDto) {
-        List<AiGeneratedProblems> problems = problemService.GetFileProblems(token, fileNameRequestDto);
+        List<AiGeneratedProblem> problems = problemService.GetFileProblems(token, fileNameRequestDto);
 
         List<FileNameResponseDto> responseDtos = problems.stream()
                 .map(this::convertToDto)
@@ -48,15 +48,15 @@ public class ProblemController { // Controller 추후 분할 예정
 
 
 
-    private FileNameResponseDto convertToDto(AiGeneratedProblems aiGeneratedProblems) {
+    private FileNameResponseDto convertToDto(AiGeneratedProblem aiGeneratedProblem) {
         return FileNameResponseDto.builder()
-                .aiGeneratedProblemId(aiGeneratedProblems.getAiGeneratedProblemId())
-                .problemName(aiGeneratedProblems.getProblemName())
-                .problemChoices(aiGeneratedProblems.getProblemChoices())
-                .problemAnswer(aiGeneratedProblems.getProblemAnswer())
-                .problemCommentary(aiGeneratedProblems.getProblemCommentary())
-                .createTime(aiGeneratedProblems.getCreateTime())
-                .updateTime(aiGeneratedProblems.getUpdateTime())
+                .aiGeneratedProblemId(aiGeneratedProblem.getAiGeneratedProblemId())
+                .problemName(aiGeneratedProblem.getProblemName())
+                .problemChoices(aiGeneratedProblem.getProblemChoices())
+                .problemAnswer(aiGeneratedProblem.getProblemAnswer())
+                .problemCommentary(aiGeneratedProblem.getProblemCommentary())
+                .createTime(aiGeneratedProblem.getCreateTime())
+                .updateTime(aiGeneratedProblem.getUpdateTime())
                 .build();
     }
 }

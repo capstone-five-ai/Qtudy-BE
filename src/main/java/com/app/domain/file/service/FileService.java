@@ -5,7 +5,7 @@ import com.app.domain.file.dto.Request.DeleteProblemFileDto;
 import com.app.domain.file.dto.Request.SearchFileByFileIdRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
 import com.app.domain.file.dto.Response.FileListResponseDto;
-import com.app.domain.file.entity.Files;
+import com.app.domain.file.entity.File;
 import com.app.global.config.ENUM.DType;
 import com.app.global.config.ENUM.PdfType;
 import com.app.global.config.S3.S3Service;
@@ -27,7 +27,7 @@ public class FileService {
 
     public List<FileListResponseDto> allAiProblemFileList(String token){ //사용자가 생성한 모든 문제파일 리스트 가져오기
 
-        List<Files> fileList = FilesRepository.findByMemberIdAndDtype(token, DType.PROBLEM); // 문제파일 리스트 가져옴
+        List<File> fileList = FilesRepository.findByMemberIdAndDtype(token, DType.PROBLEM); // 문제파일 리스트 가져옴
        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
                 .map(file -> new FileListResponseDto(
                         file.getFileId(),
@@ -41,7 +41,7 @@ public class FileService {
 
     public List<FileListResponseDto> allAiSummaryFileList(String token){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
 
-        List<Files> fileList = FilesRepository.findByMemberIdAndDtype(token,DType.SUMMARY); // 요점정리파일 이름 가져오기
+        List<File> fileList = FilesRepository.findByMemberIdAndDtype(token,DType.SUMMARY); // 요점정리파일 이름 가져오기
 
         List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
                 .map(file -> new FileListResponseDto(
@@ -75,7 +75,7 @@ public class FileService {
         String newFileName = updateFileRequestDto.getNewFileName();
 
 
-        Optional<Files> file = FilesRepository.findByFileId(fileId);
+        Optional<File> file = FilesRepository.findByFileId(fileId);
 
         file.ifPresent(entity ->{
             entity.setFileName(newFileName);
@@ -88,18 +88,18 @@ public class FileService {
         int fileId = searchFileByFileIdRequestDto.getFileId();
         String UrlKey = null;
 
-        Optional<Files> optionalFiles = FilesRepository.findByFileId(fileId);
+        Optional<File> optionalFiles = FilesRepository.findByFileId(fileId);
         if(optionalFiles.isPresent()){
-            Files files = optionalFiles.get();
+            File file = optionalFiles.get();
             switch(pdfType){
                 case PROBLEM: //문제PDF
-                    UrlKey = ConvertUrlByKey(files.getFileKey() + "_PROBLEM.pdf");
+                    UrlKey = ConvertUrlByKey(file.getFileKey() + "_PROBLEM.pdf");
                     break;
                 case ANSWER: //정답PDF
-                    UrlKey = ConvertUrlByKey(files.getFileKey() + "_ANSWER.pdf");
+                    UrlKey = ConvertUrlByKey(file.getFileKey() + "_ANSWER.pdf");
                     break;
                 case SUMMARY: //요점정리PDF
-                    UrlKey = ConvertUrlByKey(files.getFileKey() + "_SUMMARY.pdf");
+                    UrlKey = ConvertUrlByKey(file.getFileKey() + "_SUMMARY.pdf");
                     break;
             }
         }else{
@@ -116,10 +116,10 @@ public class FileService {
     public void DeleteProblemFile(String token, DeleteProblemFileDto deleteProblemFileDto) {
         int fileId = deleteProblemFileDto.getFileId();
 
-        Optional<Files> optionalFile = FilesRepository.findById(fileId);
+        Optional<File> optionalFile = FilesRepository.findById(fileId);
 
         if (optionalFile.isPresent()) {
-            Files file = optionalFile.get();
+            File file = optionalFile.get();
             FilesRepository.delete(file);
         } else {
             // 추후 에러 처리할 예정...

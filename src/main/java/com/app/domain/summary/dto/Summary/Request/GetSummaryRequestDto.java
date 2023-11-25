@@ -1,6 +1,5 @@
-package com.app.domain.summary.dto;
+package com.app.domain.summary.dto.Summary.Request;
 
-import com.app.global.config.ENUM.Amount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiSummaryDto {
-    private String text;
-    private Amount amount;
-
+public class GetSummaryRequestDto {
+    private int aiGeneratedSummaryId;
 }

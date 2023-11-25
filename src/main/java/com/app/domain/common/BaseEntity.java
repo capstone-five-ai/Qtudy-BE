@@ -14,7 +14,6 @@ import javax.persistence.MappedSuperclass;
 
 @EntityListeners(value = {AuditingEntityListener.class})
 @MappedSuperclass
-@NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
 @Getter

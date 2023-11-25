@@ -10,6 +10,8 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 public class CategorizedSummary extends BaseEntity {
     @Id
