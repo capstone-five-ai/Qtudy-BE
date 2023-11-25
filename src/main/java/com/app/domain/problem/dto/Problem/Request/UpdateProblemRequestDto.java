@@ -12,7 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UpdateProblemChoicesRequestDto {
+public class UpdateProblemRequestDto {
     private int aiGeneratedProblemId;
+    private String problemName;
     private List<String> problemChoices;
+    private String problemAnswer;
+    private String problemCommentary;
 }

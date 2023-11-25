@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class FileNameRequestDto {
-    private String fileName;
+public class FileIdRequestDto {
+    private int fileId;
 }

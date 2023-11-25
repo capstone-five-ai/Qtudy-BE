@@ -44,7 +44,7 @@ public class FileController {
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }*/
 
-    @PostMapping("/updateFile") //사용자가 생성한 특정 파일 이름 update
+    @PostMapping("/updateFile") //사용자가 생성한 파일 이름 update
     public ResponseEntity<String> updateFile(@RequestHeader("Authorization") String token,@Valid @RequestBody UpdateFileRequestDto updateFileRequestDto){
         fileService.updateFile(token, updateFileRequestDto);
 

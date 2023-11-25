@@ -1,9 +1,11 @@
 package com.app.domain.problem.controller;
 
-import com.app.domain.problem.dto.Problem.Request.CommentaryRequestDto;
-import com.app.domain.problem.dto.Problem.Request.FileNameRequestDto;
-import com.app.domain.problem.dto.Problem.Request.UpdateProblemChoicesRequestDto;
-import com.app.domain.problem.dto.Problem.Response.FileNameResponseDto;
+import com.app.domain.problem.dto.Problem.Request.FileIdRequestDto;
+import com.app.domain.problem.dto.Problem.Request.GetProblemRequestDto;
+import com.app.domain.problem.dto.Problem.Request.UpdateProblemRequestDto;
+import com.app.domain.problem.dto.Problem.Response.FileIdResponseDto;
+import com.app.domain.problem.dto.Problem.Response.GetProblemResponseDto;
+import com.app.domain.problem.dto.Problem.Response.UpdateProblemResponseDto;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.problem.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,36 +22,51 @@ public class ProblemController { // Controller 추후 분할 예정
     @Autowired
     ProblemService problemService;
 
-    @PostMapping("/getFileProblems") // 파일의 문제리스트 가져옴 //(추후 삭제해도될듯....??)
-    public ResponseEntity<List<FileNameResponseDto>> GetFileProblems(@RequestHeader("Authorization") String token, @Valid @RequestBody FileNameRequestDto fileNameRequestDto) {
-        List<AiGeneratedProblem> problems = problemService.GetFileProblems(token, fileNameRequestDto);
+    @PostMapping("/getFileProblems") // 파일의 문제리스트 가져옴
+    public ResponseEntity<List<FileIdResponseDto>> GetFileProblems(@RequestHeader("Authorization") String token, @Valid @RequestBody FileIdRequestDto fileIdRequestDto) {
+        List<AiGeneratedProblem> problems = problemService.GetFileProblems(token, fileIdRequestDto);
 
-        List<FileNameResponseDto> responseDtos = problems.stream()
+        List<FileIdResponseDto> responseDtos = problems.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responseDtos);
     }
 
-    @PostMapping("/updateProblemChoices")
-    public ResponseEntity<String> UpdateProblemChoices(@RequestHeader("Authorization") String token, @Valid @RequestBody UpdateProblemChoicesRequestDto updateProblemChoicesRequestDto){
-        problemService.UpdateProblemChoices(token,updateProblemChoicesRequestDto);
+    @PostMapping("/getProblem") // 파일의 문제리스트 가져옴
+    public ResponseEntity<GetProblemResponseDto> GetProblem(@RequestHeader("Authorization") String token, @Valid @RequestBody GetProblemRequestDto getProblemRequestDto) {
+        AiGeneratedProblem aiGeneratedProblem = problemService.GetProblem(token, getProblemRequestDto);
 
-        return ResponseEntity.ok("Sucess");
+        GetProblemResponseDto getProblemResponseDto = GetProblemResponseDto.builder()
+                .aiGeneratedProblemId(aiGeneratedProblem.getAiGeneratedProblemId())
+                .problemName(aiGeneratedProblem.getProblemName())
+                .problemChoices(aiGeneratedProblem.getProblemChoices())
+                .problemAnswer(aiGeneratedProblem.getProblemAnswer())
+                .problemCommentary(aiGeneratedProblem.getProblemCommentary())
+                .build();
+
+        return ResponseEntity.ok(getProblemResponseDto);
     }
 
-    @PostMapping("/updateProblemCommentary")
-    public ResponseEntity<String> UpdateProblemCommentary(@RequestHeader("Authorization") String token, @Valid @RequestBody CommentaryRequestDto commentaryRequestDto) {
-        problemService.UpdateProblemCommentary(token, commentaryRequestDto);
+    @PostMapping("/updateProblem") //문제 정보 업데이트
+    public ResponseEntity<UpdateProblemResponseDto> UpdateProblem(@RequestHeader("Authorization") String token, @Valid @RequestBody UpdateProblemRequestDto updateProblemRequestDto){
+        AiGeneratedProblem aiGeneratedProblem = problemService.UpdateProblem(token, updateProblemRequestDto);
 
-        return ResponseEntity.ok("Sucess");
+        UpdateProblemResponseDto updateProblemResponseDto = UpdateProblemResponseDto.builder()
+                .aiGeneratedProblemId(aiGeneratedProblem.getAiGeneratedProblemId())
+                .problemName(aiGeneratedProblem.getProblemName())
+                .problemChoices(aiGeneratedProblem.getProblemChoices())
+                .problemAnswer(aiGeneratedProblem.getProblemAnswer())
+                .problemCommentary(aiGeneratedProblem.getProblemCommentary())
+                .build();
+        return ResponseEntity.ok(updateProblemResponseDto);
     }
 
 
 
 
-    private FileNameResponseDto convertToDto(AiGeneratedProblem aiGeneratedProblem) {
-        return FileNameResponseDto.builder()
+    private FileIdResponseDto convertToDto(AiGeneratedProblem aiGeneratedProblem) {
+        return FileIdResponseDto.builder()
                 .aiGeneratedProblemId(aiGeneratedProblem.getAiGeneratedProblemId())
                 .problemName(aiGeneratedProblem.getProblemName())
                 .problemChoices(aiGeneratedProblem.getProblemChoices())

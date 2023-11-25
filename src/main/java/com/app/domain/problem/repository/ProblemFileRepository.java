@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ProblemFileRepository extends JpaRepository<ProblemFile, Integer> {
 
-    ProblemFile findByMemberIdAndFileName(String MemberId, String FileName);
+    ProblemFile findByMemberIdAndFileId(String MemberId, int FileId);
 
     Optional<ProblemFile> findByFileName(String FileName);
 

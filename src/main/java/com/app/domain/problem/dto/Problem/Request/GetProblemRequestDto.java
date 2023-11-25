@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class CommentaryRequestDto {
+public class GetProblemRequestDto {
     private int aiGeneratedProblemId;
-    private String commentary;
 }
