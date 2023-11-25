@@ -56,7 +56,7 @@ public class SummaryFileService { //Service 추후 분할 예정
         Amount amount = aiGenerateSummaryByTextRequestDto.getAmount();
         String fileName = aiGenerateSummaryByTextRequestDto.getFileName();
 
-        String url = "http://localhost:5000/create/summary/mcq";;
+        String url = "http://localhost:5000/create/summary";;
         AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto;
 
         if(summaryFileRepository.findByFileName(fileName).isPresent()){ // 이미 파일이름이 존재하는 경우 에러
@@ -239,8 +239,8 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         int summaryNumber =1;
 
-        stringBuffer.append(summaryNumber+++". ").append(aiGenerateSummaryResponseDtoArray.getSummaryName()).append("\n\n");   //요점정리 이름
-        stringBuffer.append(" ").append(aiGenerateSummaryResponseDtoArray.getSummaryCommentary()).append("\n\n");   //문제 이름
+        stringBuffer.append(summaryNumber+++". ").append(aiGenerateSummaryResponseDtoArray.getSummaryTitle()).append("\n\n");   //요점정리 이름
+        stringBuffer.append(" ").append(aiGenerateSummaryResponseDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
 
 
 
@@ -259,7 +259,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         for (AiGenerateSummaryResponseDto aiDto : aiGenerateSummaryResponseDtoArray) {
 
-            stringBuffer.append(summaryNumber+++". "+aiDto.getSummaryCommentary()); // 문제 정답
+            stringBuffer.append(summaryNumber+++". "+aiDto.getSummaryContent()); // 문제 정답
             stringBuffer.append("\n\n");
         }
 
@@ -283,8 +283,8 @@ public class SummaryFileService { //Service 추후 분할 예정
     public AiGeneratedSummary SaveSummarys (SummaryFile summaryFile, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto){
         AiGeneratedSummary aiGeneratedSummary = AiGeneratedSummary.builder() // 문제생성
                 .summaryFile(summaryFile)
-                .summaryTitle(aiGenerateSummaryResponseDto.getSummaryName())
-                .summaryContent(aiGenerateSummaryResponseDto.getSummaryCommentary())
+                .summaryTitle(aiGenerateSummaryResponseDto.getSummaryTitle())
+                .summaryContent(aiGenerateSummaryResponseDto.getSummaryContent())
                 .build();
 
         aiGeneratedSummaryRepository.save(aiGeneratedSummary);

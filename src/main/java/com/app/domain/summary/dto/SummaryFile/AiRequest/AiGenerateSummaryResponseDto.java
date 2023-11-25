@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 public class AiGenerateSummaryResponseDto {
-
-    private String summaryName;
-    private String summaryCommentary;
+    private String fileName;
+    private String summaryTitle;
+    private String summaryContent;
 }

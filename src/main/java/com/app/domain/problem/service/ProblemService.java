@@ -37,7 +37,7 @@ public class ProblemService { //Service 추후 분할 예정
         List<AiGeneratedProblem> problems;
 
         problemFile = problemFileRepository.findByMemberIdAndFileName(token,fileName);
-        problems = aiGeneratedProblemRepository.findByProblemFiles_FileId(problemFile.getFileId());
+        problems = aiGeneratedProblemRepository.findByProblemFile_FileId(problemFile.getFileId());
 
         return problems;
     }

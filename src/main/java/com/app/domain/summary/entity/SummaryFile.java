@@ -20,7 +20,7 @@ import java.util.List;
 @SuperBuilder
 public class SummaryFile extends File {
 
-    @OneToMany(mappedBy = "summaryFiles")
+    @OneToMany(mappedBy = "summaryFile")
     private List<AiGeneratedSummary> aiQuestions;
 
     @Column(name = "SUMMARY_AMOUNT", nullable = false)

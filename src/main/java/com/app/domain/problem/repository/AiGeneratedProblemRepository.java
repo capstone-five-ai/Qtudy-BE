@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface AiGeneratedProblemRepository extends JpaRepository<AiGeneratedProblem, Integer> {
 
-    List<AiGeneratedProblem> findByProblemFiles_FileId(int fileId);
+    List<AiGeneratedProblem> findByProblemFile_FileId(int fileId);
 }

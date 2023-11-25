@@ -19,7 +19,7 @@ import java.util.List;
 public class ProblemFile extends File {
 
 
-    @OneToMany(mappedBy = "problemFiles", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "problemFile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AiGeneratedProblem> aiQuestions;
 
 
