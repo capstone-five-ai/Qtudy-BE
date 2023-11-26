@@ -1,6 +1,7 @@
 package com.app.domain.file.service;
 
 
+import com.app.domain.file.dto.Request.DownloadPdfRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
 import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.file.entity.File;
@@ -54,7 +55,8 @@ public class FileService {
         file.ifPresent(FileRepository::save);
     }
 
-    public String downloadFile(String token,int fileId, PdfType pdfType){
+    public String downloadFile(String token, int fileId, DownloadPdfRequestDto downloadPdfRequestDto){
+        PdfType pdfType = downloadPdfRequestDto.getPdfType();
         String UrlKey = null;
 
         Optional<File> optionalFiles = FileRepository.findByFileId(fileId);

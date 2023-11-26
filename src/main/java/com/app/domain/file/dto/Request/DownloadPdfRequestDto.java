@@ -1,6 +1,8 @@
 package com.app.domain.file.dto.Request;
 
 
+import com.app.global.config.ENUM.PdfType;
+import com.app.global.config.ENUM.ProblemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class SearchFileByFileIdRequestDto {
-    int fileId;
+public class DownloadPdfRequestDto {
+    PdfType pdfType;
 }

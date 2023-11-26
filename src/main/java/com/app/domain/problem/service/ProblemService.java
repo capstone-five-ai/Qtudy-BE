@@ -1,8 +1,5 @@
 package com.app.domain.problem.service;
 
-import com.app.domain.problem.dto.Problem.Request.FileIdRequestDto;
-import com.app.domain.problem.dto.Problem.Request.GetProblemRequestDto;
-import com.app.domain.problem.dto.Problem.Request.UpdateProblemRequestDto;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.problem.entity.ProblemFile;
 import com.app.domain.problem.repository.AiGeneratedProblemRepository;
@@ -51,28 +48,6 @@ public class ProblemService { //Service 추후 분할 예정
         }
 
         return null; //추후 에러처리 예정
-    }
-
-    public AiGeneratedProblem UpdateProblem(String token,int aiGeneratedProblemId, UpdateProblemRequestDto updateProblemRequestDto){
-        String problemName = updateProblemRequestDto.getProblemName();
-        List<String> problemChoices = updateProblemRequestDto.getProblemChoices();
-        String problemAnswer = updateProblemRequestDto.getProblemAnswer();
-        String problemCommentary = updateProblemRequestDto.getProblemCommentary();
-
-        Optional<AiGeneratedProblem> optionalAiGeneratedProblems = aiGeneratedProblemRepository.findById(aiGeneratedProblemId);
-
-        if(optionalAiGeneratedProblems.isPresent()){
-            AiGeneratedProblem aiGeneratedProblem = optionalAiGeneratedProblems.get();
-            aiGeneratedProblem.setProblemName(problemName);
-            aiGeneratedProblem.setProblemChoices(problemChoices);
-            aiGeneratedProblem.setProblemAnswer(problemAnswer);
-            aiGeneratedProblem.setProblemCommentary(problemCommentary);
-            aiGeneratedProblemRepository.save(aiGeneratedProblem);
-
-            return aiGeneratedProblem;
-        }
-
-        return null; // 추후 에러 처리 예정
     }
 
 

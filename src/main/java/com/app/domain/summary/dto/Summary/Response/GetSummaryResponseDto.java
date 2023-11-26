@@ -1,5 +1,6 @@
 package com.app.domain.summary.dto.Summary.Response;
 
+import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.global.config.ENUM.ProblemType;
 import lombok.*;
 
@@ -13,9 +14,13 @@ import java.util.List;
 @Getter
 @Builder
 public class GetSummaryResponseDto {
-    private int aiGeneratedSummaryId;
     private String summaryTitle;
     private String summaryContent;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+
+    public static GetSummaryResponseDto ConvertToSummary(AiGeneratedSummary aiGeneratedSummary){
+        return GetSummaryResponseDto.builder()
+                .summaryTitle(aiGeneratedSummary.getSummaryTitle())
+                .summaryContent(aiGeneratedSummary.getSummaryContent())
+                .build();
+    }
 }

@@ -1,8 +1,6 @@
 package com.app.domain.summary.service;
 
-import com.app.domain.summary.dto.Summary.Request.UpdateSummaryRequestDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
-import com.app.domain.summary.entity.SummaryFile;
 import com.app.domain.summary.repository.SummaryFileRepository;
 import com.app.global.config.S3.S3Service;
 import com.app.domain.summary.repository.AiGeneratedSummaryRepository;
@@ -36,24 +34,6 @@ public class SummaryService {
 
     }
 
-    public AiGeneratedSummary UpdateSummary(String token,int aiGeneratedSummaryId,UpdateSummaryRequestDto updateSummaryRequestDto) {
-        String summaryTitle = updateSummaryRequestDto.getSummaryTitle();
-        String summaryContent = updateSummaryRequestDto.getSummaryContent();
-
-        Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId);
-        if (aiGeneratedSummaryOptional.isPresent()) {
-            AiGeneratedSummary aiGeneratedSummary = aiGeneratedSummaryOptional.get();
-            aiGeneratedSummary.setSummaryTitle(summaryTitle);
-            aiGeneratedSummary.setSummaryContent(summaryContent);
-
-            aiGeneratedSummaryRepository.save(aiGeneratedSummary);
-
-            return aiGeneratedSummary;
-        } else {
-            //추후 에러 처리 예정
-        }
-        return null;
-    }
 
 
 }

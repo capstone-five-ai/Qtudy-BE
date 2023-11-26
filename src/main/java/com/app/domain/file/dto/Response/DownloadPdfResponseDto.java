@@ -1,4 +1,4 @@
-package com.app.domain.file.dto.Request;
+package com.app.domain.file.dto.Response;
 
 
 import lombok.AllArgsConstructor;
@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class SearchFileByNameRequestDto {
-    String fileName;
+public class DownloadPdfResponseDto {
+    String fileUrl;
 }

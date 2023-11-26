@@ -1,9 +1,11 @@
-package com.app.domain.problem.dto.Problem.Response;
+package com.app.domain.problem.dto.ProblemFile.Response;
 
 import com.app.domain.problem.entity.AiGeneratedProblem;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -11,14 +13,16 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
-public class ProblemResponseDto {
+public class AiGeneratedProblemResponseDto {
+    private int aiGeneratedProblemId;
     private String problemName;
     private List<String> problemChoices;
     private String problemAnswer;
     private String problemCommentary;
 
-    public static ProblemResponseDto ConvertToProblem(AiGeneratedProblem aiGenerateProblem){
-        return ProblemResponseDto.builder()
+    public static AiGeneratedProblemResponseDto ConvertToProblem(AiGeneratedProblem aiGenerateProblem){
+        return AiGeneratedProblemResponseDto.builder()
+                .aiGeneratedProblemId(aiGenerateProblem.getAiGeneratedProblemId())
                 .problemName(aiGenerateProblem.getProblemName())
                 .problemChoices(aiGenerateProblem.getProblemChoices())
                 .problemAnswer(aiGenerateProblem.getProblemAnswer())
