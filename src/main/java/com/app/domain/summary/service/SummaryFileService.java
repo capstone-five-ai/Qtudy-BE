@@ -1,6 +1,7 @@
 package com.app.domain.summary.service;
 
 
+import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.problem.value.S3FileInformation;
 import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByFileRequestDto;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.TypeConvertSummaryDto;
@@ -19,8 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -37,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SummaryFileService { //Service 추후 분할 예정
@@ -139,6 +143,24 @@ public class SummaryFileService { //Service 추후 분할 예정
 
 
 
+    public List<FileListResponseDto> allAiSummaryFileList(String token){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
+
+        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(token); // 요점정리파일 이름 가져오기
+
+        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
+                .map(file -> new FileListResponseDto(
+                        file.getFileId(),
+                        file.getFileName(),
+                        file.getDtype(),
+                        file.getCreateTime()
+                ))
+                .collect(Collectors.toList());
+        return fileListResponseDtoList;
+    }
+
+
+
+
 
 
 
@@ -214,7 +236,9 @@ public class SummaryFileService { //Service 추후 분할 예정
             document.addPage(page);
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 contentStream.beginText();
-                contentStream.setFont(PDType1Font.COURIER, 12);
+
+                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+                contentStream.setFont(font, 12);
                 contentStream.newLineAtOffset(10, 700);
 
                 String[] lines = content.split("\n");

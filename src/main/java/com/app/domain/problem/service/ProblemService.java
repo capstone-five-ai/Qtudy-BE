@@ -29,8 +29,7 @@ public class ProblemService { //Service 추후 분할 예정
 
 
 
-    public List<AiGeneratedProblem> GetFileProblems(String token, FileIdRequestDto fileIdRequestDto) {
-        int fileId = fileIdRequestDto.getFileId();
+    public List<AiGeneratedProblem> GetFileProblems(String token, int fileId) {
         ProblemFile problemFile;
         List<AiGeneratedProblem> problems;
 
@@ -40,8 +39,7 @@ public class ProblemService { //Service 추후 분할 예정
         return problems;
     }
 
-    public AiGeneratedProblem GetProblem(String token, GetProblemRequestDto getProblemRequestDto) {
-        int aiGeneratedProblemId =  getProblemRequestDto.getAiGeneratedProblemId();
+    public AiGeneratedProblem GetProblem(String token,int aiGeneratedProblemId) {
 
         Optional<AiGeneratedProblem> optionalAiGeneratedProblem;
 
@@ -55,8 +53,7 @@ public class ProblemService { //Service 추후 분할 예정
         return null; //추후 에러처리 예정
     }
 
-    public AiGeneratedProblem UpdateProblem(String token, UpdateProblemRequestDto updateProblemRequestDto){
-        int aiGeneratedProblemId = updateProblemRequestDto.getAiGeneratedProblemId();
+    public AiGeneratedProblem UpdateProblem(String token,int aiGeneratedProblemId, UpdateProblemRequestDto updateProblemRequestDto){
         String problemName = updateProblemRequestDto.getProblemName();
         List<String> problemChoices = updateProblemRequestDto.getProblemChoices();
         String problemAnswer = updateProblemRequestDto.getProblemAnswer();

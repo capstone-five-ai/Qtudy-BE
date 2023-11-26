@@ -1,6 +1,5 @@
 package com.app.domain.summary.service;
 
-import com.app.domain.summary.dto.Summary.Request.GetSummaryRequestDto;
 import com.app.domain.summary.dto.Summary.Request.UpdateSummaryRequestDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.domain.summary.entity.SummaryFile;
@@ -26,8 +25,7 @@ public class SummaryService {
     @Autowired
     private S3Service s3Service;
 
-    public AiGeneratedSummary GetSummary(String token, GetSummaryRequestDto getSummaryRequestDto){
-        int aiGeneratedSummaryId = getSummaryRequestDto.getAiGeneratedSummaryId();
+    public AiGeneratedSummary GetSummary(String token,int aiGeneratedSummaryId){
 
         Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId);
         if (aiGeneratedSummaryOptional.isPresent()) {
@@ -38,8 +36,7 @@ public class SummaryService {
 
     }
 
-    public AiGeneratedSummary UpdateSummary(String token, UpdateSummaryRequestDto updateSummaryRequestDto) {
-        int aiGeneratedSummaryId = updateSummaryRequestDto.getAiGeneratedSummaryId();
+    public AiGeneratedSummary UpdateSummary(String token,int aiGeneratedSummaryId,UpdateSummaryRequestDto updateSummaryRequestDto) {
         String summaryTitle = updateSummaryRequestDto.getSummaryTitle();
         String summaryContent = updateSummaryRequestDto.getSummaryContent();
 

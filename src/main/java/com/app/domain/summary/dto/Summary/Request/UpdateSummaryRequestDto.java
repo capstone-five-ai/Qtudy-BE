@@ -11,7 +11,6 @@ import lombok.*;
 @Getter
 @Builder
 public class UpdateSummaryRequestDto {
-    private int aiGeneratedSummaryId;
     private String summaryTitle;
     private String summaryContent;
 

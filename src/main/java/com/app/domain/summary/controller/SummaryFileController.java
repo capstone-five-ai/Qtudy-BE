@@ -1,5 +1,6 @@
 package com.app.domain.summary.controller;
 
+import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByFileRequestDto;
 import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByTextRequestDto;
 import com.app.domain.summary.dto.SummaryFile.Response.AiGenerateSummaryByFileResponseDto;
@@ -48,6 +49,13 @@ public class SummaryFileController {
         AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByFile(token, pdfFileList, aiGenerateSummaryByFileRequestDto, FileType.PDF); // List에 하나만 추가
 
         return ResponseEntity.ok(ConvertToSummaryFileResponse(aiGeneratedSummary));
+    }
+
+    @GetMapping("/searchAiSummaryFileList") //사용자가 생성한 모든 요점정리 리스트 가져오기 (생성 히스토리)
+    public ResponseEntity<List<FileListResponseDto>> allAiSummaryFileList(@RequestHeader("Authorization") String token){
+        List<FileListResponseDto> fileList = summaryFileService.allAiSummaryFileList(token);
+
+        return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
 
 

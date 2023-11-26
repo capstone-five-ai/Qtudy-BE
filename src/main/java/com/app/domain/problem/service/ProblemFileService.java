@@ -1,6 +1,7 @@
 package com.app.domain.problem.service;
 
 
+import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.problem.dto.ProblemFile.AiRequest.TypeConvertProblemDto;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByFileDto;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByTextDto;
@@ -19,8 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -37,7 +39,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProblemFileService { //Service 추후 분할 예정
@@ -52,7 +56,9 @@ public class ProblemFileService { //Service 추후 분할 예정
     private S3Service s3Service;
 
 
-    public void AiGenerateProblemFileByText(String token, AiGenerateProblemByTextDto aiGenerateProblemByTextDto) {
+
+
+    public List<AiGeneratedProblem> AiGenerateProblemFileByText(String token, AiGenerateProblemByTextDto aiGenerateProblemByTextDto) {
         String text = aiGenerateProblemByTextDto.getText();
         ProblemType type = aiGenerateProblemByTextDto.getType();
         Amount amount = aiGenerateProblemByTextDto.getAmount();
@@ -91,13 +97,15 @@ public class ProblemFileService { //Service 추후 분할 예정
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
 
-        UploadS3AndSaveFile(aiGenerateProblemToAiDto, token, aiGenerateProblemByTextDto.toTextDto2());
+        return UploadS3AndSaveFile(aiGenerateProblemToAiDto, token, aiGenerateProblemByTextDto.toTextDto2());
+
     }
 
 
-    public void AiGenerateProblemFileByFile(String token,List<MultipartFile> File, AiGenerateProblemByFileDto aiGenerateProblemByFileDto, FileType fileType) {
+    public List<AiGeneratedProblem> AiGenerateProblemFileByFile(String token,List<MultipartFile> File, AiGenerateProblemByFileDto aiGenerateProblemByFileDto, FileType fileType) {
         String url;
         AiGenerateProblemToAiDto[] aiGenerateProblemToAiDto;
+        List<AiGeneratedProblem> problems = new ArrayList<>();
 
         switch (aiGenerateProblemByFileDto.getType()){  //Problem 타입 체크
             case MULTIPLE:
@@ -125,7 +133,7 @@ public class ProblemFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateProblemToAiDto = restTemplate.postForObject(url, request, AiGenerateProblemToAiDto[].class); // http 응답 받아옴
 
-                    UploadS3AndSaveFile(aiGenerateProblemToAiDto, token, aiGenerateProblemByFileDto.toTextDto2());
+                    problems = UploadS3AndSaveFile(aiGenerateProblemToAiDto, token, aiGenerateProblemByFileDto.toTextDto2());
                 } catch (JsonProcessingException e) {
                     throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
                 } catch (IOException e) {
@@ -149,13 +157,27 @@ public class ProblemFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                 aiGenerateProblemToAiDto = restTemplate.postForObject(url, request, AiGenerateProblemToAiDto[].class); // http 응답 받아옴
 
-                UploadS3AndSaveFile(aiGenerateProblemToAiDto, token, aiGenerateProblemByFileDto.toTextDto2());
+                problems = UploadS3AndSaveFile(aiGenerateProblemToAiDto, token, aiGenerateProblemByFileDto.toTextDto2());
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
         }
+        return problems;
 
+    }
 
+    public List<FileListResponseDto> allAiProblemFileList(String token){ //사용자가 생성한 모든 문제파일 리스트 가져오기
+
+        List<ProblemFile> fileList = problemFileRepository.findByMemberId(token); // 문제파일 리스트 가져옴
+        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
+                .map(file -> new FileListResponseDto(
+                        file.getFileId(),
+                        file.getFileName(),
+                        file.getDtype(),
+                        file.getCreateTime()
+                ))
+                .collect(Collectors.toList());
+        return fileListResponseDtoList;
     }
 
 
@@ -174,7 +196,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public void UploadS3AndSaveFile(AiGenerateProblemToAiDto[] aiGenerateProblemToAiDto, String token, TypeConvertProblemDto typeConvertProblemDto) {
+    public List<AiGeneratedProblem> UploadS3AndSaveFile(AiGenerateProblemToAiDto[] aiGenerateProblemToAiDto, String token, TypeConvertProblemDto typeConvertProblemDto) {
         File tempFile = null;
 
         try { // 문제 PDF 생성
@@ -190,7 +212,7 @@ public class ProblemFileService { //Service 추후 분할 예정
 
 
         } catch (IOException e) {
-            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+            //throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제
@@ -212,7 +234,7 @@ public class ProblemFileService { //Service 추후 분할 예정
             S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
         } catch (IOException e) {
-            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+            //throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제
@@ -221,7 +243,8 @@ public class ProblemFileService { //Service 추후 분할 예정
 
         ProblemFile problemFile = SaveProblemFile(token, typeConvertProblemDto); //PROBLEM_FILE 테이블 저장
 
-        SaveProblems(problemFile, aiGenerateProblemToAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+        return SaveProblems(problemFile, aiGenerateProblemToAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+
     }
 
     private File CreateTempFile(String fileName, AiGenerateProblemToAiDto[] aiGenerateProblemToAiDtoArray, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
@@ -237,7 +260,9 @@ public class ProblemFileService { //Service 추후 분할 예정
                 document.addPage(page);
                 try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                     contentStream.beginText();
-                    contentStream.setFont(PDType1Font.COURIER, 12);
+                    PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+
+                    contentStream.setFont(font, 12);
                     contentStream.newLineAtOffset(10, 700);
 
                     String[] lines = content.split("\n");
@@ -263,7 +288,9 @@ public class ProblemFileService { //Service 추후 분할 예정
                 document.addPage(page);
                 try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                     contentStream.beginText();
-                    contentStream.setFont(PDType1Font.COURIER, 12);
+                    PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+
+                    contentStream.setFont(font, 12);
                     contentStream.newLineAtOffset(10, 700);
 
                     String[] lines = content.split("\n");
@@ -331,7 +358,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public ProblemFile SaveProblemFile(String token , TypeConvertProblemDto typeConvertProblemDto){
+    public ProblemFile SaveProblemFile(String token ,  TypeConvertProblemDto typeConvertProblemDto){
         ProblemFile problemFile = ProblemFile.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(typeConvertProblemDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
@@ -346,19 +373,23 @@ public class ProblemFileService { //Service 추후 분할 예정
         return problemFile;
     }
 
-    public void SaveProblems (ProblemFile problemFile, AiGenerateProblemToAiDto[] aiGenerateProblemToAiDtoArray){
+    public List<AiGeneratedProblem> SaveProblems (ProblemFile problemFile, AiGenerateProblemToAiDto[] aiGenerateProblemToAiDtoArray){
+        List<AiGeneratedProblem> problems = new ArrayList<>();
         for(AiGenerateProblemToAiDto aiDto : aiGenerateProblemToAiDtoArray){
             AiGeneratedProblem aiGeneratedProblem = AiGeneratedProblem.builder() // 문제생성
                     .problemFile(problemFile)
                     .problemName(aiDto.getProblemName())
                     .problemChoices(aiDto.getProblemChoices())
+                    .problemAnswer(aiDto.getProblemAnswer())
                     .problemCommentary(aiDto.getProblemCommentary())
                     .problemType(problemFile.getProblemType())
                     .build();
 
             aiGeneratedProblemRepository.save(aiGeneratedProblem);
-
+            problems.add(aiGeneratedProblem);
         }
+
+        return problems;
     }
 
 

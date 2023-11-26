@@ -18,7 +18,6 @@ public class FileIdResponseDto {
     private List<String> problemChoices; // Assuming AiProblemChoice has appropriate DTO or can be mapped directly
     private String problemAnswer;
     private String problemCommentary;
-    private ProblemType problemType;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

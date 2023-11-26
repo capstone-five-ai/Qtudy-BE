@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @Getter
 public class UpdateProblemRequestDto {
-    private int aiGeneratedProblemId;
     private String problemName;
     private List<String> problemChoices;
     private String problemAnswer;

@@ -1,6 +1,5 @@
 package com.app.domain.summary.controller;
 
-import com.app.domain.summary.dto.Summary.Request.GetSummaryRequestDto;
 import com.app.domain.summary.dto.Summary.Request.UpdateSummaryRequestDto;
 import com.app.domain.summary.dto.Summary.Response.GetSummaryResponseDto;
 import com.app.domain.summary.dto.Summary.Response.UpdateSummaryResponseDto;
@@ -20,9 +19,9 @@ public class SummaryController {
     SummaryService summaryService;
 
 
-    @PostMapping("/getSummary") // 요약정리 제목,해설 업데이트
-    public ResponseEntity<GetSummaryResponseDto> GetSummary(@RequestHeader("Authorization") String token, @Valid @RequestBody GetSummaryRequestDto getSummaryRequestDto) {
-        AiGeneratedSummary aiGeneratedSummary = summaryService.GetSummary(token, getSummaryRequestDto);
+    @GetMapping("/getSummary/{aiGeneratedSummaryId}") // 요약정리 제목,해설 업데이트
+    public ResponseEntity<GetSummaryResponseDto> GetSummary(@RequestHeader("Authorization") String token,@PathVariable int aiGeneratedSummaryId) {
+        AiGeneratedSummary aiGeneratedSummary = summaryService.GetSummary(token,aiGeneratedSummaryId);
 
         GetSummaryResponseDto getSummaryResponseDto = GetSummaryResponseDto.builder()
                 .aiGeneratedSummaryId(aiGeneratedSummary.getAiGeneratedSummaryId())
@@ -36,9 +35,9 @@ public class SummaryController {
     }
 
 
-    @PostMapping("/updateSummary") // 요약정리 제목,해설 업데이트
-    public ResponseEntity<UpdateSummaryResponseDto> UpdateSummary(@RequestHeader("Authorization") String token, @Valid @RequestBody UpdateSummaryRequestDto updateSummaryRequestDto) {
-        AiGeneratedSummary aiGeneratedSummary = summaryService.UpdateSummary(token, updateSummaryRequestDto);
+    @PatchMapping("/updateSummary/{aiGeneratedSummaryId}") // 요약정리 제목,해설 업데이트
+    public ResponseEntity<UpdateSummaryResponseDto> UpdateSummary(@RequestHeader("Authorization") String token,@PathVariable int aiGeneratedSummaryId ,@Valid @RequestBody UpdateSummaryRequestDto updateSummaryRequestDto) {
+        AiGeneratedSummary aiGeneratedSummary = summaryService.UpdateSummary(token,aiGeneratedSummaryId,updateSummaryRequestDto);
 
         UpdateSummaryResponseDto updateSummaryResponseDto = UpdateSummaryResponseDto.builder()
                 .aiGeneratedSummaryId(aiGeneratedSummary.getAiGeneratedSummaryId())
