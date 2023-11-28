@@ -2,7 +2,7 @@ package com.app.domain.memberSavedProblem.entity;
 
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
-import com.app.domain.memberSavedProblem.constant.ProblemType;
+import com.app.global.config.ENUM.ProblemType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 //@SuperBuilder
