@@ -2,8 +2,8 @@ package com.app.domain.categorizedProblem.entity;
 
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
-import com.app.domain.file.problem.entity.AiGeneratedProblems;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
+import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import lombok.*;
@@ -40,15 +40,15 @@ public class CategorizedProblem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AI_GENERATED_PROBLEM_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private AiGeneratedProblems aiGeneratedProblems;
+    private AiGeneratedProblem aiGeneratedProblem;
 
     @PrePersist
     @PreUpdate
     private void validateFk() {
-        if (memberSavedProblem != null && aiGeneratedProblems != null) {
+        if (memberSavedProblem != null && aiGeneratedProblem != null) {
             throw new BusinessException(ErrorCode.FK_BOTH_EXISTS);
         }
-        else if(memberSavedProblem == null && aiGeneratedProblems == null){
+        else if(memberSavedProblem == null && aiGeneratedProblem == null){
             throw new BusinessException(ErrorCode.FK_NOT_EXISTS);
         }
     }

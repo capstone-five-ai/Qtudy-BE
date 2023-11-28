@@ -1,9 +1,9 @@
 package com.app.domain.categorizedProblem.dto;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
-import com.app.domain.file.problem.entity.AiGeneratedProblems;
-import com.app.domain.memberSavedProblem.constant.ProblemType;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
+import com.app.domain.problem.entity.AiGeneratedProblem;
+import com.app.global.config.ENUM.ProblemType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -80,12 +80,12 @@ public class CategorizedProblemDto {
                         .categorizedProblems(categorizedProblem.getCategory().getCategorizedProblems());
             }
             else{
-                AiGeneratedProblems aiGeneratedProblems = categorizedProblem.getAiGeneratedProblems();
-                builder.problemName(aiGeneratedProblems.getProblemName())
-                        .problemAnswer(aiGeneratedProblems.getProblemAnswer())
-                        .problemCommentary(aiGeneratedProblems.getProblemCommentary())
-                        .problemChoices(aiGeneratedProblems.getProblemChoices())
-                        .problemType(aiGeneratedProblems.getProblemType())
+                AiGeneratedProblem aiGeneratedProblem = categorizedProblem.getAiGeneratedProblem();
+                builder.problemName(aiGeneratedProblem.getProblemName())
+                        .problemAnswer(aiGeneratedProblem.getProblemAnswer())
+                        .problemCommentary(aiGeneratedProblem.getProblemCommentary())
+                        .problemChoices(aiGeneratedProblem.getProblemChoices())
+                        .problemType(aiGeneratedProblem.getProblemType())
                         .CategoryName(categorizedProblem.getCategory().getCategoryName())
                         .categorizedProblems(categorizedProblem.getCategory().getCategorizedProblems());
             }
