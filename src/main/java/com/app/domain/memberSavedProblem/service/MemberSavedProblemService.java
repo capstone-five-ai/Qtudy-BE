@@ -49,7 +49,7 @@ public class MemberSavedProblemService {
 
         memberSavedProblemRepository.deleteById(problemId);
     }
-    private MemberSavedProblem findVerifiedProblemByProblemId(Long problemId){
+    public MemberSavedProblem findVerifiedProblemByProblemId(Long problemId){
         return memberSavedProblemRepository.findById(problemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROBLEM_NOT_EXISTS));
     }

@@ -8,8 +8,10 @@ import com.app.domain.file.problem.entity.ProblemFiles;
 import com.app.domain.file.problem.repository.AiGeneratedProblemsRepository;
 import com.app.domain.file.problem.repository.AiProblemChoiceRepository;
 import com.app.domain.file.problem.repository.ProblemFilesRepository;
+import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
+import com.app.global.error.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -63,7 +65,26 @@ public class ProblemService { //Service 추후 분할 예정
 
     }
 
+    public AiGeneratedProblems updateProblem(MemberSavedProblem problem, Integer problemId){
+        AiGeneratedProblems preProblem = findVerifiedProblemByProblemId(problemId);
+        Optional.ofNullable(problem.getProblemName())
+                .ifPresent(problemName -> preProblem.updateProblemName(problemName));
+        Optional.ofNullable(problem.getProblemAnswer())
+                .ifPresent(problemAnswer -> preProblem.updateProblemAnswer(problemAnswer));
+        Optional.ofNullable(problem.getProblemCommentary())
+                .ifPresent(problemCommentary -> preProblem.updateProblemCommentary(problemCommentary));
+        Optional.ofNullable(problem.getProblemChoices())
+                .ifPresent(problemChoices ->{
+                    preProblem.getProblemChoices().clear();
+                    preProblem.getProblemChoices().addAll(problemChoices);
+                });
+        return aiGeneratedProblemsRepository.save(preProblem);
+    }
 
+    public AiGeneratedProblems findVerifiedProblemByProblemId(Integer problemId){
+        return aiGeneratedProblemsRepository.findById(problemId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROBLEM_NOT_EXISTS));
+    }
 
 
 }

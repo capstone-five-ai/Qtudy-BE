@@ -33,8 +33,8 @@ public class AiGeneratedProblems {
     @Column(name = "problem_name", length = 100,nullable = false)
     private String problemName;
 
-    @OneToMany(mappedBy = "aiGeneratedProblems", cascade=CascadeType.ALL, orphanRemoval=true)
-    private List<AiProblemChoice> problemChoices;
+    @ElementCollection
+    private List<String> problemChoices;
 
     @Column(name = "problem_answer", length = 300)
     private String problemAnswer;
@@ -42,4 +42,15 @@ public class AiGeneratedProblems {
     @Column(name = "problem_commentary", columnDefinition = "TEXT", nullable = false)
     private String problemCommentary;
 
+    public void updateProblemName(String problemName) {
+        this.problemName = problemName;
+    }
+
+    public void updateProblemAnswer(String problemAnswer) {
+        this.problemAnswer = problemAnswer;
+    }
+
+    public void updateProblemCommentary(String problemCommentary) {
+        this.problemCommentary = problemCommentary;
+    }
 }
