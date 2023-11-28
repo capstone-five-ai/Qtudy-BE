@@ -55,19 +55,22 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.save(categorizedProblem);
     }
     private CategorizedProblem createCategorizedProblemEntity(Category category, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
+        CategorizedProblem categorizedProblem;
+
         if (memberSavedProblemId != null) {
             MemberSavedProblem memberSavedProblem = memberSavedProblemService.findVerifiedProblemByProblemId(memberSavedProblemId);
-            return CategorizedProblem.builder()
-                    .category(category)
+            categorizedProblem = CategorizedProblem.builder()
                     .memberSavedProblem(memberSavedProblem)
                     .build();
         } else {
-            AiGeneratedProblem aiGeneratedProblems = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
-            return CategorizedProblem.builder()
-                    .category(category)
-                    .aiGeneratedProblem(aiGeneratedProblems)
+            AiGeneratedProblem aiGeneratedProblem = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
+            categorizedProblem = CategorizedProblem.builder()
+                    .aiGeneratedProblem(aiGeneratedProblem)
                     .build();
         }
+
+        categorizedProblem.updateCategory(category);
+        return categorizedProblem;
     }
 
     /**
@@ -93,7 +96,7 @@ public class CategorizedProblemService {
     private void checkForDuplicateCategorizedProblem(Long categoryId, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
         boolean exists = memberSavedProblemId != null
                 ? categorizedProblemRepository.existsByCategoryCategoryIdAndMemberSavedProblemMemberSavedProblemId(categoryId, memberSavedProblemId)
-                : categorizedProblemRepository.existsByCategoryCategoryIdAndAiGeneratedProblemsAiGeneratedProblemId(categoryId, aiGeneratedProblemId);
+                : categorizedProblemRepository.existsByCategoryCategoryIdAndAiGeneratedProblemAiGeneratedProblemId(categoryId, aiGeneratedProblemId);
 
         if (exists) {
             throw new BusinessException(ErrorCode.DUPLICATE_CATEGORIZED_PROBLEM);

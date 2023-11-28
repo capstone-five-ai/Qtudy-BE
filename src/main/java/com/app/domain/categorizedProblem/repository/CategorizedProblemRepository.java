@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CategorizedProblemRepository extends JpaRepository<CategorizedProblem, Long> {
     boolean existsByCategoryCategoryIdAndMemberSavedProblemMemberSavedProblemId(Long categoryId, Long memberSavedProblemId);
 
-    boolean existsByCategoryCategoryIdAndAiGeneratedProblemsAiGeneratedProblemId(Long categoryId, Integer aiGeneratedProblemId);
+    boolean existsByCategoryCategoryIdAndAiGeneratedProblemAiGeneratedProblemId(Long categoryId, Integer aiGeneratedProblemId);
 }
