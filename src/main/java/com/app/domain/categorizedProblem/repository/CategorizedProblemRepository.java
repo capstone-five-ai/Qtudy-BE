@@ -7,4 +7,6 @@ public interface CategorizedProblemRepository extends JpaRepository<CategorizedP
     boolean existsByCategoryCategoryIdAndMemberSavedProblemMemberSavedProblemId(Long categoryId, Long memberSavedProblemId);
 
     boolean existsByCategoryCategoryIdAndAiGeneratedProblemAiGeneratedProblemId(Long categoryId, Integer aiGeneratedProblemId);
+
+    boolean existsByMemberSavedProblemMemberSavedProblemId(Long memberSavedProblemId);
 }

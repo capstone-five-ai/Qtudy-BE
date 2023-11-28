@@ -106,7 +106,20 @@ public class CategorizedProblemService {
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
 
+        Long memberSavedProblemId = categorizedProblem.getMemberSavedProblem() != null
+                ? categorizedProblem.getMemberSavedProblem().getMemberSavedProblemId()
+                : null;
+
         categorizedProblemRepository.deleteById(categorizedProblemID);
+
+        if (memberSavedProblemId != null && !isMemberSavedProblemUsedInOtherCategorizedProblems(memberSavedProblemId)) {
+            // MemberSavedProblem 삭제
+            memberSavedProblemService.deleteProblem(memberSavedProblemId);
+        }
+    }
+
+    private boolean isMemberSavedProblemUsedInOtherCategorizedProblems(Long memberSavedProblemId) {
+        return categorizedProblemRepository.existsByMemberSavedProblemMemberSavedProblemId(memberSavedProblemId);
     }
 
     private CategorizedProblem findVerifiedCategorizedProblemByCategorizedProblemId(Long categorizedProblemId){
