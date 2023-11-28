@@ -1,6 +1,5 @@
 package com.app.domain.memberSavedProblem.dto;
 
-import com.app.domain.memberSavedProblem.constant.ProblemType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

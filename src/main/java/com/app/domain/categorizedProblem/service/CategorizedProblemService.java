@@ -1,16 +1,15 @@
 package com.app.domain.categorizedProblem.service;
 
-import com.app.domain.categorizedProblem.dto.CategorizedProblemDto;
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.categorizedProblem.repository.CategorizedProblemRepository;
 import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
-import com.app.domain.file.problem.entity.AiGeneratedProblems;
-import com.app.domain.file.problem.service.ProblemService;
 import com.app.domain.memberSavedProblem.dto.MemberSavedProblemDto;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.memberSavedProblem.mapper.MemberSavedProblemMapper;
 import com.app.domain.memberSavedProblem.service.MemberSavedProblemService;
+import com.app.domain.problem.entity.AiGeneratedProblem;
+import com.app.domain.problem.service.ProblemService;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
@@ -51,7 +50,7 @@ public class CategorizedProblemService {
         }
         else{
             aiGeneratedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblems().getAiGeneratedProblemId());
+                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblem().getAiGeneratedProblemId());
         }
         return categorizedProblemRepository.save(categorizedProblem);
     }
@@ -63,10 +62,10 @@ public class CategorizedProblemService {
                     .memberSavedProblem(memberSavedProblem)
                     .build();
         } else {
-            AiGeneratedProblems aiGeneratedProblems = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
+            AiGeneratedProblem aiGeneratedProblems = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
             return CategorizedProblem.builder()
                     .category(category)
-                    .aiGeneratedProblems(aiGeneratedProblems)
+                    .aiGeneratedProblem(aiGeneratedProblems)
                     .build();
         }
     }
