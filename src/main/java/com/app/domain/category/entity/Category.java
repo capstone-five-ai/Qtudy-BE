@@ -27,7 +27,7 @@ public class Category extends BaseEntity {
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
 
-    @Column(name = "CATEGORY_NAME")
+    @Column(name = "CATEGORY_NAME", nullable = false)
     private String categoryName;
 
     @Enumerated(EnumType.STRING)

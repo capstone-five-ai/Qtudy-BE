@@ -42,7 +42,7 @@ public class CategoryService {
 
         categoryRepository.deleteById(categoryId);
     }
-    private Category findVerifiedCategoryByCategoryId(Long categoryId){
+    public Category findVerifiedCategoryByCategoryId(Long categoryId){
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_EXISTS));
     }
