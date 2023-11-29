@@ -130,7 +130,7 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.existsByMemberSavedProblemMemberSavedProblemId(memberSavedProblemId);
     }
 
-    private CategorizedProblem findVerifiedCategorizedProblemByCategorizedProblemId(Long categorizedProblemId){
+    public CategorizedProblem findVerifiedCategorizedProblemByCategorizedProblemId(Long categorizedProblemId){
         return categorizedProblemRepository.findById(categorizedProblemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORIZED_PROBLEM_NOT_EXISTS));
     }

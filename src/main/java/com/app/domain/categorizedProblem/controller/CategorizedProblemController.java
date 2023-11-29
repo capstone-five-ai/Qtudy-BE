@@ -49,7 +49,7 @@ public class CategorizedProblemController {
                                                    @Valid @RequestBody MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = categorizedProblemService.
                 updateCategorizedProblem(categorizedProblemId, problemPatchDto);
-        CategorizedProblemDto.PatchResponse patchResponse = CategorizedProblemDto.PatchResponse.of(categorizedProblem);
+        CategorizedProblemDto.Response patchResponse = CategorizedProblemDto.Response.of(categorizedProblem);
 
         return ResponseEntity.ok(patchResponse);
 
@@ -61,8 +61,11 @@ public class CategorizedProblemController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/{categorizedProblemId}")
-//    public ResponseEntity getCategorizedProblem(@PathVariable @Positive Long categorizedProblemId){
-//
-//    }
+    @GetMapping("/{categorizedProblemId}")
+    public ResponseEntity getCategorizedProblem(@PathVariable @Positive Long categorizedProblemId){
+        CategorizedProblem categorizedProblem = categorizedProblemService.findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
+        CategorizedProblemDto.Response response = CategorizedProblemDto.Response.of(categorizedProblem);
+
+        return ResponseEntity.ok(response);
+    }
 }
