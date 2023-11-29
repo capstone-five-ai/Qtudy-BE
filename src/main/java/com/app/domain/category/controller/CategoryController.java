@@ -1,5 +1,7 @@
 package com.app.domain.category.controller;
 
+import com.app.domain.categorizedProblem.entity.CategorizedProblem;
+import com.app.domain.categorizedProblem.service.CategorizedProblemService;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.dto.CategoryDto;
 import com.app.domain.category.entity.Category;
@@ -24,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
+
+    private final CategorizedProblemService categorizedProblemService;
 
     private final CategoryMapper categoryMapper;
 
@@ -71,10 +75,14 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity getCategory(@PathVariable @Positive Long categoryId) {
+    public ResponseEntity getCategory(@PathVariable @Positive Long categoryId,
+                                      @RequestParam(value = "page", defaultValue = "1") int page,
+                                      @RequestParam(value = "size", defaultValue = "10") int size) {
         Category category = categoryService.findVerifiedCategoryByCategoryId(categoryId);
 
-        CategoryDto.CategoryProblemResponse response = categoryMapper.categoryToCategoryProblemResponse(category);
+        Page<CategorizedProblem> categorizedProblemsPage = categorizedProblemService.findCategorizedProblemsByCategoryId(categoryId, page-1, size);
+
+        CategoryDto.CategoryProblemPageResponse response = categoryMapper.categoryToCategoryProblemPageResponse(category, categorizedProblemsPage);
 
         return ResponseEntity.ok(response);
     }

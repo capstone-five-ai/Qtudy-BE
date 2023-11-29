@@ -60,4 +60,9 @@ public class CategorizedProblemController {
         categorizedProblemService.deleteCategorizedProblem(categorizedProblemId);
         return ResponseEntity.ok().build();
     }
+
+//    @GetMapping("/{categorizedProblemId}")
+//    public ResponseEntity getCategorizedProblem(@PathVariable @Positive Long categorizedProblemId){
+//
+//    }
 }

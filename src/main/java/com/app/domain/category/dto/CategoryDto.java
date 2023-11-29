@@ -3,12 +3,14 @@ package com.app.domain.category.dto;
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.entity.Category;
+import com.app.domain.common.MultiResponseDto;
 import com.app.global.config.ENUM.GeneratedType;
 import com.app.global.config.ENUM.ProblemType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -33,6 +35,33 @@ public class CategoryDto {
         private String categoryName;
 
         private CategoryType categoryType;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategoryProblemPageResponse {
+        private Long categoryId;
+
+        private String categoryName;
+
+//        private List<CategorizedProblemResponse> categorizedProblemResponses;
+        private MultiResponseDto<CategorizedProblemResponse> categorizedProblemResponses;
+        public static CategoryProblemPageResponse of(Category category,
+                                                     Page<CategorizedProblem> categorizedProblemsPage){
+            List<CategorizedProblemResponse> categorizedProblemResponses = categorizedProblemsPage.getContent().stream()
+                    .map(CategorizedProblemResponse::of)
+                    .collect(Collectors.toList());
+
+            MultiResponseDto<CategorizedProblemResponse> multiResponseDto = new MultiResponseDto<>(categorizedProblemResponses, categorizedProblemsPage);
+
+            return CategoryProblemPageResponse.builder()
+                    .categoryId(category.getCategoryId())
+                    .categoryName(category.getCategoryName())
+                    .categorizedProblemResponses(multiResponseDto)
+                    .build();
+        }
     }
 
     @Getter

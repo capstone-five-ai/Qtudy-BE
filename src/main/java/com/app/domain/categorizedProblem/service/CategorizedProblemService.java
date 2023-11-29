@@ -14,6 +14,8 @@ import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,12 @@ public class CategorizedProblemService {
                     problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblem().getAiGeneratedProblemId());
         }
         return categorizedProblemRepository.save(categorizedProblem);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CategorizedProblem> findCategorizedProblemsByCategoryId(Long categoryId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
     private CategorizedProblem createCategorizedProblemEntity(Category category, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
         CategorizedProblem categorizedProblem;
