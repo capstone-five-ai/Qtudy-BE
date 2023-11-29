@@ -14,6 +14,8 @@ import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,20 +56,29 @@ public class CategorizedProblemService {
         }
         return categorizedProblemRepository.save(categorizedProblem);
     }
+
+    @Transactional(readOnly = true)
+    public Page<CategorizedProblem> findCategorizedProblemsByCategoryId(Long categoryId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
+    }
     private CategorizedProblem createCategorizedProblemEntity(Category category, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
+        CategorizedProblem categorizedProblem;
+
         if (memberSavedProblemId != null) {
             MemberSavedProblem memberSavedProblem = memberSavedProblemService.findVerifiedProblemByProblemId(memberSavedProblemId);
-            return CategorizedProblem.builder()
-                    .category(category)
+            categorizedProblem = CategorizedProblem.builder()
                     .memberSavedProblem(memberSavedProblem)
                     .build();
         } else {
-            AiGeneratedProblem aiGeneratedProblems = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
-            return CategorizedProblem.builder()
-                    .category(category)
-                    .aiGeneratedProblem(aiGeneratedProblems)
+            AiGeneratedProblem aiGeneratedProblem = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
+            categorizedProblem = CategorizedProblem.builder()
+                    .aiGeneratedProblem(aiGeneratedProblem)
                     .build();
         }
+
+        categorizedProblem.updateCategory(category);
+        return categorizedProblem;
     }
 
     /**
@@ -93,7 +104,7 @@ public class CategorizedProblemService {
     private void checkForDuplicateCategorizedProblem(Long categoryId, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
         boolean exists = memberSavedProblemId != null
                 ? categorizedProblemRepository.existsByCategoryCategoryIdAndMemberSavedProblemMemberSavedProblemId(categoryId, memberSavedProblemId)
-                : categorizedProblemRepository.existsByCategoryCategoryIdAndAiGeneratedProblemsAiGeneratedProblemId(categoryId, aiGeneratedProblemId);
+                : categorizedProblemRepository.existsByCategoryCategoryIdAndAiGeneratedProblemAiGeneratedProblemId(categoryId, aiGeneratedProblemId);
 
         if (exists) {
             throw new BusinessException(ErrorCode.DUPLICATE_CATEGORIZED_PROBLEM);
@@ -103,10 +114,23 @@ public class CategorizedProblemService {
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
 
+        Long memberSavedProblemId = categorizedProblem.getMemberSavedProblem() != null
+                ? categorizedProblem.getMemberSavedProblem().getMemberSavedProblemId()
+                : null;
+
         categorizedProblemRepository.deleteById(categorizedProblemID);
+
+        if (memberSavedProblemId != null && !isMemberSavedProblemUsedInOtherCategorizedProblems(memberSavedProblemId)) {
+            // MemberSavedProblem 삭제
+            memberSavedProblemService.deleteProblem(memberSavedProblemId);
+        }
     }
 
-    private CategorizedProblem findVerifiedCategorizedProblemByCategorizedProblemId(Long categorizedProblemId){
+    private boolean isMemberSavedProblemUsedInOtherCategorizedProblems(Long memberSavedProblemId) {
+        return categorizedProblemRepository.existsByMemberSavedProblemMemberSavedProblemId(memberSavedProblemId);
+    }
+
+    public CategorizedProblem findVerifiedCategorizedProblemByCategorizedProblemId(Long categorizedProblemId){
         return categorizedProblemRepository.findById(categorizedProblemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORIZED_PROBLEM_NOT_EXISTS));
     }

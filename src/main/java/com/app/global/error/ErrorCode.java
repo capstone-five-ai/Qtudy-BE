@@ -27,6 +27,7 @@ public enum ErrorCode {
 
     //카테고리
     CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "C-001", "해당 카테고리는 존재하지 않습니다"),
+    CATEGORY_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "C-002", "이미 존재하는 카테고리 입니다."),
 
     //카테고리화 문제
     FK_BOTH_EXISTS(HttpStatus.BAD_REQUEST, "CP-001", "AI와 Mebmer 둘 중 하나만 설정되어야 합니다"),

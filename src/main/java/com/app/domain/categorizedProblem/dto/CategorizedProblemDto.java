@@ -1,6 +1,7 @@
 package com.app.domain.categorizedProblem.dto;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
+import com.app.domain.category.entity.Category;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.global.config.ENUM.ProblemType;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CategorizedProblemDto {
 
@@ -49,7 +51,7 @@ public class CategorizedProblemDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PatchResponse{
+    public static class Response {
         private Long categorizedProblemId;
 
         private String problemName;
@@ -64,11 +66,17 @@ public class CategorizedProblemDto {
 
         private String CategoryName;
 
-        private List<CategorizedProblem> categorizedProblems;
+        private List<CategorizedProblemResponse> categorizedProblems;
 
-        public static CategorizedProblemDto.PatchResponse of(CategorizedProblem categorizedProblem) {
-            PatchResponseBuilder builder = PatchResponse.builder()
+        public static Response of(CategorizedProblem categorizedProblem) {
+            ResponseBuilder builder = Response.builder()
                     .categorizedProblemId(categorizedProblem.getCategorizedProblemId());
+
+            List<CategorizedProblemResponse> categorizedProblemResponses = categorizedProblem.getCategory().getCategorizedProblems()
+                    .stream()
+                    .map(CategorizedProblemResponse::of)
+                    .collect(Collectors.toList());
+
             if(categorizedProblem.getMemberSavedProblem() != null){
                 MemberSavedProblem memberSavedProblem = categorizedProblem.getMemberSavedProblem();
                 builder.problemName(memberSavedProblem.getProblemName())
@@ -77,7 +85,7 @@ public class CategorizedProblemDto {
                         .problemChoices(memberSavedProblem.getProblemChoices())
                         .problemType(memberSavedProblem.getProblemType())
                         .CategoryName(categorizedProblem.getCategory().getCategoryName())
-                        .categorizedProblems(categorizedProblem.getCategory().getCategorizedProblems());
+                        .categorizedProblems(categorizedProblemResponses);
             }
             else{
                 AiGeneratedProblem aiGeneratedProblem = categorizedProblem.getAiGeneratedProblem();
@@ -87,9 +95,29 @@ public class CategorizedProblemDto {
                         .problemChoices(aiGeneratedProblem.getProblemChoices())
                         .problemType(aiGeneratedProblem.getProblemType())
                         .CategoryName(categorizedProblem.getCategory().getCategoryName())
-                        .categorizedProblems(categorizedProblem.getCategory().getCategorizedProblems());
+                        .categorizedProblems(categorizedProblemResponses);
             }
             return builder.build();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class CategorizedProblemResponse{
+        private Long categorizedProblemId;
+
+        private String categorizedProblemName;
+
+        public static CategorizedProblemResponse of(CategorizedProblem categorizedProblem){
+            return CategorizedProblemResponse.builder()
+                    .categorizedProblemId(categorizedProblem.getCategorizedProblemId())
+                    .categorizedProblemName(categorizedProblem.getMemberSavedProblem() != null ?
+                            categorizedProblem.getMemberSavedProblem().getProblemName() :
+                            categorizedProblem.getAiGeneratedProblem().getProblemName())
+                    .build();
+
         }
     }
 }
