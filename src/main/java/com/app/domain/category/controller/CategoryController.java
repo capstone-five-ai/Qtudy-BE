@@ -1,10 +1,14 @@
 package com.app.domain.category.controller;
 
+import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.dto.CategoryDto;
 import com.app.domain.category.entity.Category;
 import com.app.domain.category.mapper.CategoryMapper;
 import com.app.domain.category.service.CategoryService;
+import com.app.domain.common.MultiResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/category")
@@ -48,5 +53,20 @@ public class CategoryController {
     public ResponseEntity deleteCategory(@PathVariable @Positive Long categoryId){
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity getCategories(@Positive @RequestParam(value = "page",defaultValue = "1") int page,
+                                        @Positive @RequestParam(value = "size", defaultValue = "10") int size,
+                                        @RequestParam(value = "categoryType") CategoryType categoryType,
+                                        HttpServletRequest httpServletRequest){
+        Page<Category> pageCategories = categoryService.findCategoriesByMemberIdAndType(page-1, size, categoryType, httpServletRequest);
+
+        List<Category> categoryList = pageCategories.getContent();
+        List<CategoryDto.Response> response = categoryMapper.categoryToCategoryResponseList(categoryList);
+
+        return new ResponseEntity(
+                new MultiResponseDto<>(
+                        response, pageCategories), HttpStatus.OK);
     }
 }
