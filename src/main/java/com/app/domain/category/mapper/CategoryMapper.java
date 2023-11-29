@@ -21,4 +21,8 @@ public interface CategoryMapper {
         }
         return responseList;
     }
+
+    default CategoryDto.CategoryProblemResponse categoryToCategoryProblemResponse(Category category){
+        return CategoryDto.CategoryProblemResponse.of(category);
+    }
 }

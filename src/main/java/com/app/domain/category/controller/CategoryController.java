@@ -69,4 +69,14 @@ public class CategoryController {
                 new MultiResponseDto<>(
                         response, pageCategories), HttpStatus.OK);
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity getCategory(@PathVariable @Positive Long categoryId) {
+        Category category = categoryService.findVerifiedCategoryByCategoryId(categoryId);
+
+        CategoryDto.CategoryProblemResponse response = categoryMapper.categoryToCategoryProblemResponse(category);
+
+        return ResponseEntity.ok(response);
+    }
+
 }
