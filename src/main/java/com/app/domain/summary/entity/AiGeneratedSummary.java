@@ -19,7 +19,7 @@ public class AiGeneratedSummary extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="AI_GENERATED_SUMMARY_ID")
-    private int aiGeneratedSummaryId;
+    private Integer aiGeneratedSummaryId;
 
     @ManyToOne
     @JoinColumn(name = "FILE_ID")

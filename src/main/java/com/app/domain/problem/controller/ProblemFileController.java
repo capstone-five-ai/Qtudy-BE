@@ -1,9 +1,8 @@
 package com.app.domain.problem.controller;
 
 import com.app.domain.file.dto.Response.FileListResponseDto;
-import com.app.domain.problem.dto.Problem.Response.ProblemResponseDto;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByFileDto;
-import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemByTextDto;
+import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemDto;
 import com.app.domain.problem.dto.ProblemFile.Response.AiGeneratedProblemResponseDto;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.global.config.ENUM.FileType;
@@ -27,8 +26,8 @@ public class ProblemFileController { // Controller 추후 분할 예정
     ProblemFileService problemFileService;
 
     @PostMapping("/generateProblemFileByText") // 텍스트기반 문제파일 생성
-    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemFileByText(@RequestHeader("Authorization") String token, @Valid @RequestBody AiGenerateProblemByTextDto aiGenerateProblemByTextDto) {
-        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByText(token, aiGenerateProblemByTextDto);
+    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemFileByText(@RequestHeader("Authorization") String token, @Valid @RequestBody AiGenerateProblemDto aiGenerateProblemDto) {
+        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByText(token, aiGenerateProblemDto);
 
         List<AiGeneratedProblemResponseDto> responseDtos = problems.stream()
                 .map(AiGeneratedProblemResponseDto::ConvertToProblem)
@@ -38,8 +37,8 @@ public class ProblemFileController { // Controller 추후 분할 예정
     }
 
     @PostMapping(value = "/generateProblemFileByImage",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE) // 이미지(png,jpg)기반 문제파일 생성
-    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemImageByImage(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> imageFile, @ModelAttribute AiGenerateProblemByFileDto aiGenerateProblemByFileDto) {
-        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByFile(token,imageFile, aiGenerateProblemByFileDto, FileType.JPG); // pdf List 전체 다 추가
+    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemImageByImage(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> imageFile, @ModelAttribute AiGenerateProblemDto aiGenerateProblemDto) {
+        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByFile(token,imageFile, aiGenerateProblemDto, FileType.JPG); // pdf List 전체 다 추가
 
         List<AiGeneratedProblemResponseDto> responseDtos = problems.stream()
                 .map(AiGeneratedProblemResponseDto::ConvertToProblem)
@@ -49,10 +48,10 @@ public class ProblemFileController { // Controller 추후 분할 예정
     }
 
     @PostMapping("/generateProblemFileByPdf") // PDF 기반 문제파일 생성
-    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemFileByPdf(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile pdfFile, @ModelAttribute AiGenerateProblemByFileDto aiGenerateProblemByFileDto) {
+    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemFileByPdf(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile pdfFile, @ModelAttribute AiGenerateProblemDto aiGenerateProblemDto) {
         List<MultipartFile> pdfFileList = new ArrayList<>();
         pdfFileList.add(pdfFile);
-        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByFile(token, pdfFileList,aiGenerateProblemByFileDto, FileType.PDF); // List에 하나만 추가
+        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByFile(token, pdfFileList,aiGenerateProblemDto, FileType.PDF); // List에 하나만 추가
 
         List<AiGeneratedProblemResponseDto> responseDtos = problems.stream()
                 .map(AiGeneratedProblemResponseDto::ConvertToProblem)

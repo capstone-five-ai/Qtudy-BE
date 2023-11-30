@@ -142,39 +142,6 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-
-    public List<FileListResponseDto> allAiSummaryFileList(String token){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
-
-        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(token); // 요점정리파일 이름 가져오기
-
-        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
-                .map(file -> new FileListResponseDto(
-                        file.getFileId(),
-                        file.getFileName(),
-                        file.getDtype(),
-                        file.getCreateTime()
-                ))
-                .collect(Collectors.toList());
-        return fileListResponseDtoList;
-    }
-
-
-
-
-
-
-
-    public static String convertPdfToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
-        try (InputStream is = pdfFile.getInputStream()) {
-            PDDocument document = PDDocument.load(is);
-            PDFTextStripper textStripper = new PDFTextStripper();
-            String text = textStripper.getText(document);
-            document.close();
-            return text;
-        }
-    }
-
-
     public AiGeneratedSummary UploadS3AndSaveFile(AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto, String token, TypeConvertSummaryDto typeConvertSummaryDto) {
         File tempFile = null;
 
@@ -224,6 +191,36 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         return SaveSummarys(summaryFile, aiGenerateSummaryResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
     }
+
+
+
+    public static String convertPdfToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
+        try (InputStream is = pdfFile.getInputStream()) {
+            PDDocument document = PDDocument.load(is);
+            PDFTextStripper textStripper = new PDFTextStripper();
+            String text = textStripper.getText(document);
+            document.close();
+            return text;
+        }
+    }
+
+    public List<FileListResponseDto> allAiSummaryFileList(String token){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
+
+        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(token); // 요점정리파일 이름 가져오기
+
+        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
+                .map(file -> new FileListResponseDto(
+                        file.getFileId(),
+                        file.getFileName(),
+                        file.getDtype(),
+                        file.getCreateTime()
+                ))
+                .collect(Collectors.toList());
+        return fileListResponseDtoList;
+    }
+
+
+
 
     private File CreateTempFile(String fileName, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDtoArray,PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
