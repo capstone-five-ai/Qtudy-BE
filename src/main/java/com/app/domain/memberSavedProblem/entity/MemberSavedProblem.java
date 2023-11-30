@@ -4,14 +4,12 @@ import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
 import com.app.global.config.ENUM.ProblemType;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 //@SuperBuilder

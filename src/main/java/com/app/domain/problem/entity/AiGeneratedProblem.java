@@ -48,4 +48,16 @@ public class AiGeneratedProblem extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProblemType problemType;
 
+
+    public void updateProblemName(String problemName) {
+        this.problemName = problemName;
+    }
+
+    public void updateProblemAnswer(String problemAnswer) {
+        this.problemAnswer = problemAnswer;
+    }
+
+    public void updateProblemCommentary(String problemCommentary) {
+        this.problemCommentary = problemCommentary;
+    }
 }
