@@ -21,7 +21,7 @@ public class AiGeneratedProblem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AI_GENERATED_PROBLEM_ID")
-    private int aiGeneratedProblemId;
+    private Integer aiGeneratedProblemId;
 
 
     @JsonIgnore

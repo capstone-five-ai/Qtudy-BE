@@ -1,11 +1,11 @@
 package com.app.domain.summary.service;
 
 
+import com.app.domain.file.dto.Response.FileListResponseDto;
+import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
 import com.app.domain.problem.value.S3FileInformation;
-import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByFileRequestDto;
-import com.app.domain.summary.dto.SummaryFile.AiRequest.TypeConvertSummaryDto;
-import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryByTextRequestDto;
-import com.app.domain.summary.dto.SummaryFile.AiRequest.AiGenerateSummaryResponseDto;
+import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryDto;
+import com.app.domain.summary.dto.SummaryFile.AiRequest.AiGenerateSummaryFromAiDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.domain.summary.entity.SummaryFile;
 import com.app.domain.summary.repository.AiGeneratedSummaryRepository;
@@ -19,9 +19,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SummaryFileService { //Service 추후 분할 예정
@@ -51,13 +54,14 @@ public class SummaryFileService { //Service 추후 분할 예정
     private S3Service s3Service;
 
 
-    public AiGeneratedSummary AiGenerateSummaryFileByText(String token, AiGenerateSummaryByTextRequestDto aiGenerateSummaryByTextRequestDto) {
-        String text = aiGenerateSummaryByTextRequestDto.getText();
-        Amount amount = aiGenerateSummaryByTextRequestDto.getAmount();
-        String fileName = aiGenerateSummaryByTextRequestDto.getFileName();
+    public AiGeneratedSummary AiGenerateSummaryFileByText(String token, AiGenerateSummaryDto aiGenerateSummaryDto) {
+        String text = aiGenerateSummaryDto.getText();
+        Amount amount = aiGenerateSummaryDto.getAmount();
+        String fileName = aiGenerateSummaryDto.getFileName();
 
         String url = "http://localhost:5000/create/summary";;
-        AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto;
+        AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
+        AiGeneratedSummary aiGeneratedSummary = null;
 
         if(summaryFileRepository.findByFileName(fileName).isPresent()){ // 이미 파일이름이 존재하는 경우 에러
             throw new BusinessException(ErrorCode.ALREADY_EXISTS_NAME);
@@ -70,23 +74,27 @@ public class SummaryFileService { //Service 추후 분할 예정
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
-            jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryByTextRequestDto); //HTTP BODY 생성
+            jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryDto); //HTTP BODY 생성
 
             HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
-            aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
+            aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
         } catch (JsonProcessingException e) {
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
 
-        return UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByTextRequestDto.toTextDto2());
+        UploadS3AndSaveFile(aiGenerateSummaryFromAiDto, token, aiGenerateSummaryDto);
 
+        SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //PROBLEM_FILE 테이블 저장
 
+        aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+
+        return aiGeneratedSummary;
     }
 
 
-    public AiGeneratedSummary AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryByFileRequestDto aiGenerateSummaryByFileRequestDto, FileType fileType) {
+    public AiGeneratedSummary AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
         String url = "http://localhost:5000/create/summary";
-        AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto;
+        AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
         AiGeneratedSummary aiGeneratedSummary = null;
 
 
@@ -100,12 +108,12 @@ public class SummaryFileService { //Service 추후 분할 예정
                     headers.setContentType(MediaType.APPLICATION_JSON);
 
                     ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
-                    jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryByFileRequestDto.toTextDto(pdfText)); //HTTP BODY 생성 (FILE -> TEXTDto 변환)
+                    jsonBody = objectMapper.writeValueAsString(aiGenerateSummaryDto.toTextDto(pdfText)); //HTTP BODY 생성 (FILE -> TEXTDto 변환)
 
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
-                    aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
+                    aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                    aiGeneratedSummary = UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileRequestDto.toTextDto2());
+                    UploadS3AndSaveFile(aiGenerateSummaryFromAiDto, token, aiGenerateSummaryDto);
                 } catch (JsonProcessingException e) {
                     throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
                 } catch (IOException e) {
@@ -115,50 +123,45 @@ public class SummaryFileService { //Service 추후 분할 예정
 
             case JPG: // JPG 타입일경우
                 url+="/jpg";
+
+                MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+                for (MultipartFile file : File) {
+                    try {
+                        map.add("files", new ByteArrayResource(file.getBytes())); // 파일리스트 추가
+                    } catch (IOException e) {
+                        throw new RuntimeException(e); // 추후 에러처리
+                    }
+                }
+
+                // 다른 필드도 MultiValueMap에 추가
+                map.add("amount", aiGenerateSummaryDto.getAmount().toString());
+
                 HttpHeaders headers = new HttpHeaders();  // HTTP 요청 헤더 설정
                 headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-                MultiValueMap<String, Object> jsonBody = new LinkedMultiValueMap<>();
+                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers); // // HTTP 요청 전송
+                aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                jsonBody.add("amount", aiGenerateSummaryByFileRequestDto.getAmount());
-
-                for(MultipartFile file : File)
-                    jsonBody.add("file",file);
-
-                HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
-                aiGenerateSummaryResponseDto = restTemplate.postForObject(url, request, AiGenerateSummaryResponseDto.class); // http 응답 받아옴
-
-                aiGeneratedSummary = UploadS3AndSaveFile(aiGenerateSummaryResponseDto, token, aiGenerateSummaryByFileRequestDto.toTextDto2());
+                UploadS3AndSaveFile(aiGenerateSummaryFromAiDto, token, aiGenerateSummaryDto);
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
         }
+
+        SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //PROBLEM_FILE 테이블 저장
+
+        aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+
         return aiGeneratedSummary;
-
     }
 
 
-
-
-
-
-    public static String convertPdfToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
-        try (InputStream is = pdfFile.getInputStream()) {
-            PDDocument document = PDDocument.load(is);
-            PDFTextStripper textStripper = new PDFTextStripper();
-            String text = textStripper.getText(document);
-            document.close();
-            return text;
-        }
-    }
-
-
-    public AiGeneratedSummary UploadS3AndSaveFile(AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto, String token, TypeConvertSummaryDto typeConvertSummaryDto) {
+    public void UploadS3AndSaveFile(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, String token, AiGenerateSummaryDto aiGenerateSummaryDto) {
         File tempFile = null;
 
         try { // 문제 PDF 생성
-            String fileName = token+"_"+ typeConvertSummaryDto.getFileName()+"_summary.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-            tempFile = CreateTempFile(fileName, aiGenerateSummaryResponseDto,PdfType.SUMMARY); // 파일 생성
+            String fileName = token+"_"+ aiGenerateSummaryDto.getFileName()+"_summary.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            tempFile = CreateTempFile(fileName, aiGenerateSummaryFromAiDto,PdfType.SUMMARY); // 파일 생성
 
             // 파일을 MultipartFile로 변환
             FileSystemResource resource = new FileSystemResource(tempFile);
@@ -180,8 +183,8 @@ public class SummaryFileService { //Service 추후 분할 예정
 
 
         try { // 정답 PDF 생성
-            String fileName = token+"_"+ typeConvertSummaryDto.getFileName()+"_answer.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-            tempFile = CreateTempFile(fileName, aiGenerateSummaryResponseDto,PdfType.ANSWER); // 파일 생성
+            String fileName = token+"_"+ aiGenerateSummaryDto.getFileName()+"_answer.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            tempFile = CreateTempFile(fileName, aiGenerateSummaryFromAiDto,PdfType.ANSWER); // 파일 생성
 
             // 파일을 MultipartFile로 변환
             FileSystemResource resource = new FileSystemResource(tempFile);
@@ -197,16 +200,13 @@ public class SummaryFileService { //Service 추후 분할 예정
                 tempFile.delete();  // 방금 생성한 파일 삭제
             }
         }
-
-        SummaryFile summaryFile = SaveSummaryFile(token, typeConvertSummaryDto); //PROBLEM_FILE 테이블 저장
-
-        return SaveSummarys(summaryFile, aiGenerateSummaryResponseDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
     }
 
-    private File CreateTempFile(String fileName, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDtoArray,PdfType pdfType)  throws IOException { // String 기반으로 File 생성
+
+    private File CreateTempFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
         File tempFile = File.createTempFile(fileName, ".pdf");
-        String content = ConvertToStringBySummary(aiGenerateSummaryResponseDtoArray); //파일 내용 변환
+        String content = ConvertToStringBySummary(aiGenerateSummaryFromAiDto); //파일 내용 변환
 
 
         try (PDDocument document = new PDDocument()) {
@@ -214,7 +214,9 @@ public class SummaryFileService { //Service 추후 분할 예정
             document.addPage(page);
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 contentStream.beginText();
-                contentStream.setFont(PDType1Font.COURIER, 12);
+
+                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+                contentStream.setFont(font, 12);
                 contentStream.newLineAtOffset(10, 700);
 
                 String[] lines = content.split("\n");
@@ -230,8 +232,20 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public static String ConvertToStringBySummary(AiGenerateSummaryResponseDto aiGenerateSummaryResponseDtoArray) { // 파일의 내용 변환 함수
-        if (aiGenerateSummaryResponseDtoArray == null ) {
+    public static String convertPdfToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
+        try (InputStream is = pdfFile.getInputStream()) {
+            PDDocument document = PDDocument.load(is);
+            PDFTextStripper textStripper = new PDFTextStripper();
+            String text = textStripper.getText(document);
+            document.close();
+            return text;
+        }
+    }
+
+
+
+    public static String ConvertToStringBySummary(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDtoArray) { // 파일의 내용 변환 함수
+        if (aiGenerateSummaryFromAiDtoArray == null ) {
             return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
         }
 
@@ -239,8 +253,8 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         int summaryNumber =1;
 
-        stringBuffer.append(summaryNumber+++". ").append(aiGenerateSummaryResponseDtoArray.getSummaryTitle()).append("\n\n");   //요점정리 이름
-        stringBuffer.append(" ").append(aiGenerateSummaryResponseDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
+        stringBuffer.append(summaryNumber+++". ").append(aiGenerateSummaryFromAiDtoArray.getSummaryTitle()).append("\n\n");   //요점정리 이름
+        stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
 
 
 
@@ -248,47 +262,47 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public static String ConvertToStringByAnswer(AiGenerateSummaryResponseDto[] aiGenerateSummaryResponseDtoArray) { // 파일의 내용 변환 함수
-        if (aiGenerateSummaryResponseDtoArray == null || aiGenerateSummaryResponseDtoArray.length == 0) {
-            return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
-        }
-
-        StringBuffer stringBuffer = new StringBuffer();
-
-        int summaryNumber =1;
-
-        for (AiGenerateSummaryResponseDto aiDto : aiGenerateSummaryResponseDtoArray) {
-
-            stringBuffer.append(summaryNumber+++". "+aiDto.getSummaryContent()); // 문제 정답
-            stringBuffer.append("\n\n");
-        }
-
-        return stringBuffer.toString();
-    }
 
 
-    public SummaryFile SaveSummaryFile(String token , TypeConvertSummaryDto typeConvertSummaryDto){
+    public SummaryFile SaveSummaryFile(String token , AiGenerateSummaryDto aiGenerateSummaryDto){
         SummaryFile summaryFile = SummaryFile.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
-                .fileName(typeConvertSummaryDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
-                .fileKey(typeConvertSummaryDto.getFileName())
+                .fileName(aiGenerateSummaryDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
+                .fileKey(aiGenerateSummaryDto.getFileName())
                 .dtype(DType.SUMMARY)
-                .summaryAmount(typeConvertSummaryDto.getAmount())
+                .summaryAmount(aiGenerateSummaryDto.getAmount())
                 .build();
 
         summaryFileRepository.save(summaryFile);
         return summaryFile;
     }
 
-    public AiGeneratedSummary SaveSummarys (SummaryFile summaryFile, AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto){
+    public AiGeneratedSummary SaveSummarys (SummaryFile summaryFile, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto){
         AiGeneratedSummary aiGeneratedSummary = AiGeneratedSummary.builder() // 문제생성
                 .summaryFile(summaryFile)
-                .summaryTitle(aiGenerateSummaryResponseDto.getSummaryTitle())
-                .summaryContent(aiGenerateSummaryResponseDto.getSummaryContent())
+                .summaryTitle(aiGenerateSummaryFromAiDto.getSummaryTitle())
+                .summaryContent(aiGenerateSummaryFromAiDto.getSummaryContent())
                 .build();
 
         aiGeneratedSummaryRepository.save(aiGeneratedSummary);
 
         return aiGeneratedSummary;
         }
+
+
+
+    public List<FileListResponseDto> allAiSummaryFileList(String token){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
+
+        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(token); // 요점정리파일 이름 가져오기
+
+        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
+                .map(file -> new FileListResponseDto(
+                        file.getFileId(),
+                        file.getFileName(),
+                        file.getDtype(),
+                        file.getCreateTime()
+                ))
+                .collect(Collectors.toList());
+        return fileListResponseDtoList;
+    }
 }

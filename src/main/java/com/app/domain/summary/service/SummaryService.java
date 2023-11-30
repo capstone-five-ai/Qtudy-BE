@@ -1,12 +1,12 @@
 package com.app.domain.summary.service;
 
+
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.summary.dto.Summary.Request.GetSummaryRequestDto;
 import com.app.domain.summary.dto.Summary.Request.UpdateSummaryRequestDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
-import com.app.domain.summary.entity.SummaryFile;
 import com.app.domain.summary.repository.SummaryFileRepository;
 import com.app.global.config.S3.S3Service;
 import com.app.domain.summary.repository.AiGeneratedSummaryRepository;
@@ -31,8 +31,7 @@ public class SummaryService {
     @Autowired
     private S3Service s3Service;
 
-    public AiGeneratedSummary GetSummary(String token, GetSummaryRequestDto getSummaryRequestDto){
-        int aiGeneratedSummaryId = getSummaryRequestDto.getAiGeneratedSummaryId();
+    public AiGeneratedSummary GetSummary(String token,int aiGeneratedSummaryId){
 
         Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId);
         if (aiGeneratedSummaryOptional.isPresent()) {
@@ -43,25 +42,6 @@ public class SummaryService {
 
     }
 
-    public AiGeneratedSummary UpdateSummary(String token, UpdateSummaryRequestDto updateSummaryRequestDto) {
-        int aiGeneratedSummaryId = updateSummaryRequestDto.getAiGeneratedSummaryId();
-        String summaryTitle = updateSummaryRequestDto.getSummaryTitle();
-        String summaryContent = updateSummaryRequestDto.getSummaryContent();
-
-        Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId);
-        if (aiGeneratedSummaryOptional.isPresent()) {
-            AiGeneratedSummary aiGeneratedSummary = aiGeneratedSummaryOptional.get();
-            aiGeneratedSummary.setSummaryTitle(summaryTitle);
-            aiGeneratedSummary.setSummaryContent(summaryContent);
-
-            aiGeneratedSummaryRepository.save(aiGeneratedSummary);
-
-            return aiGeneratedSummary;
-        } else {
-            //추후 에러 처리 예정
-        }
-        return null;
-    }
 
     public AiGeneratedSummary updateSummary(MemberSavedSummary summary, Integer summaryId){
         AiGeneratedSummary preSummary = findVerifiedSummaryBySummaryId(summaryId);
