@@ -2,6 +2,8 @@ package com.app.domain.category.controller;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.categorizedProblem.service.CategorizedProblemService;
+import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.categorizedSummary.service.CategorizedSummaryService;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.dto.CategoryDto;
 import com.app.domain.category.entity.Category;
@@ -28,6 +30,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     private final CategorizedProblemService categorizedProblemService;
+
+    private final CategorizedSummaryService categorizedSummaryService;
 
     private final CategoryMapper categoryMapper;
 
@@ -80,11 +84,20 @@ public class CategoryController {
                                       @RequestParam(value = "size", defaultValue = "10") int size) {
         Category category = categoryService.findVerifiedCategoryByCategoryId(categoryId);
 
+        if(category.getCategoryType() == CategoryType.PROBLEM){
         Page<CategorizedProblem> categorizedProblemsPage = categorizedProblemService.findCategorizedProblemsByCategoryId(categoryId, page-1, size);
 
         CategoryDto.CategoryProblemPageResponse response = categoryMapper.categoryToCategoryProblemPageResponse(category, categorizedProblemsPage);
 
         return ResponseEntity.ok(response);
+        }else{
+            Page<CategorizedSummary> categorizedSummaryPage = categorizedSummaryService.findCategorziedSummarysByCategoryId(categoryId, page - 1, size);
+
+            CategoryDto.CategorySummaryPageResponse response = categoryMapper.categoryToCategorySummaryPageResponse(category, categorizedSummaryPage);
+
+            return ResponseEntity.ok(response);
+        }
+
     }
 
 }

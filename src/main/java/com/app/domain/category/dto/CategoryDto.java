@@ -1,6 +1,7 @@
 package com.app.domain.category.dto;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
+import com.app.domain.categorizedSummary.entity.CategorizedSummary;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.MultiResponseDto;
@@ -76,14 +77,14 @@ public class CategoryDto {
         private List<CategorizedProblemResponse> categorizedProblemResponses;
 
         public static CategoryProblemResponse of(Category category){
-            List<CategorizedProblemResponse> categorizedProblemResponses = category.getCategorizedProblems().stream()
+            List<CategorizedProblemResponse> categorizedProblemResponsesList = category.getCategorizedProblems().stream()
                     .map(CategorizedProblemResponse::of)
                     .collect(Collectors.toList());
 
             return CategoryProblemResponse.builder()
                     .categoryId(category.getCategoryId())
                     .categoryName(category.getCategoryName())
-                    .categorizedProblemResponses(categorizedProblemResponses)
+                    .categorizedProblemResponses(categorizedProblemResponsesList)
                     .build();
         }
     }
@@ -121,5 +122,84 @@ public class CategoryDto {
         }
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategorySummaryPageResponse {
+        private Long categoryId;
 
+        private String categoryName;
+        private MultiResponseDto<CategorizedSummaryResponse> categorizedProblemResponses;
+        public static CategorySummaryPageResponse of(Category category,
+                                                     Page<CategorizedSummary> categorizedSummarysPage){
+            List<CategorizedSummaryResponse> categorizedSummaryResponses = categorizedSummarysPage.getContent().stream()
+                    .map(CategorizedSummaryResponse::of)
+                    .collect(Collectors.toList());
+
+            MultiResponseDto<CategorizedSummaryResponse> multiResponseDto = new MultiResponseDto<>(categorizedSummaryResponses, categorizedSummarysPage);
+
+            return CategorySummaryPageResponse.builder()
+                    .categoryId(category.getCategoryId())
+                    .categoryName(category.getCategoryName())
+                    .categorizedProblemResponses(multiResponseDto)
+                    .build();
+        }
+    }
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategorySummaryResponse {
+        private Long categoryId;
+
+        private String categoryName;
+
+        private List<CategorizedSummaryResponse> categorizedSummaryResponses;
+        public static CategorySummaryResponse of(Category category){
+            List<CategorizedSummaryResponse> categorizedSummaryResponsesList = category.getCategorizedSummaries().stream()
+                    .map(CategorizedSummaryResponse::of)
+                    .collect(Collectors.toList());
+
+            return CategorySummaryResponse.builder()
+                    .categoryId(category.getCategoryId())
+                    .categoryName(category.getCategoryName())
+                    .categorizedSummaryResponses(categorizedSummaryResponsesList)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategorizedSummaryResponse {
+        private Long categorizedSummaryId;
+
+        private GeneratedType summaryGeneratedBy;
+
+        private String summaryTilte;
+
+        private String summaryContent;
+
+        private LocalDateTime createTime;
+
+        private LocalDateTime updateTime;
+
+        public static CategorizedSummaryResponse of(CategorizedSummary categorizedSummary) {
+            return CategorizedSummaryResponse.builder()
+                    .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
+                    .summaryGeneratedBy(categorizedSummary.getMemberSavedSummary() != null ?
+                            GeneratedType.MEMBER : GeneratedType.AI)
+                    .summaryTilte(categorizedSummary.getMemberSavedSummary() != null ?
+                            categorizedSummary.getMemberSavedSummary().getSummaryTitle() :
+                            categorizedSummary.getAiGeneratedSummary().getSummaryTitle())
+                    .summaryContent(categorizedSummary.getMemberSavedSummary() != null ?
+                            categorizedSummary.getMemberSavedSummary().getSummaryContent() :
+                            categorizedSummary.getAiGeneratedSummary().getSummaryContent())
+                    .createTime(categorizedSummary.getCreateTime())
+                    .updateTime(categorizedSummary.getUpdateTime())
+                    .build();
+        }
+    }
 }

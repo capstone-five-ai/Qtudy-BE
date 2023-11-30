@@ -11,7 +11,10 @@ import java.util.List;
 
 @Entity
 @Getter
-@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+//@SuperBuilder
+@Builder
 public class MemberSavedSummary extends BaseEntity {
     @Id
     @Column(name = "MEMBER_SAVED_SUMMARY_ID")

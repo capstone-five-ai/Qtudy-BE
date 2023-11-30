@@ -46,7 +46,7 @@ public class MemberSavedSummaryService {
 
         memberSavedSummaryRepository.deleteById(summaryId);
     }
-    private MemberSavedSummary findVerifiedSummaryBySummaryId(Long summaryId){
+    public MemberSavedSummary findVerifiedSummaryBySummaryId(Long summaryId){
         return memberSavedSummaryRepository.findById(summaryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SUMMARY_NOT_EXISTS));
     }
