@@ -21,14 +21,4 @@ public class RequestSummaryToAiByTextDto {
     private ProblemDifficulty difficulty;
     private String fileName;
 
-    public ProblemFile toEntity() { // DTO -> ENTITY 변환 메서드
-        return ProblemFile.builder()
-                //.memberId(1)     (pk값이라 일단 제거)
-                .dtype(DType.PROBLEM)
-                .problemDifficulty(difficulty)
-                .problemAmount(amount)
-                .problemType(type)
-                .build();
-    }
-
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-public class AiGenerateProblemToAiDto { // 객관식 받아오는 DTO
+public class AiGenerateProblemFromAiDto { // 객관식 받아오는 DTO
 
     private String problemName;
     private List<String> problemChoices;

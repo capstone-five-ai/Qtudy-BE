@@ -37,8 +37,8 @@ public class ProblemFileController { // Controller 추후 분할 예정
     }
 
     @PostMapping(value = "/generateProblemFileByImage",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE) // 이미지(png,jpg)기반 문제파일 생성
-    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemImageByImage(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> imageFile, @ModelAttribute AiGenerateProblemDto aiGenerateProblemDto) {
-        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByFile(token,imageFile, aiGenerateProblemDto, FileType.JPG); // pdf List 전체 다 추가
+    public ResponseEntity<List<AiGeneratedProblemResponseDto>> AiGenerateProblemImageByImage(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> file, @ModelAttribute AiGenerateProblemDto aiGenerateProblemDto) {
+        List<AiGeneratedProblem> problems = problemFileService.AiGenerateProblemFileByFile(token,file, aiGenerateProblemDto, FileType.JPG); // pdf List 전체 다 추가
 
         List<AiGeneratedProblemResponseDto> responseDtos = problems.stream()
                 .map(AiGeneratedProblemResponseDto::ConvertToProblem)
