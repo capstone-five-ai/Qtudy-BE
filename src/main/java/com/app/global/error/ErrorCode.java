@@ -29,12 +29,15 @@ public enum ErrorCode {
     CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "C-001", "해당 카테고리는 존재하지 않습니다"),
     CATEGORY_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "C-002", "이미 존재하는 카테고리 입니다."),
 
-    //카테고리화 문제
+    //카테고리화 문제, 요점정리
     FK_BOTH_EXISTS(HttpStatus.BAD_REQUEST, "CP-001", "AI와 Mebmer 둘 중 하나만 설정되어야 합니다"),
     FK_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CP-002", "AI와 Member 둘 중 하나는 설정되어야 합니다."),
 
     DUPLICATE_CATEGORIZED_PROBLEM(HttpStatus.BAD_REQUEST, "CP-003", "이미 카테고리에 존재하는 문제입니다."),
     CATEGORIZED_PROBLEM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CP-004", "해당 카테고리별 문제는 존재하지 않습니다"),
+
+    DUPLICATE_CATEGORIZED_SUMMARY(HttpStatus.BAD_REQUEST, "CS-001", "이미 카테고리에 존재하는 요점정리입니다."),
+    CATEGORIZED_SUMMARY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "CS-002", "해당 카테고리별 요점정리는 존재하지 않습니다"),
     // 회원
     INVALID_MEMBER_TYPE(HttpStatus.BAD_REQUEST, "M-001", "잘못된 회원 타입 입니다.(memberType : KAKAO)"),
     ALREADY_REGISTERED_MEMBER(HttpStatus.BAD_REQUEST, "M-002", "이미 가입된 회원 입니다."),
