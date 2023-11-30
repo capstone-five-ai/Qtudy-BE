@@ -35,5 +35,11 @@ public class AiGeneratedSummary extends BaseEntity {
     private String summaryContent;
 
 
+    public void updateSummaryTitle(String summaryTitle) {
+        this.summaryTitle = summaryTitle;
+    }
 
+    public void updateSummaryContent(String summaryContent) {
+        this.summaryContent = summaryContent;
+    }
 }
