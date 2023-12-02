@@ -36,8 +36,8 @@ public class File extends BaseEntity {
     @Column(name = "FILE_NAME", length = 100)
     private String fileName;
 
-    @Column(name = "FILE_KEY", length = 100, unique = true)
-    private String fileKey;
+    /*@Column(name = "FILE_KEY", length = 100, unique = true)
+    private String fileKey;*/
 
 
     @Column(name = "DTYPE")
