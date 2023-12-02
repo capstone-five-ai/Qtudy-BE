@@ -67,7 +67,5 @@ public class ProblemFileController { // Controller 추후 분할 예정
 
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
-
-
 }
 

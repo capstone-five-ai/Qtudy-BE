@@ -82,11 +82,10 @@ public class SummaryFileService { //Service 추후 분할 예정
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
 
-        UploadS3AndSaveFile(aiGenerateSummaryFromAiDto, token, aiGenerateSummaryDto);
+        SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+        aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
 
-        SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //PROBLEM_FILE 테이블 저장
-
-        aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
+        UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
 
         return aiGeneratedSummary;
     }
@@ -95,13 +94,13 @@ public class SummaryFileService { //Service 추후 분할 예정
     public AiGeneratedSummary AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
         String url = "http://localhost:5000/create/summary";
         AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
-        AiGeneratedSummary aiGeneratedSummary = null;
+        AiGeneratedSummary summary = null;
 
 
         switch (fileType){  //File 타입 체크
             case PDF: // PDF 타입일경우
                 try {
-                    String pdfText = convertPdfToString(File.get(0));
+                    String pdfText = convertFileToString(File.get(0));
                     String jsonBody;   // AI 문제 DTO를 JSON 문자열로 변환
 
                     HttpHeaders headers = new HttpHeaders();  // HTTP 요청 헤더 설정
@@ -113,7 +112,10 @@ public class SummaryFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                    UploadS3AndSaveFile(aiGenerateSummaryFromAiDto, token, aiGenerateSummaryDto);
+                    SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+                    summary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
+
+                    UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
                 } catch (JsonProcessingException e) {
                     throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
                 } catch (IOException e) {
@@ -142,56 +144,34 @@ public class SummaryFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers); // // HTTP 요청 전송
                 aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                UploadS3AndSaveFile(aiGenerateSummaryFromAiDto, token, aiGenerateSummaryDto);
+                SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+                summary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
+
+                UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
         }
 
-        SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //PROBLEM_FILE 테이블 저장
 
-        aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
-
-        return aiGeneratedSummary;
+        return summary;
     }
 
 
-    public void UploadS3AndSaveFile(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, String token, AiGenerateSummaryDto aiGenerateSummaryDto) {
+    public void UploadS3(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, AiGenerateSummaryDto aiGenerateSummaryDto, int fileId) {
         File tempFile = null;
 
-        try { // 문제 PDF 생성
-            String fileName = token+"_"+ aiGenerateSummaryDto.getFileName()+"_summary.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-            tempFile = CreateTempFile(fileName, aiGenerateSummaryFromAiDto,PdfType.SUMMARY); // 파일 생성
+        try { // 요점정리 PDF 생성
+            String S3PdfName = fileId +"_SUMMARY.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
+            tempFile = CreatePdfFile(aiGenerateSummaryDto.getFileName(), aiGenerateSummaryFromAiDto,PdfType.SUMMARY); // 파일 생성
 
             // 파일을 MultipartFile로 변환
             FileSystemResource resource = new FileSystemResource(tempFile);
-            MultipartFile multipartFile = new MockMultipartFile(fileName, resource.getFilename(), "application/pdf", resource.getInputStream());
+            MultipartFile multipartFile = new MockMultipartFile(S3PdfName, resource.getFilename(), "application/pdf", resource.getInputStream());
 
             //생성된 파일을 S3에 업로드
             S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
-
-        } catch (IOException e) {
-            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
-        } finally {
-            if (tempFile != null) {
-                tempFile.delete();  // 방금 생성한 파일 삭제
-            }
-        }
-
-
-
-
-        try { // 정답 PDF 생성
-            String fileName = token+"_"+ aiGenerateSummaryDto.getFileName()+"_answer.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-            tempFile = CreateTempFile(fileName, aiGenerateSummaryFromAiDto,PdfType.ANSWER); // 파일 생성
-
-            // 파일을 MultipartFile로 변환
-            FileSystemResource resource = new FileSystemResource(tempFile);
-            MultipartFile multipartFile = new MockMultipartFile(fileName, resource.getFilename(), "application/pdf", resource.getInputStream());
-
-            //생성된 파일을 S3에 업로드
-            S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
@@ -203,7 +183,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    private File CreateTempFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
+    private File CreatePdfFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
         File tempFile = File.createTempFile(fileName, ".pdf");
         String content = ConvertToStringBySummary(aiGenerateSummaryFromAiDto); //파일 내용 변환
@@ -231,8 +211,8 @@ public class SummaryFileService { //Service 추후 분할 예정
         return tempFile;
     }
 
-
-    public static String convertPdfToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
+    // 사용자 입력 PDF를 String 문자열로 바꾸는 함수
+    public static String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
         try (InputStream is = pdfFile.getInputStream()) {
             PDDocument document = PDDocument.load(is);
             PDFTextStripper textStripper = new PDFTextStripper();
@@ -243,7 +223,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-
+    //PDF 파일에 사용할 문자열변환 (요점정리PDF.ver)
     public static String ConvertToStringBySummary(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDtoArray) { // 파일의 내용 변환 함수
         if (aiGenerateSummaryFromAiDtoArray == null ) {
             return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
@@ -267,8 +247,8 @@ public class SummaryFileService { //Service 추후 분할 예정
     public SummaryFile SaveSummaryFile(String token , AiGenerateSummaryDto aiGenerateSummaryDto){
         SummaryFile summaryFile = SummaryFile.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
-                .fileName(aiGenerateSummaryDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
-                .fileKey(aiGenerateSummaryDto.getFileName())
+                .fileName(aiGenerateSummaryDto.getFileName())
+                //.fileKey()
                 .dtype(DType.SUMMARY)
                 .summaryAmount(aiGenerateSummaryDto.getAmount())
                 .build();
@@ -280,7 +260,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     public AiGeneratedSummary SaveSummarys (SummaryFile summaryFile, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto){
         AiGeneratedSummary aiGeneratedSummary = AiGeneratedSummary.builder() // 문제생성
                 .summaryFile(summaryFile)
-                .summaryTitle(aiGenerateSummaryFromAiDto.getSummaryTitle())
+                .summaryTitle(summaryFile.getFileName()) // summaryTitle = summartFileName
                 .summaryContent(aiGenerateSummaryFromAiDto.getSummaryContent())
                 .build();
 

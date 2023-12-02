@@ -64,13 +64,13 @@ public class FileService {
             File file = optionalFiles.get();
             switch(pdfType){
                 case PROBLEM: //문제PDF
-                    UrlKey = ConvertUrlByKey(file.getFileKey() + "_PROBLEM.pdf");
+                    UrlKey = ConvertUrlByKey(file.getFileId() + "_PROBLEM.pdf");
                     break;
                 case ANSWER: //정답PDF
-                    UrlKey = ConvertUrlByKey(file.getFileKey() + "_ANSWER.pdf");
+                    UrlKey = ConvertUrlByKey(file.getFileId() + "_ANSWER.pdf");
                     break;
                 case SUMMARY: //요점정리PDF
-                    UrlKey = ConvertUrlByKey(file.getFileKey() + "_SUMMARY.pdf");
+                    UrlKey = ConvertUrlByKey(file.getFileId() + "_SUMMARY.pdf");
                     break;
             }
         }else{
