@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,6 +114,7 @@ public class ProblemFileService { //Service 추후 분할 예정
         AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDto;
         List<AiGeneratedProblem> problems = new ArrayList<>();
 
+
         switch (aiGenerateProblemDto.getType()) {  //Problem 타입 체크
             case MULTIPLE:
                 url = "http://localhost:5000/create/problem/mcq";
@@ -154,10 +157,25 @@ public class ProblemFileService { //Service 추후 분할 예정
 
                 MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
                 for (MultipartFile file : File) {
+                    //String encodedString = Base64.getEncoder().encodeToString(file.getBytes());
+                    //map.add("files", encodedString); // 파일리스트 추가
+
                     try {
-                        map.add("files", new ByteArrayResource(file.getBytes())); // 파일리스트 추가
+                        //파일 데이터를 바이트 배열로 읽어옴
+                        byte[] fileBytes = file.getBytes();
+                        //ByteArrayResource를 사용해 파일 데이터를 담은 자원 생성
+                        ByteArrayResource resource = new ByteArrayResource(fileBytes) {
+                            @Override
+                            public String getFilename() {
+                                // 파일 원본 이름 반환
+                                return file.getOriginalFilename();
+                            }
+                        };
+                        //'files'라는 키로 ByteArrayResource를 추가
+                        map.add("files", resource);
                     } catch (IOException e) {
-                        throw new RuntimeException(e); // 추후 에러처리
+                        e.printStackTrace();
+                        // 예외 처리 로직 추가
                     }
                 }
 
@@ -173,6 +191,20 @@ public class ProblemFileService { //Service 추후 분할 예정
                 aiGenerateProblemFromAiDto = restTemplate.postForObject(url, request, AiGenerateProblemFromAiDto[].class); // http 응답 받아옴
 
                 ProblemFile problemFile = SaveProblemFile(token, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
+
+                /*System.out.println(File.get(0).getResource());
+                try {
+                    System.out.println(Base64.getEncoder().encodeToString(File.get(0).getBytes()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("=== HTTP Request Information ===");
+                System.out.println("URL: " + url);
+                System.out.println("Method: POST");
+                System.out.println("Headers: " + headers);*/
+                System.out.println("Body: " + request.getBody().get("files"));
+
+
                 problems = SaveProblems(problemFile, aiGenerateProblemFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
                 UploadS3(aiGenerateProblemFromAiDto, aiGenerateProblemDto, problemFile.getFileId()); // DTO 2개, FileId값 넘김
