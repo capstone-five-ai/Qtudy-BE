@@ -10,7 +10,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class AiGenerateSummaryFromAiDto {
-    private String fileName;
-    private String summaryTitle;
     private String summaryContent;
 }

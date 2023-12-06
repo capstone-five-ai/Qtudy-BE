@@ -19,13 +19,11 @@ public class AiGenerateProblemDto {
     private String fileName;
 
 
-    public RequestProblemToAiByTextDto toTextDto(String text) {
+    public RequestProblemToAiByTextDto toTextDto(String pdfText) {
         RequestProblemToAiByTextDto textDto = new RequestProblemToAiByTextDto();
-        textDto.setText(text); // Assuming you have a method to convert MultipartFile to text
-        textDto.setType(this.type);
+        textDto.setText(pdfText); // Assuming you have a method to convert MultipartFile to text
         textDto.setAmount(this.amount);
         textDto.setDifficulty(this.difficulty);
-        textDto.setFileName(this.fileName);
         return textDto;
     }
 

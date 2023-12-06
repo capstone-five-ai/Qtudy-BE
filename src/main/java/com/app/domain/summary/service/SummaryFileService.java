@@ -186,7 +186,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     private File CreatePdfFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
         File tempFile = File.createTempFile(fileName, ".pdf");
-        String content = ConvertToStringBySummary(aiGenerateSummaryFromAiDto); //파일 내용 변환
+        String content = ConvertToStringBySummary(fileName, aiGenerateSummaryFromAiDto); //파일 내용 변환
 
 
         try (PDDocument document = new PDDocument()) {
@@ -224,7 +224,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
 
     //PDF 파일에 사용할 문자열변환 (요점정리PDF.ver)
-    public static String ConvertToStringBySummary(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDtoArray) { // 파일의 내용 변환 함수
+    public static String ConvertToStringBySummary(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDtoArray) { // 파일의 내용 변환 함수
         if (aiGenerateSummaryFromAiDtoArray == null ) {
             return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
         }
@@ -233,7 +233,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         int summaryNumber =1;
 
-        stringBuffer.append(summaryNumber+++". ").append(aiGenerateSummaryFromAiDtoArray.getSummaryTitle()).append("\n\n");   //요점정리 이름
+        stringBuffer.append(summaryNumber+++". ").append(fileName).append("\n\n");   //요점정리 이름
         stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
 
 
@@ -248,7 +248,6 @@ public class SummaryFileService { //Service 추후 분할 예정
         SummaryFile summaryFile = SummaryFile.builder()
                 .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateSummaryDto.getFileName())
-                //.fileKey()
                 .dtype(DType.SUMMARY)
                 .summaryAmount(aiGenerateSummaryDto.getAmount())
                 .build();
@@ -260,7 +259,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     public AiGeneratedSummary SaveSummarys (SummaryFile summaryFile, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto){
         AiGeneratedSummary aiGeneratedSummary = AiGeneratedSummary.builder() // 문제생성
                 .summaryFile(summaryFile)
-                .summaryTitle(summaryFile.getFileName()) // summaryTitle = summartFileName
+                .summaryTitle(summaryFile.getFileName()) // 요점정리 제목 = 요점정리 파일 이름
                 .summaryContent(aiGenerateSummaryFromAiDto.getSummaryContent())
                 .build();
 

@@ -90,7 +90,7 @@ public class ProblemFileService { //Service 추후 분할 예정
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             ObjectMapper objectMapper = new ObjectMapper();  // JSON 데이터로 변환하기 위한 ObjectMapper 생성
-            jsonBody = objectMapper.writeValueAsString(aiGenerateProblemDto); //HTTP BODY 생성
+            jsonBody = objectMapper.writeValueAsString(aiGenerateProblemDto.toTextDto(text)); //HTTP BODY 생성
 
             HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
             aiGenerateProblemFromAiDto = restTemplate.postForObject(url, request, AiGenerateProblemFromAiDto[].class); // http 응답 받아옴
