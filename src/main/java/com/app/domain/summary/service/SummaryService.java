@@ -4,8 +4,6 @@ package com.app.domain.summary.service;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
 import com.app.domain.problem.entity.AiGeneratedProblem;
-import com.app.domain.summary.dto.Summary.Request.GetSummaryRequestDto;
-import com.app.domain.summary.dto.Summary.Request.UpdateSummaryRequestDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.domain.summary.repository.SummaryFileRepository;
 import com.app.global.config.S3.S3Service;

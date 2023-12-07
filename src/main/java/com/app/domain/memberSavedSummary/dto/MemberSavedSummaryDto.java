@@ -31,4 +31,11 @@ public class MemberSavedSummaryDto {
         private String summaryTitle;
         private String summaryContent;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class pdfResponse{
+        private byte[] pdfContent;
+        private String title;
+    }
 }
