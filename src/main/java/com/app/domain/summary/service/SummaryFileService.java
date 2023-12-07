@@ -251,8 +251,6 @@ public class SummaryFileService { //Service 추후 분할 예정
         stringBuffer.append(fileName).append("\n\n");   //요점정리 이름
         stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
 
-
-
         return stringBuffer.toString();
     }
 
