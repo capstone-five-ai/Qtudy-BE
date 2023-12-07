@@ -1,9 +1,6 @@
 package com.app.domain.problem.service;
 
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
-import com.app.domain.problem.dto.Problem.Request.CommentaryRequestDto;
-import com.app.domain.problem.dto.Problem.Request.FileNameRequestDto;
-import com.app.domain.problem.dto.Problem.Request.UpdateProblemChoicesRequestDto;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.problem.entity.ProblemFile;
 import com.app.domain.problem.repository.AiGeneratedProblemRepository;
