@@ -128,10 +128,25 @@ public class SummaryFileService { //Service 추후 분할 예정
 
                 MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
                 for (MultipartFile file : File) {
+                    //String encodedString = Base64.getEncoder().encodeToString(file.getBytes());
+                    //map.add("files", encodedString); // 파일리스트 추가
+
                     try {
-                        map.add("files", new ByteArrayResource(file.getBytes())); // 파일리스트 추가
+                        //파일 데이터를 바이트 배열로 읽어옴
+                        byte[] fileBytes = file.getBytes();
+                        //ByteArrayResource를 사용해 파일 데이터를 담은 자원 생성
+                        ByteArrayResource resource = new ByteArrayResource(fileBytes) {
+                            @Override
+                            public String getFilename() {
+                                // 파일 원본 이름 반환
+                                return file.getOriginalFilename();
+                            }
+                        };
+                        //'files'라는 키로 ByteArrayResource를 추가
+                        map.add("files", resource);
                     } catch (IOException e) {
-                        throw new RuntimeException(e); // 추후 에러처리
+                        e.printStackTrace();
+                        // 예외 처리 로직 추가
                     }
                 }
 
@@ -233,7 +248,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         int summaryNumber =1;
 
-        stringBuffer.append(summaryNumber+++". ").append(fileName).append("\n\n");   //요점정리 이름
+        stringBuffer.append(fileName).append("\n\n");   //요점정리 이름
         stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
 
 
