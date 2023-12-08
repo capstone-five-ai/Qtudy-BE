@@ -26,17 +26,17 @@ public class ProblemService { //Service 추후 분할 예정
 
 
 
-    public List<AiGeneratedProblem> GetFileProblems(String token, int fileId) {
+    public List<AiGeneratedProblem> GetFileProblems( int fileId) {
         ProblemFile problemFile;
         List<AiGeneratedProblem> problems;
 
-        problemFile = problemFileRepository.findByMemberIdAndFileId(token,fileId);
+        problemFile = problemFileRepository.findByFileId(fileId);
         problems = aiGeneratedProblemRepository.findByProblemFile_FileId(problemFile.getFileId());
 
         return problems;
     }
 
-    public AiGeneratedProblem GetProblem(String token,int aiGeneratedProblemId) {
+    public AiGeneratedProblem GetProblem(String token,int aiGeneratedProblemId) { //삭제 예정
 
         Optional<AiGeneratedProblem> optionalAiGeneratedProblem;
 

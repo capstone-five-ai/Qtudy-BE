@@ -19,8 +19,8 @@ public class ProblemController { // Controller 추후 분할 예정
     ProblemService problemService;
 
     @GetMapping("/getFileProblems/{fileId}") // 파일의 전체 문제정보를 가져옴
-    public ResponseEntity<List<ProblemResponseDto>> GetFileProblems(@RequestHeader("Authorization") String token, @PathVariable int fileId) {
-        List<AiGeneratedProblem> problems = problemService.GetFileProblems(token, fileId);
+    public ResponseEntity<List<ProblemResponseDto>> GetFileProblems( @PathVariable int fileId) {
+        List<AiGeneratedProblem> problems = problemService.GetFileProblems( fileId);
 
         List<ProblemResponseDto> responseDtos = problems.stream()
                 .map(ProblemResponseDto::ConvertToProblem)
@@ -29,7 +29,7 @@ public class ProblemController { // Controller 추후 분할 예정
         return ResponseEntity.ok(responseDtos);
     }
 
-    @GetMapping("/getProblem/{aiGeneratedProblemId}") // 파일의 단일 문제정보를 가져옴
+    @GetMapping("/getProblem/{aiGeneratedProblemId}") // 파일의 단일 문제정보를 가져옴 (삭제 예정)
     public ResponseEntity<ProblemResponseDto> GetProblem(@RequestHeader("Authorization") String token, @PathVariable int aiGeneratedProblemId) {
         AiGeneratedProblem aiGeneratedProblem = problemService.GetProblem(token, aiGeneratedProblemId);
 

@@ -1,6 +1,7 @@
 package com.app.domain.summary.repository;
 
 import com.app.domain.file.entity.File;
+import com.app.domain.member.entity.Member;
 import com.app.domain.summary.entity.SummaryFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,5 +15,5 @@ public interface SummaryFileRepository extends JpaRepository<SummaryFile,Integer
 
     Optional<SummaryFile> findByFileName(String FileName);
 
-    List<SummaryFile> findByMemberId(String memberId);
+    List<SummaryFile> findByMemberId(Member member);
 }

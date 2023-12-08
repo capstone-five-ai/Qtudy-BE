@@ -34,6 +34,7 @@ public enum ErrorCode {
 
 
 
+    NOT_EXIST_FILE(HttpStatus.NOT_FOUND,"F-001","해당 파일이 존재하지 않습니다."),
 
     //AI 서버 통신 문제
     NOT_SENT_HTTP(HttpStatus.NO_CONTENT,"H-001","HTTP 메세지를 생성하지 못하였습니다."),

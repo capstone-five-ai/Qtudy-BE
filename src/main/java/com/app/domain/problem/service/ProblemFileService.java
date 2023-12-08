@@ -2,6 +2,8 @@ package com.app.domain.problem.service;
 
 
 import com.app.domain.file.dto.Response.FileListResponseDto;
+import com.app.domain.member.entity.Member;
+import com.app.domain.member.service.MemberService;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemDto;
 import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
 import com.app.domain.problem.entity.AiGeneratedProblem;
@@ -29,12 +31,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,12 +56,16 @@ public class ProblemFileService { //Service 추후 분할 예정
     @Autowired
     private ProblemFileRepository problemFileRepository;
     @Autowired
+    private MemberService memberService;
+    @Autowired
     private AiGeneratedProblemRepository aiGeneratedProblemRepository;
     @Autowired
     private S3Service s3Service;
 
 
-    public List<AiGeneratedProblem> AiGenerateProblemFileByText(String token, AiGenerateProblemDto aiGenerateProblemDto) {
+    @Transactional
+    public List<AiGeneratedProblem> AiGenerateProblemFileByText(HttpServletRequest httpServletRequest, AiGenerateProblemDto aiGenerateProblemDto) {
+        Member member = memberService.getLoginMember(httpServletRequest);
         String text = aiGenerateProblemDto.getText();
         ProblemType type = aiGenerateProblemDto.getType();
         Amount amount = aiGenerateProblemDto.getAmount();
@@ -98,7 +106,7 @@ public class ProblemFileService { //Service 추후 분할 예정
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
 
-        ProblemFile problemFile = SaveProblemFile(token, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
+        ProblemFile problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
         problems = SaveProblems(problemFile, aiGenerateProblemFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
         UploadS3(aiGenerateProblemFromAiDto, aiGenerateProblemDto, problemFile.getFileId());
@@ -109,7 +117,9 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public List<AiGeneratedProblem> AiGenerateProblemFileByFile(String token, List<MultipartFile> File, AiGenerateProblemDto aiGenerateProblemDto, FileType fileType) {
+    @Transactional
+    public List<AiGeneratedProblem> AiGenerateProblemFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateProblemDto aiGenerateProblemDto, FileType fileType) {
+        Member member = memberService.getLoginMember(httpServletRequest);
         String url;
         AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDto;
         List<AiGeneratedProblem> problems = new ArrayList<>();
@@ -141,7 +151,7 @@ public class ProblemFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateProblemFromAiDto = restTemplate.postForObject(url, request, AiGenerateProblemFromAiDto[].class); // http 응답 받아옴
 
-                    ProblemFile problemFile = SaveProblemFile(token, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
+                    ProblemFile problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
                     problems = SaveProblems(problemFile, aiGenerateProblemFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
                     UploadS3(aiGenerateProblemFromAiDto, aiGenerateProblemDto, problemFile.getFileId());// DTO 2개, FileId값 넘김
@@ -190,7 +200,7 @@ public class ProblemFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers); // // HTTP 요청 전송
                 aiGenerateProblemFromAiDto = restTemplate.postForObject(url, request, AiGenerateProblemFromAiDto[].class); // http 응답 받아옴
 
-                ProblemFile problemFile = SaveProblemFile(token, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
+                ProblemFile problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
 
                 /*System.out.println(File.get(0).getResource());
                 try {
@@ -266,61 +276,103 @@ public class ProblemFileService { //Service 추후 분할 예정
     //PDF 파일 생성함수
     private File CreatePdfFile(String fileName, AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDtoArray, PdfType pdfType) throws IOException { // String 기반으로 File 생성
 
+
         if (pdfType == PdfType.PROBLEM) { //문제 PDF 생성
 
             File tempFile = File.createTempFile(fileName, ".pdf");
-            String content = ConvertToStringByProblem(aiGenerateProblemFromAiDtoArray); // 파일에 넣을 파일 내용 변환 함수 호출 (Dto -> String)
-
+            String content = ConvertToStringByProblem(aiGenerateProblemFromAiDtoArray); // 파일 내용 변환
 
             try (PDDocument document = new PDDocument()) {
                 PDPage page = new PDPage();
                 document.addPage(page);
-                try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                    contentStream.beginText();
-                    PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
 
-                    contentStream.setFont(font, 12);
-                    contentStream.newLineAtOffset(10, 700);
+                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+                contentStream.beginText();
 
-                    String[] lines = content.split("\n");
-                    for (String line : lines) {
-                        contentStream.showText(line);
-                        contentStream.newLineAtOffset(0, -12); // 12는 폰트 크기에 따라 조절
+                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+                contentStream.setFont(font, 12);
+                contentStream.newLineAtOffset(10, 700);
+
+                String[] lines = content.split("\n");
+                int linesInCurrentPage = 0;
+                int maxLinesPerPage = 42;
+
+                for (String line : lines) {
+                    if (linesInCurrentPage >= maxLinesPerPage) {
+                        // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
+                        contentStream.endText();
+                        contentStream.close();
+
+                        page = new PDPage();
+                        document.addPage(page);
+
+                        contentStream = new PDPageContentStream(document, page);
+                        contentStream.beginText();
+                        contentStream.setFont(font, 12);
+                        contentStream.newLineAtOffset(10, 700);
+
+                        linesInCurrentPage = 0;
                     }
-                    contentStream.endText();
+
+                    contentStream.showText(line);
+                    contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
+                    linesInCurrentPage++;
                 }
+
+                contentStream.endText();
+                contentStream.close();
                 document.save(tempFile);
             }
+
             return tempFile;
 
-        } else if (pdfType == PdfType.ANSWER) { //정답 PDF 생성
-
-
+        } else if (pdfType == PdfType.ANSWER) { // 정답 PDF 생성
             File tempFile = File.createTempFile(fileName, ".pdf");
-            String content = ConvertToStringByAnswer(aiGenerateProblemFromAiDtoArray); //파일 내용 변환
-
+            String content = ConvertToStringByAnswer(aiGenerateProblemFromAiDtoArray); // 파일 내용 변환
 
             try (PDDocument document = new PDDocument()) {
                 PDPage page = new PDPage();
                 document.addPage(page);
-                try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                    contentStream.beginText();
-                    PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
 
-                    contentStream.setFont(font, 12);
-                    contentStream.newLineAtOffset(10, 700);
+                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+                contentStream.beginText();
 
-                    String[] lines = content.split("\n");
-                    for (String line : lines) {
-                        contentStream.showText(line);
-                        contentStream.newLineAtOffset(0, -12); // 12는 폰트 크기에 따라 조절
+                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+                contentStream.setFont(font, 12);
+                contentStream.newLineAtOffset(10, 700);
+
+                String[] lines = content.split("\n");
+                int linesInCurrentPage = 0;
+                int maxLinesPerPage = 42;
+
+                for (String line : lines) {
+                    if (linesInCurrentPage >= maxLinesPerPage) {
+                        // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
+                        contentStream.endText();
+                        contentStream.close();
+
+                        page = new PDPage();
+                        document.addPage(page);
+
+                        contentStream = new PDPageContentStream(document, page);
+                        contentStream.beginText();
+                        contentStream.setFont(font, 12);
+                        contentStream.newLineAtOffset(10, 700);
+
+                        linesInCurrentPage = 0;
                     }
-                    contentStream.endText();
+
+                    contentStream.showText(line);
+                    contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
+                    linesInCurrentPage++;
                 }
+
+                contentStream.endText();
+                contentStream.close();
                 document.save(tempFile);
             }
-            return tempFile;
 
+            return tempFile;
         }
         return null;
     }
@@ -349,16 +401,14 @@ public class ProblemFileService { //Service 추후 분할 예정
         int problemNumber = 1;
 
         for (AiGenerateProblemFromAiDto aiDto : aiGenerateProblemFromAiDtoArray) {
-            stringBuffer.append(problemNumber++ + ". ").append(aiDto.getProblemName()).append("\n");   //문제 이름
+            stringBuffer.append(problemNumber++ + ". ").append(wrapText(aiDto.getProblemName(),55)).append("\n");   //문제 이름
 
             List<String> choices = aiDto.getProblemChoices(); // 문제 보기
             if (choices != null && !choices.isEmpty()) {
                 for (int i = 0; i < choices.size(); i++) {
-                    stringBuffer.append(" ").append(i + 1).append(" ").append(choices.get(i)).append("\n");
+                    stringBuffer.append(" ").append(i + 1).append(" ").append(wrapText(choices.get(i),55)).append("\n");
                 }
             }
-
-            stringBuffer.append(aiDto.getProblemCommentary()).append("\n"); // 문제 정답
             stringBuffer.append("\n\n\n");
         }
 
@@ -379,19 +429,45 @@ public class ProblemFileService { //Service 추후 분할 예정
         for (AiGenerateProblemFromAiDto aiDto : aiGenerateProblemFromAiDtoArray) {
 
             if (aiDto.getProblemAnswer() != null) {
-                stringBuffer.append(problemNumber + ". " + aiDto.getProblemAnswer()); // 문제 정답 (객관식인 경우에만)
+                stringBuffer.append(problemNumber++ + ".  \n")
+                        .append("정답 : "+aiDto.getProblemAnswer()+"\n"); // 문제 정답 (객관식인 경우에만)
+
             }
-            stringBuffer.append(" " + String.valueOf(aiDto.getProblemCommentary())); // 해설은 객관식,주관식 둘다 필수로 있음
+            stringBuffer.append(" " + wrapText(aiDto.getProblemCommentary(),55)); // 해설은 객관식,주관식 둘다 필수로 있음
             stringBuffer.append("\n\n");
         }
 
         return stringBuffer.toString();
     }
 
+    private static String wrapText(String content, int maxLineLength) {
+        StringBuilder result = new StringBuilder();
+        int currentIndex = 0;
 
-    public ProblemFile SaveProblemFile(String token, AiGenerateProblemDto aiGenerateProblemDto) {
+        while (currentIndex < content.length()) {// 현재 인덱스부터 최대 길이만큼의 부분 문자열을 추출
+            int endIndex = Math.min(currentIndex + maxLineLength, content.length());
+            // 추출한 부분 문자열을 결과에 추가
+
+            if(content.charAt(currentIndex) == ' ') // 맨앞에 공백있을시 스킵
+                currentIndex++;
+
+            result.append(content, currentIndex, endIndex);
+
+            // 다음 줄이 있다면 줄바꿈 문자를 추가
+            if (endIndex < content.length()) {
+                result.append("\n");
+            }
+            // 현재 인덱스 업데이트
+            currentIndex = endIndex;
+        }
+
+        return result.toString();
+    }
+
+
+    public ProblemFile SaveProblemFile(Member member, AiGenerateProblemDto aiGenerateProblemDto) {
         ProblemFile problemFile = ProblemFile.builder()
-                .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
+                .memberId(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateProblemDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
                 //.fileKey() // fileKey 삭제
                 .dtype(DType.PROBLEM)
@@ -426,9 +502,10 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public List<FileListResponseDto> allAiProblemFileList(String token) { //사용자가 생성한 모든 문제파일 리스트 가져오기
+    public List<FileListResponseDto> allAiProblemFileList(HttpServletRequest httpServletRequest) { //사용자가 생성한 모든 문제파일 리스트 가져오기
+        Member member = memberService.getLoginMember(httpServletRequest);
 
-        List<ProblemFile> fileList = problemFileRepository.findByMemberId(token); // 문제파일 리스트 가져옴
+        List<ProblemFile> fileList = problemFileRepository.findByMemberId(member); // 문제파일 리스트 가져옴
         List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
                 .map(file -> new FileListResponseDto(
                         file.getFileId(),

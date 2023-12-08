@@ -6,12 +6,18 @@ import com.app.domain.file.dto.Request.UpdateFileRequestDto;
 import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.file.entity.File;
 import com.app.domain.file.repository.FileRepository;
+import com.app.domain.member.entity.Member;
+import com.app.domain.member.service.MemberService;
 import com.app.global.config.ENUM.DType;
 import com.app.global.config.ENUM.PdfType;
 import com.app.global.config.S3.S3Service;
+import com.app.global.error.ErrorCode;
+import com.app.global.error.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +30,9 @@ public class FileService {
 
     @Autowired
     private FileRepository FileRepository;
+
+    @Autowired
+    private MemberService memberService;
 
 
     /*public List<FileListResponseDto> searchFileList(String token, SearchFileByNameRequestDto searchFileByNameRequestDto){ //사용자가 생성한 특정 파일 리스트 가져오기
@@ -42,20 +51,18 @@ public class FileService {
         return fileListResponseDtoList;
     }*/
 
-    public void updateFile(String token,int fileId, UpdateFileRequestDto updateFileRequestDto){
+    public void updateFile( int fileId, UpdateFileRequestDto updateFileRequestDto){
         String newFileName = updateFileRequestDto.getNewFileName();
 
 
-        Optional<File> file = FileRepository.findByFileId(fileId);
+        File file = FileRepository.findByFileId(fileId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
 
-        file.ifPresent(entity ->{
-            entity.setFileName(newFileName);
-        });
-
-        file.ifPresent(FileRepository::save);
+        file.setFileName(newFileName);
+        FileRepository.save(file);
     }
 
-    public String downloadFile(String token, int fileId, DownloadPdfRequestDto downloadPdfRequestDto){
+    public String downloadFile( int fileId, DownloadPdfRequestDto downloadPdfRequestDto){
         PdfType pdfType = downloadPdfRequestDto.getPdfType();
         String UrlKey = null;
 
@@ -74,7 +81,7 @@ public class FileService {
                     break;
             }
         }else{
-            //추후 에러처리 할 예정
+            throw new BusinessException(ErrorCode.NOT_EXIST_FILE);
         }
         return UrlKey;
     }
@@ -84,15 +91,12 @@ public class FileService {
     }
 
 
-    public void DeleteProblemFile(String token, int fileId) {
+    @Transactional
+    public void DeleteProblemFile(int fileId) {
+        File file = FileRepository.findById(fileId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
 
-        Optional<File> optionalFile = FileRepository.findById(fileId);
-
-        if (optionalFile.isPresent()) {
-            File file = optionalFile.get();
-            FileRepository.delete(file);
-        } else {
-            // 추후 에러 처리할 예정...
-        }
+        FileRepository.delete(file);
     }
+
 }

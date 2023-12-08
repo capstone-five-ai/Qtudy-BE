@@ -2,6 +2,8 @@ package com.app.domain.summary.service;
 
 
 import com.app.domain.file.dto.Response.FileListResponseDto;
+import com.app.domain.member.entity.Member;
+import com.app.domain.member.service.MemberService;
 import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
 import com.app.domain.problem.value.S3FileInformation;
 import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryDto;
@@ -30,11 +32,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,10 +55,14 @@ public class SummaryFileService { //Service 추후 분할 예정
     @Autowired
     private AiGeneratedSummaryRepository aiGeneratedSummaryRepository;
     @Autowired
+    private MemberService memberService;
+    @Autowired
     private S3Service s3Service;
 
 
-    public AiGeneratedSummary AiGenerateSummaryFileByText(String token, AiGenerateSummaryDto aiGenerateSummaryDto) {
+    @Transactional
+    public AiGeneratedSummary AiGenerateSummaryFileByText(HttpServletRequest httpServletRequest, AiGenerateSummaryDto aiGenerateSummaryDto) {
+        Member member = memberService.getLoginMember(httpServletRequest);
         String text = aiGenerateSummaryDto.getText();
         Amount amount = aiGenerateSummaryDto.getAmount();
         String fileName = aiGenerateSummaryDto.getFileName();
@@ -82,7 +90,7 @@ public class SummaryFileService { //Service 추후 분할 예정
             throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
         }
 
-        SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+        SummaryFile summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
         aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
 
         UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
@@ -91,7 +99,9 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public AiGeneratedSummary AiGenerateSummaryFileByFile(String token, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
+    @Transactional
+    public AiGeneratedSummary AiGenerateSummaryFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
+        Member member = memberService.getLoginMember(httpServletRequest);
         String url = "http://localhost:5000/create/summary";
         AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
         AiGeneratedSummary summary = null;
@@ -112,7 +122,7 @@ public class SummaryFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                    SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+                    SummaryFile summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
                     summary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
 
                     UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
@@ -159,7 +169,7 @@ public class SummaryFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers); // // HTTP 요청 전송
                 aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                SummaryFile summaryFile = SaveSummaryFile(token, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+                SummaryFile summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
                 summary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
 
                 UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
@@ -207,22 +217,45 @@ public class SummaryFileService { //Service 추후 분할 예정
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.beginText();
 
-                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
-                contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(10, 700);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            contentStream.beginText();
 
-                String[] lines = content.split("\n");
-                for (String line : lines) {
-                    contentStream.showText(line);
-                    contentStream.newLineAtOffset(0, -12); // 12는 폰트 크기에 따라 조절
+            PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
+            contentStream.setFont(font, 12);
+            contentStream.newLineAtOffset(10, 700);
+
+            String[] lines = content.split("\n");
+            int linesInCurrentPage = 0;
+            int maxLinesPerPage = 42;
+
+            for (String line : lines) {
+                if (linesInCurrentPage >= maxLinesPerPage) {
+                    // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
+                    contentStream.endText();
+                    contentStream.close();
+
+                    page = new PDPage();
+                    document.addPage(page);
+
+                    contentStream = new PDPageContentStream(document, page);
+                    contentStream.beginText();
+                    contentStream.setFont(font, 12);
+                    contentStream.newLineAtOffset(10, 700);
+
+                    linesInCurrentPage = 0;
                 }
-                contentStream.endText();
+
+                contentStream.showText(line);
+                contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
+                linesInCurrentPage++;
             }
+
+            contentStream.endText();
+            contentStream.close();
             document.save(tempFile);
         }
+
         return tempFile;
     }
 
@@ -249,17 +282,44 @@ public class SummaryFileService { //Service 추후 분할 예정
         int summaryNumber =1;
 
         stringBuffer.append(fileName).append("\n\n");   //요점정리 이름
-        stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
+        //stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
+        stringBuffer.append(wrapText(aiGenerateSummaryFromAiDtoArray.getSummaryContent(), 55)).append("\n\n");
+
 
         return stringBuffer.toString();
+    }
+
+    private static String wrapText(String content, int maxLineLength) {
+        StringBuilder result = new StringBuilder();
+        int currentIndex = 0;
+
+        while (currentIndex < content.length()) {// 현재 인덱스부터 최대 길이만큼의 부분 문자열을 추출
+            int endIndex = Math.min(currentIndex + maxLineLength, content.length());
+            // 추출한 부분 문자열을 결과에 추가
+
+            if(content.charAt(currentIndex) == ' ') // 맨앞에 공백있을시 스킵
+                currentIndex++;
+
+            result.append(content, currentIndex, endIndex);
+
+            // 다음 줄이 있다면 줄바꿈 문자를 추가
+            if (endIndex < content.length()) {
+                result.append("\n");
+            }
+            // 현재 인덱스 업데이트
+            currentIndex = endIndex;
+        }
+
+        return result.toString();
     }
 
 
 
 
-    public SummaryFile SaveSummaryFile(String token , AiGenerateSummaryDto aiGenerateSummaryDto){
+
+    public SummaryFile SaveSummaryFile(Member member , AiGenerateSummaryDto aiGenerateSummaryDto){
         SummaryFile summaryFile = SummaryFile.builder()
-                .memberId(token)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
+                .memberId(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateSummaryDto.getFileName())
                 .dtype(DType.SUMMARY)
                 .summaryAmount(aiGenerateSummaryDto.getAmount())
@@ -282,10 +342,10 @@ public class SummaryFileService { //Service 추후 분할 예정
         }
 
 
+    public List<FileListResponseDto> allAiSummaryFileList(HttpServletRequest httpServletRequest){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
+        Member member = memberService.getLoginMember(httpServletRequest);
 
-    public List<FileListResponseDto> allAiSummaryFileList(String token){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
-
-        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(token); // 요점정리파일 이름 가져오기
+        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(member); // 요점정리파일 이름 가져오기
 
         List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
                 .map(file -> new FileListResponseDto(

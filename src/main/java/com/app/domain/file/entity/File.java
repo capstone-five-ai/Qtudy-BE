@@ -1,7 +1,10 @@
 package com.app.domain.file.entity;
 
 import com.app.domain.common.BaseEntity;
+import com.app.domain.member.entity.Member;
+import com.app.domain.problem.entity.ProblemFile;
 import com.app.global.config.ENUM.DType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -30,8 +33,12 @@ public class File extends BaseEntity {
 
 
 
-    @Column(name = "MEMBER_ID") //추후에 Members 엔티티와 연결
-    private String memberId;
+    //@Column(name = "MEMBER_ID") //추후에 Members 엔티티와 연결
+    //private String memberId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "MEMBER_ID")
+    private Member memberId;
 
     @Column(name = "FILE_NAME", length = 100)
     private String fileName;
