@@ -37,7 +37,7 @@ public class SummaryService {
     @Autowired
     private S3Service s3Service;
 
-    public AiGeneratedSummary GetSummary(String token,int aiGeneratedSummaryId){
+    public AiGeneratedSummary GetSummary(int aiGeneratedSummaryId){
 
         Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId);
         if (aiGeneratedSummaryOptional.isPresent()) {

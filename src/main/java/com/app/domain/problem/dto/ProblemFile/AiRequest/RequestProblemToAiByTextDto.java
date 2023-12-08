@@ -16,10 +16,6 @@ import lombok.Setter;
 @Getter
 public class RequestProblemToAiByTextDto {
     private String text;
-    private ProblemType type;
     private Amount amount;
     private ProblemDifficulty difficulty;
-    private String fileName;
-
-
 }

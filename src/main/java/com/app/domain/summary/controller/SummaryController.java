@@ -16,8 +16,8 @@ public class SummaryController {
 
 
     @GetMapping("/getSummary/{aiGeneratedSummaryId}") // 요점정리 가져오기
-    public ResponseEntity<GetSummaryResponseDto> GetSummary(@RequestHeader("Authorization") String token,@PathVariable int aiGeneratedSummaryId) {
-        AiGeneratedSummary aiGeneratedSummary = summaryService.GetSummary(token,aiGeneratedSummaryId);
+    public ResponseEntity<GetSummaryResponseDto> GetSummary(@PathVariable int aiGeneratedSummaryId) {
+        AiGeneratedSummary aiGeneratedSummary = summaryService.GetSummary(aiGeneratedSummaryId);
 
         GetSummaryResponseDto responseDto = GetSummaryResponseDto.ConvertToSummary(aiGeneratedSummary);
 

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,33 +28,33 @@ public class SummaryFileController {
     SummaryFileService summaryFileService;
 
     @PostMapping("/generateSummaryFileByText") // 텍스트기반 문제파일 생성
-    public ResponseEntity<AiGenerateSummaryByTextResponseDto> AiGenerateSummaryFileByText(@RequestHeader("Authorization") String token, @Valid @RequestBody AiGenerateSummaryDto aiGenerateSummaryDto) {
-        AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByText(token, aiGenerateSummaryDto);
+    public ResponseEntity<AiGenerateSummaryByTextResponseDto> AiGenerateSummaryFileByText(HttpServletRequest httpServletRequest, @Valid @RequestBody AiGenerateSummaryDto aiGenerateSummaryDto) {
+        AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByText(httpServletRequest, aiGenerateSummaryDto);
 
 
         return ResponseEntity.ok(ConvertToSummaryTextResponse(aiGeneratedSummary));
     }
 
     @PostMapping(value = "/generateSummaryFileByImage",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE) // 이미지(png,jpg)기반 문제파일 생성
-    public ResponseEntity<AiGenerateSummaryByFileResponseDto> AiGenerateSummaryImageByImage(@RequestHeader("Authorization") String token, @RequestParam("file") List<MultipartFile> imageFile, @ModelAttribute AiGenerateSummaryDto aiGenerateSummaryDto) {
-        AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByFile(token,imageFile, aiGenerateSummaryDto, FileType.JPG); // pdf List 전체 다 추가
+    public ResponseEntity<AiGenerateSummaryByFileResponseDto> AiGenerateSummaryImageByImage(HttpServletRequest httpServletRequest, @RequestParam("file") List<MultipartFile> imageFile, @ModelAttribute AiGenerateSummaryDto aiGenerateSummaryDto) {
+        AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByFile(httpServletRequest,imageFile, aiGenerateSummaryDto, FileType.JPG); // pdf List 전체 다 추가
 
 
         return ResponseEntity.ok(ConvertToSummaryFileResponse(aiGeneratedSummary));
     }
 
     @PostMapping("/generateSummaryFileByPdf") // PDF 기반 문제파일 생성
-    public ResponseEntity<AiGenerateSummaryByFileResponseDto> AiGenerateSummaryFileByPdf(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile pdfFile, @ModelAttribute AiGenerateSummaryDto aiGenerateSummaryDto) {
+    public ResponseEntity<AiGenerateSummaryByFileResponseDto> AiGenerateSummaryFileByPdf(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile pdfFile, @ModelAttribute AiGenerateSummaryDto aiGenerateSummaryDto) {
         List<MultipartFile> pdfFileList = new ArrayList<>();
         pdfFileList.add(pdfFile);
-        AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByFile(token, pdfFileList, aiGenerateSummaryDto, FileType.PDF); // List에 하나만 추가
+        AiGeneratedSummary aiGeneratedSummary = summaryFileService.AiGenerateSummaryFileByFile(httpServletRequest, pdfFileList, aiGenerateSummaryDto, FileType.PDF); // List에 하나만 추가
 
         return ResponseEntity.ok(ConvertToSummaryFileResponse(aiGeneratedSummary));
     }
 
     @GetMapping("/searchAiSummaryFileList") //사용자가 생성한 모든 요점정리 리스트 가져오기 (생성 히스토리)
-    public ResponseEntity<List<FileListResponseDto>> allAiSummaryFileList(@RequestHeader("Authorization") String token){
-        List<FileListResponseDto> fileList = summaryFileService.allAiSummaryFileList(token);
+    public ResponseEntity<List<FileListResponseDto>> allAiSummaryFileList(HttpServletRequest httpServletRequest){
+        List<FileListResponseDto> fileList = summaryFileService.allAiSummaryFileList(httpServletRequest);
 
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
