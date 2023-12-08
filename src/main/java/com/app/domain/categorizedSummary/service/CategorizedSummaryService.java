@@ -20,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -43,6 +45,19 @@ public class CategorizedSummaryService {
         CategorizedSummary categorizedSummary = createCategorizedSummaryEntity(category, memberSavedSummaryId, aiGeneratedSummaryId);
 
         return categorizedSummaryRepository.save(categorizedSummary);
+    }
+
+    public MemberSavedSummaryDto.pdfResponse createSummaryPdf(Long categorizedSummaryId) throws IOException{
+        CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
+        if (categorizedSummary.getMemberSavedSummary() != null) {
+            // MemberSavedSummary와 연관된 경우
+            Long memberSavedSummaryId = categorizedSummary.getMemberSavedSummary().getMemberSavedSummaryId();
+            return memberSavedSummaryService.createSummaryPdf(memberSavedSummaryId);
+        }else{
+            // AiGeneratedSummary와 연관된 경우
+            Integer aiGeneratedSummaryId = categorizedSummary.getAiGeneratedSummary().getAiGeneratedSummaryId();
+            return aiGeneratedSummaryService.createSummaryPdf(aiGeneratedSummaryId);
+        }
     }
 
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, MemberSavedSummaryDto.Patch summaryPatchDto) {

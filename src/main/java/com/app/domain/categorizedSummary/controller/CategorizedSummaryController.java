@@ -6,12 +6,18 @@ import com.app.domain.categorizedSummary.mapper.CategorizedSummaryMapper;
 import com.app.domain.categorizedSummary.service.CategorizedSummaryService;
 import com.app.domain.memberSavedSummary.dto.MemberSavedSummaryDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +47,22 @@ public class CategorizedSummaryController {
         return ResponseEntity.ok(postResponse);
     }
 
+    @PostMapping("/download-pdf/{categorizedSummaryId}")
+    public ResponseEntity<byte[]> downloadSummaryPdf(@PathVariable @Positive Long categorizedSummaryId) throws IOException {
+        MemberSavedSummaryDto.pdfResponse response = categorizedSummaryService.createSummaryPdf(categorizedSummaryId);
+
+        byte[] pdfContent = response.getPdfContent();
+        String title = response.getTitle();
+
+        String encodedFilename = URLEncoder.encode(title, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20") + ".pdf";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+
+        String contentDisposition = "attachment; filename=\"" + encodedFilename + "\"; filename*=UTF-8''" + encodedFilename;
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
+
+        return new ResponseEntity<>(pdfContent, headers, HttpStatus.OK);
+    }
     @PatchMapping("/edit/{categorizedSummaryId}")
     public ResponseEntity updateCategorizedSummary(@PathVariable @Positive Long categorizedSummaryId,
                                                    @Valid @RequestBody MemberSavedSummaryDto.Patch problemPatchDto) {
