@@ -39,101 +39,79 @@ public class MemberSavedSummaryService {
         return memberSavedSummaryRepository.save(memberSavedSummary);
     }
 
-
     public MemberSavedSummaryDto.pdfResponse createSummaryPdf(Long memberSavedSummaryId) throws IOException {
         MemberSavedSummary summary = findVerifiedSummaryBySummaryId(memberSavedSummaryId);
 
         try (PDDocument document = new PDDocument()) {
             PDType0Font font = PDType0Font.load(document, getClass().getResourceAsStream("/fonts/malgun.ttf"));
+            float fontSize = 12;
+            float titleFontSize = 18; // 제목의 글자 크기를 더 크게 설정
+            float leading = 1.5f * fontSize;
+            float margin = 50;
             PDPage page = new PDPage();
             document.addPage(page);
+            float width = page.getMediaBox().getWidth() - 2 * margin;
+            float startX = margin;
+            float startY = page.getMediaBox().getHeight() - margin;
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            contentStream.setFont(font, titleFontSize);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(startX, startY);
 
             // 제목 추가
-            addTitle(document, page, summary.getSummaryTitle(), font);
+            String title = summary.getSummaryTitle();
+            float titleWidth = font.getStringWidth(title) / 1000 * titleFontSize;
+            // 가운데 정렬을 위해 계산
+            float titleX = (page.getMediaBox().getWidth() - titleWidth) / 2;
+            contentStream.newLineAtOffset(titleX - startX, 0); // 제목의 시작 위치 조정
+            contentStream.showText(title);
+            contentStream.endText();
 
-            // 내용 추가
-            addContent(document, page, summary.getSummaryContent(), font);
+            // 본문 내용 시작 위치를 제목 아래로 조정
+            startY -= titleFontSize + leading;
+
+            // 본문 폰트 크기 설정
+            contentStream.setFont(font, fontSize);
+
+            String[] lines = summary.getSummaryContent().split("\n");
+            for (String line : lines) {
+                String[] words = line.split(" ");
+                float currentX = startX;
+                float currentY = startY;
+                contentStream.beginText();
+                contentStream.newLineAtOffset(startX, currentY);
+                for (String word : words) {
+                    float wordWidth = font.getStringWidth(word) / 1000 * fontSize;
+                    if (currentX + wordWidth >= width) {
+                        contentStream.endText();
+                        currentY -= leading;
+                        currentX = startX;
+                        if (currentY <= margin) {
+                            contentStream.close();
+                            page = new PDPage();
+                            document.addPage(page);
+                            contentStream = new PDPageContentStream(document, page);
+                            contentStream.setFont(font, fontSize);
+                            currentY = page.getMediaBox().getHeight() - margin;
+                        }
+                        contentStream.beginText();
+                        contentStream.newLineAtOffset(startX, currentY);
+                    }
+                    contentStream.showText(word + " ");
+                    currentX += wordWidth + font.getStringWidth(" ") / 1000 * fontSize;
+                }
+                contentStream.endText();
+                startY = currentY - leading;
+            }
+
+            contentStream.close();
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             document.save(byteArrayOutputStream);
             return new MemberSavedSummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
         }
     }
-
-    private void addTitle(PDDocument document, PDPage page, String title, PDType0Font font) throws IOException {
-        float titleFontSize = 18; // 제목의 글자 크기
-        float margin = 50; // 여백
-        float startY = page.getMediaBox().getHeight() - margin;
-
-        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-            contentStream.setFont(font, titleFontSize);
-            contentStream.beginText();
-            contentStream.newLineAtOffset(margin, startY);
-            contentStream.showText(title);
-            contentStream.endText();
-        }
-    }
-
-    private void addContent(PDDocument document, PDPage page, String content, PDType0Font font) throws IOException {
-        float fontSize = 12; // 본문의 글자 크기
-        float leading = 1.5f * fontSize; // 줄 간격
-        float margin = 50; // 여백
-        float width = page.getMediaBox().getWidth() - 2 * margin;
-        float startY = page.getMediaBox().getHeight() - margin - leading - leading; // 본문 시작 위치
-
-        PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
-        contentStream.setFont(font, fontSize);
-
-        String[] lines = content.split("\n");
-        for (String line : lines) {
-            startY = addLine(document, contentStream, line, font, fontSize, width, margin, startY, leading);
-            if (startY < margin) { // 페이지 하단에 도달하면 새 페이지 시작
-                contentStream.close();
-                page = new PDPage();
-                document.addPage(page);
-                contentStream = new PDPageContentStream(document, page);
-                contentStream.setFont(font, fontSize);
-                startY = page.getMediaBox().getHeight() - margin - leading - leading;
-            }
-        }
-
-        contentStream.close();
-    }
-
-    private float addLine(PDDocument document, PDPageContentStream contentStream, String line, PDType0Font font, float fontSize, float width, float margin, float startY, float leading) throws IOException {
-        float currentX = margin;
-        contentStream.beginText();
-        contentStream.newLineAtOffset(currentX, startY);
-
-        String[] words = line.split(" ");
-        for (String word : words) {
-            float wordWidth = font.getStringWidth(word) / 1000 * fontSize;
-            if (currentX + wordWidth >= width) {
-                contentStream.endText();
-                startY -= leading;
-                if (startY < margin) { // 페이지 하단에 도달하면 새 페이지 시작
-                    contentStream.close();
-                    PDPage page = new PDPage();
-                    document.addPage(page);
-                    contentStream = new PDPageContentStream(document, page);
-                    contentStream.setFont(font, fontSize);
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin, page.getMediaBox().getHeight() - margin - leading);
-                    startY = page.getMediaBox().getHeight() - margin - leading;
-                } else {
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin, startY);
-                }
-                currentX = margin;
-            }
-            contentStream.showText(word + " ");
-            currentX += wordWidth + font.getStringWidth(" ") / 1000 * fontSize;
-        }
-        contentStream.endText();
-        return startY - leading;
-    }
-
-
 
     public MemberSavedSummary updateSummary(MemberSavedSummary summary, Long summaryId) {
         MemberSavedSummary preSummary = findVerifiedSummaryBySummaryId(summaryId);
