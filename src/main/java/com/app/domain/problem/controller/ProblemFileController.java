@@ -8,6 +8,9 @@ import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.global.config.ENUM.FileType;
 import com.app.domain.problem.service.ProblemFileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,8 +66,11 @@ public class ProblemFileController { // Controller 추후 분할 예정
 
 
     @GetMapping("/searchAiProblemFileList") //사용자가 생성한 모든 문제 리스트 가져오기 (생성 히스토리)
-    public ResponseEntity<List<FileListResponseDto>> allAiProblemFileList(HttpServletRequest httpServletRequest){
-        List<FileListResponseDto> fileList = problemFileService.allAiProblemFileList(httpServletRequest);
+    public ResponseEntity<Page<FileListResponseDto>> allAiProblemFileList(HttpServletRequest httpServletRequest, @PathVariable(required = false) Integer pageNumber){
+        int page = (pageNumber != null) ? pageNumber : 0; //default 값 =0;
+        Pageable pageable = PageRequest.of(page,9);
+
+        Page<FileListResponseDto> fileList = problemFileService.allAiProblemFileList(pageable,httpServletRequest);
 
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
