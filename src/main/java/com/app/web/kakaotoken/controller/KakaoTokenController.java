@@ -43,10 +43,11 @@ public class KakaoTokenController {
                 .client_secret(clientSecret)
                 .grant_type("authorization_code")
                 .code(code)
-                .redirect_uri("http://54.180.142.157/oauth/kakao/callback")
+//                .redirect_uri("http://54.180.142.157/oauth/kakao/callback")
+                .redirect_uri("http://localhost:5173/oauth/kakao/callback")
                 .build();
         KakaoTokenDto.Response kakaoToken = kakaoTokenClient.requestKakaoToken(contentType, kakaoTokenRequestDto);
-        return "kakao toekn : " + kakaoToken;
+        return "kakao token : " + kakaoToken;
     }
 
 }

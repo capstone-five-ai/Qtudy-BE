@@ -54,6 +54,10 @@ public class CategorizedSummaryDto {
 
         private String summaryContent;
 
+        private String categoryName;
+
+        private Long categoryId;
+
         public static Response of(CategorizedSummary categorizedSummary) {
             return Response.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
@@ -63,6 +67,8 @@ public class CategorizedSummaryDto {
                     .summaryContent(categorizedSummary.getMemberSavedSummary() != null ?
                             categorizedSummary.getMemberSavedSummary().getSummaryContent() :
                             categorizedSummary.getAiGeneratedSummary().getSummaryContent())
+                    .categoryName(categorizedSummary.getCategory().getCategoryName())
+                    .categoryId(categorizedSummary.getCategory().getCategoryId())
                     .build();
         }
     }
