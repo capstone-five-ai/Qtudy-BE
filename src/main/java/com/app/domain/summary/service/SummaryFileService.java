@@ -27,6 +27,9 @@ import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -342,12 +345,12 @@ public class SummaryFileService { //Service 추후 분할 예정
         }
 
 
-    public List<FileListResponseDto> allAiSummaryFileList(HttpServletRequest httpServletRequest){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
+    public Page<FileListResponseDto> allAiSummaryFileList(Pageable pageable, HttpServletRequest httpServletRequest){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
         Member member = memberService.getLoginMember(httpServletRequest);
 
-        List<SummaryFile> fileList = summaryFileRepository.findByMemberId(member); // 요점정리파일 이름 가져오기
+        Page<SummaryFile> filePage = summaryFileRepository.findAllByMemberId(member,pageable); // 요점정리파일 이름 가져오기
 
-        List<FileListResponseDto> fileListResponseDtoList = fileList.stream()
+        List<FileListResponseDto> fileListResponseDtoList = filePage.getContent().stream()
                 .map(file -> new FileListResponseDto(
                         file.getFileId(),
                         file.getFileName(),
@@ -355,6 +358,7 @@ public class SummaryFileService { //Service 추후 분할 예정
                         file.getCreateTime()
                 ))
                 .collect(Collectors.toList());
-        return fileListResponseDtoList;
+
+        return new PageImpl<>(fileListResponseDtoList, pageable, filePage.getTotalElements());
     }
 }
