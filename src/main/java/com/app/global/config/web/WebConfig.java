@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") //어떤 url로 요청이 왔을 때 허용할 것인지
+        registry.addMapping("/**") //어떤 url로 요청이 왔을 때 허용할 것인지
                 .allowedOrigins("*")
                 .allowedMethods(
                         //별표(*) 사용 시 모든 오리진 허용 및 콤마로 여러 origin을 설정할 수도 있음
@@ -45,7 +45,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/kakao/login",
                         "/api/oauth/login",
-                        "/api/access-token/issue"
+                        "/api/access-token/issue",
+                        "/oauth/kakao/callback"
                         ); // 인증 인터셉터를 동작시키지 않을 예외적인 uri 작성
 
         registry.addInterceptor(adminAuthorizationInterceptor) //인증 인터셉터 다음 인가 인터셉터 실행
