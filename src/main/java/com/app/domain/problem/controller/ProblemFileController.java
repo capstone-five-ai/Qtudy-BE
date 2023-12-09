@@ -65,10 +65,10 @@ public class ProblemFileController { // Controller 추후 분할 예정
     }
 
 
-    @GetMapping("/searchAiProblemFileList") //사용자가 생성한 모든 문제 리스트 가져오기 (생성 히스토리)
-    public ResponseEntity<Page<FileListResponseDto>> allAiProblemFileList(HttpServletRequest httpServletRequest, @PathVariable(required = false) Integer pageNumber){
-        int page = (pageNumber != null) ? pageNumber : 0; //default 값 =0;
-        Pageable pageable = PageRequest.of(page,9);
+    @GetMapping("/searchAiProblemFileList/{pageNumber}") //사용자가 생성한 모든 문제 리스트 가져오기 (생성 히스토리)
+    public ResponseEntity<Page<FileListResponseDto>> allAiProblemFileList(HttpServletRequest httpServletRequest, @PathVariable int pageNumber){
+
+        Pageable pageable = PageRequest.of(pageNumber-1,9);
 
         Page<FileListResponseDto> fileList = problemFileService.allAiProblemFileList(pageable,httpServletRequest);
 

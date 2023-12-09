@@ -9,6 +9,9 @@ import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.domain.summary.service.SummaryFileService;
 import com.app.global.config.ENUM.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,9 +55,11 @@ public class SummaryFileController {
         return ResponseEntity.ok(ConvertToSummaryFileResponse(aiGeneratedSummary));
     }
 
-    @GetMapping("/searchAiSummaryFileList") //사용자가 생성한 모든 요점정리 리스트 가져오기 (생성 히스토리)
-    public ResponseEntity<List<FileListResponseDto>> allAiSummaryFileList(HttpServletRequest httpServletRequest){
-        List<FileListResponseDto> fileList = summaryFileService.allAiSummaryFileList(httpServletRequest);
+    @GetMapping("/searchAiSummaryFileList/{pageNumber}") //사용자가 생성한 모든 요점정리 리스트 가져오기 (생성 히스토리)
+    public ResponseEntity<Page<FileListResponseDto>> allAiSummaryFileList(HttpServletRequest httpServletRequest,@PathVariable int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber-1,9);
+
+        Page<FileListResponseDto> fileList = summaryFileService.allAiSummaryFileList(pageable, httpServletRequest);
 
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
