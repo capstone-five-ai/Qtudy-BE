@@ -26,7 +26,7 @@ public class AiGeneratedSummary extends BaseEntity {
     private SummaryFile summaryFile;
 
 
-    @Column(name = "SUMMARY_TITLE", nullable = false)
+    @Column(name = "SUMMARY_TITLE",length = 500, nullable = false)
     private String summaryTitle;
 
 
