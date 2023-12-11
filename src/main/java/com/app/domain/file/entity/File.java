@@ -38,7 +38,7 @@ public class File extends BaseEntity {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
-    private Member memberId;
+    private Member member;
 
     @Column(name = "FILE_NAME", length = 100)
     private String fileName;

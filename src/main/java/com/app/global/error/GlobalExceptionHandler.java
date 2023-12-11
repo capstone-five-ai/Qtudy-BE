@@ -75,10 +75,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
+    /**
+     *
+     * Multipart값 받을 때 오류 발생
+     */
     @ExceptionHandler(MultipartException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleMultipartException(MultipartException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Multipart 구분자 오류 (식별 불가 형식) -> " + e.getMessage());
     }
-
 }
