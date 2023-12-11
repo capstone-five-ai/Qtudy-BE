@@ -38,7 +38,7 @@ public class KakaoTokenController {
     // scope(account_email, profile_image, profile_nickname) 출력
     //redirect 처리 메서드
     @GetMapping("/oauth/kakao/callback")
-    public ResponseEntity<KakaoTokenDto.Response> loginCallback(@RequestParam("code")String code) {
+    public ResponseEntity<KakaoTokenDto.Response> loginCallback(@RequestParam("code")String code, @RequestParam("redirectUri") String redirectUri) {
         String contentType = "application/x-www-form-urlencoded;charset=utf-8";
         KakaoTokenDto.Request kakaoTokenRequestDto = KakaoTokenDto.Request.builder()
                 .client_id(clientId)
@@ -46,7 +46,8 @@ public class KakaoTokenController {
                 .grant_type("authorization_code")
                 .code(code)
 //                .redirect_uri("http://54.180.142.157/oauth/kakao/callback")
-                .redirect_uri("http://localhost:5173/oauth/kakao/callback")
+//                .redirect_uri("http://localhost:5173/oauth/kakao/callback")
+                .redirect_uri(redirectUri)
                 .build();
         KakaoTokenDto.Response kakaoToken = kakaoTokenClient.requestKakaoToken(contentType, kakaoTokenRequestDto);
 //        return "kakao token : " + kakaoToken;
