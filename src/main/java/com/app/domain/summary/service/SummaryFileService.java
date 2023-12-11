@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 @Service
 public class SummaryFileService { //Service 추후 분할 예정
 
+    private String base_url = "http://101.101.211.36:5000";;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -71,7 +72,7 @@ public class SummaryFileService { //Service 추후 분할 예정
         Amount amount = aiGenerateSummaryDto.getAmount();
         String fileName = aiGenerateSummaryDto.getFileName();
 
-        String url = "http://localhost:5000/create/summary";;
+        String url = base_url + "/create/summary";;
         AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
         AiGeneratedSummary aiGeneratedSummary = null;
 
@@ -108,7 +109,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     @Transactional
     public AiGenerateSummaryResponseDto AiGenerateSummaryFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
         Member member = memberService.getLoginMember(httpServletRequest);
-        String url = "http://localhost:5000/create/summary";
+        String url = base_url + "/create/summary";
         AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
         SummaryFile summaryFile;
         AiGeneratedSummary aiGeneratedSummary;

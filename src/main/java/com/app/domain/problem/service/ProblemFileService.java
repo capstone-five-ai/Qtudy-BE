@@ -56,6 +56,8 @@ import java.util.stream.Collectors;
 @Service
 public class ProblemFileService { //Service 추후 분할 예정
 
+    private String base_url = "http://101.101.211.36:5000";
+
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -89,10 +91,10 @@ public class ProblemFileService { //Service 추후 분할 예정
 
         switch (aiGenerateProblemDto.getType()) {  //Problem 타입 체크
             case MULTIPLE:
-                url = "http://localhost:5000/create/problem/mcq";
+                url = base_url + "/create/problem/mcq";
                 break;
             case SUBJECTIVE:
-                url = "http://localhost:5000/create/problem/saq";
+                url = base_url + "/create/problem/saq";
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
@@ -142,10 +144,10 @@ public class ProblemFileService { //Service 추후 분할 예정
 
         switch (aiGenerateProblemDto.getType()) {  //Problem 타입 체크
             case MULTIPLE:
-                url = "http://localhost:5000/create/problem/mcq";
+                url = base_url + "/create/problem/mcq";
                 break;
             case SUBJECTIVE:
-                url = "http://localhost:5000/create/problem/saq";
+                url = base_url + "/create/problem/saq";
                 break;
             default:
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
