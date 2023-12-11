@@ -1,6 +1,7 @@
 package com.app.domain.categorizedSummary.dto;
 
 import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,6 +59,7 @@ public class CategorizedSummaryDto {
 
         private Long categoryId;
 
+
         public static Response of(CategorizedSummary categorizedSummary) {
             return Response.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
@@ -70,6 +72,19 @@ public class CategorizedSummaryDto {
                     .categoryName(categorizedSummary.getCategory().getCategoryName())
                     .categoryId(categorizedSummary.getCategory().getCategoryId())
                     .build();
+        }
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class LinkedSharedResponse{
+        private Response response;
+
+        @JsonProperty("isWriter")
+        private Boolean isWriter;
+
+        public Boolean getisWriter() {
+            return isWriter;
         }
     }
 }

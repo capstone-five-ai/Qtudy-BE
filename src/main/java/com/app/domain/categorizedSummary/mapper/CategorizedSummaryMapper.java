@@ -16,4 +16,11 @@ public interface CategorizedSummaryMapper {
     default CategorizedSummaryDto.Response categorizedSummaryToResponse(CategorizedSummary categorizedSummary) {
         return CategorizedSummaryDto.Response.of(categorizedSummary);
     }
+
+    default CategorizedSummaryDto.LinkedSharedResponse categorizedSummaryToLinkedSharedResponse(CategorizedSummary categorizedSummary, Boolean isWriter){
+        CategorizedSummaryDto.Response response = categorizedSummaryToResponse(categorizedSummary);
+        CategorizedSummaryDto.LinkedSharedResponse linkedSharedResponse = new CategorizedSummaryDto.LinkedSharedResponse(response, isWriter);
+
+        return linkedSharedResponse;
+    }
 }

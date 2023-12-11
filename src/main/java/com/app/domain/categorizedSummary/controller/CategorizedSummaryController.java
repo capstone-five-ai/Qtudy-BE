@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -81,9 +82,16 @@ public class CategorizedSummaryController {
     }
 
     @GetMapping("/{categorizedSummaryId}")
-    public ResponseEntity getCategorizedSummary(@PathVariable @Positive Long categorizedSummaryId) {
+    public ResponseEntity getCategorizedSummary(@PathVariable @Positive Long categorizedSummaryId,
+                                                HttpServletRequest httpServletRequest) {
         CategorizedSummary categorizedSummary = categorizedSummaryService.findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
-        CategorizedSummaryDto.Response response = categorizedSummaryMapper.categorizedSummaryToResponse(categorizedSummary);
+
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        Boolean isWriter = false;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            isWriter = categorizedSummaryService.checkIsWriter(httpServletRequest, categorizedSummary);
+        }
+        CategorizedSummaryDto.LinkedSharedResponse response = categorizedSummaryMapper.categorizedSummaryToLinkedSharedResponse(categorizedSummary, isWriter);
 
         return ResponseEntity.ok(response);
     }

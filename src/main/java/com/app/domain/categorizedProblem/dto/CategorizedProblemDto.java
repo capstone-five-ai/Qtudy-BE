@@ -1,10 +1,12 @@
 package com.app.domain.categorizedProblem.dto;
 
 import com.app.domain.categorizedProblem.entity.CategorizedProblem;
+import com.app.domain.categorizedSummary.dto.CategorizedSummaryDto;
 import com.app.domain.category.entity.Category;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.global.config.ENUM.ProblemType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -102,6 +104,19 @@ public class CategorizedProblemDto {
                         .categorizedProblems(categorizedProblemResponses);
             }
             return builder.build();
+        }
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class LinkedSharedResponse{
+        private Response response;
+
+        @JsonProperty("isWriter")
+        private Boolean isWriter;
+
+        public Boolean getisWriter() {
+            return isWriter;
         }
     }
 
