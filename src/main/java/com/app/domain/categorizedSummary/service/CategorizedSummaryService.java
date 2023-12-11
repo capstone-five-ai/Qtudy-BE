@@ -5,6 +5,8 @@ import com.app.domain.categorizedSummary.entity.CategorizedSummary;
 import com.app.domain.categorizedSummary.repository.CategorizedSummaryRepository;
 import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
+import com.app.domain.member.entity.Member;
+import com.app.domain.member.service.MemberService;
 import com.app.domain.memberSavedSummary.dto.MemberSavedSummaryDto;
 import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
 import com.app.domain.memberSavedSummary.mapper.MemberSavedSummaryMapper;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Service
@@ -31,6 +34,8 @@ public class CategorizedSummaryService {
     private final MemberSavedSummaryService memberSavedSummaryService;
 
     private final MemberSavedSummaryMapper memberSavedSummaryMapper;
+
+    private final MemberService memberService;
 
     private final SummaryService aiGeneratedSummaryService;
 
@@ -137,5 +142,13 @@ public class CategorizedSummaryService {
     public Page<CategorizedSummary> findCategorziedSummarysByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedSummaryRepository.findByCategoryCategoryId(categoryId, pageRequest);
+    }
+
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, CategorizedSummary categorizedSummary) {
+        Member member = memberService.getLoginMember(httpServletRequest);
+        if (categorizedSummary.getCategory().getMember().getMemberId() == member.getMemberId()) {
+            return true;
+        }
+        return false;
     }
 }

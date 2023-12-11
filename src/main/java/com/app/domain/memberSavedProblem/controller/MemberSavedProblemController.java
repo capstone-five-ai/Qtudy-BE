@@ -52,4 +52,21 @@ public class MemberSavedProblemController {
         memberSavedProblemService.deleteProblem(memberSavedProblemId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{memberSavedProblemId}")
+    public ResponseEntity getMemberSavedProblem(@PathVariable @Positive Long memberSavedProblemId,
+                                                HttpServletRequest httpServletRequest) {
+        MemberSavedProblem memberSavedProblem = memberSavedProblemService.findVerifiedProblemByProblemId(memberSavedProblemId);
+
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        Boolean isWriter = false;
+        // "Authorization" 헤더가 존재하면 checkIsWriter 함수 호출
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            isWriter = memberSavedProblemService.checkIsWriter(httpServletRequest, memberSavedProblem);
+        }
+
+        MemberSavedProblemDto.LinkSharedResponse response = memberSavedProblemMapper.problemToLinkSharedResponse(memberSavedProblem, isWriter);
+
+        return ResponseEntity.ok(response);
+    }
 }

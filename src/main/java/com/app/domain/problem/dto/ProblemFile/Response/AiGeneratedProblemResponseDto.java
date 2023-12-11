@@ -14,19 +14,13 @@ import java.util.List;
 @Getter
 @Builder
 public class AiGeneratedProblemResponseDto {
-    private int aiGeneratedProblemId;
-    private String problemName;
-    private List<String> problemChoices;
-    private String problemAnswer;
-    private String problemCommentary;
+    private int fileId;
+    private List<AiGeneratedProblemList> problems;
 
-    public static AiGeneratedProblemResponseDto ConvertToProblem(AiGeneratedProblem aiGenerateProblem){
+    public static AiGeneratedProblemResponseDto ConvertToProblem(List<AiGeneratedProblemList> aiGeneratedProblemList, int fileId){
         return AiGeneratedProblemResponseDto.builder()
-                .aiGeneratedProblemId(aiGenerateProblem.getAiGeneratedProblemId())
-                .problemName(aiGenerateProblem.getProblemName())
-                .problemChoices(aiGenerateProblem.getProblemChoices())
-                .problemAnswer(aiGenerateProblem.getProblemAnswer())
-                .problemCommentary(aiGenerateProblem.getProblemCommentary())
+                .fileId(fileId)
+                .problems(aiGeneratedProblemList)
                 .build();
     }
 }

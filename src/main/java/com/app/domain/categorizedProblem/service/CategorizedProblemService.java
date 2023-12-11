@@ -4,6 +4,8 @@ import com.app.domain.categorizedProblem.entity.CategorizedProblem;
 import com.app.domain.categorizedProblem.repository.CategorizedProblemRepository;
 import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
+import com.app.domain.member.entity.Member;
+import com.app.domain.member.service.MemberService;
 import com.app.domain.memberSavedProblem.dto.MemberSavedProblemDto;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.memberSavedProblem.mapper.MemberSavedProblemMapper;
@@ -25,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,6 +41,8 @@ public class CategorizedProblemService {
     private final CategoryService categoryService;
 
     private final MemberSavedProblemService memberSavedProblemService;
+
+    private final MemberService memberService;
 
     private final MemberSavedProblemMapper memberSavedProblemMapper;
 
@@ -326,4 +331,11 @@ public class CategorizedProblemService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORIZED_PROBLEM_NOT_EXISTS));
     }
 
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, CategorizedProblem categorizedProblem) {
+        Member member = memberService.getLoginMember(httpServletRequest);
+        if (categorizedProblem.getCategory().getMember().getMemberId() == member.getMemberId()) {
+            return true;
+        }
+        return false;
+    }
 }

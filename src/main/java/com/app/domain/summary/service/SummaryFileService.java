@@ -8,6 +8,7 @@ import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiD
 import com.app.domain.problem.value.S3FileInformation;
 import com.app.domain.summary.dto.SummaryFile.Request.AiGenerateSummaryDto;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.AiGenerateSummaryFromAiDto;
+import com.app.domain.summary.dto.SummaryFile.Response.AiGenerateSummaryResponseDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.domain.summary.entity.SummaryFile;
 import com.app.domain.summary.repository.AiGeneratedSummaryRepository;
@@ -64,7 +65,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
 
     @Transactional
-    public AiGeneratedSummary AiGenerateSummaryFileByText(HttpServletRequest httpServletRequest, AiGenerateSummaryDto aiGenerateSummaryDto) {
+    public AiGenerateSummaryResponseDto AiGenerateSummaryFileByText(HttpServletRequest httpServletRequest, AiGenerateSummaryDto aiGenerateSummaryDto) {
         Member member = memberService.getLoginMember(httpServletRequest);
         String text = aiGenerateSummaryDto.getText();
         Amount amount = aiGenerateSummaryDto.getAmount();
@@ -98,16 +99,19 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
 
-        return aiGeneratedSummary;
+        AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto = AiGenerateSummaryResponseDto.ConvertToSummaryFileResponse(aiGeneratedSummary, summaryFile.getFileId());
+
+        return aiGenerateSummaryResponseDto;
     }
 
 
     @Transactional
-    public AiGeneratedSummary AiGenerateSummaryFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
+    public AiGenerateSummaryResponseDto AiGenerateSummaryFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateSummaryDto aiGenerateSummaryDto, FileType fileType) {
         Member member = memberService.getLoginMember(httpServletRequest);
         String url = "http://localhost:5000/create/summary";
         AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto;
-        AiGeneratedSummary summary = null;
+        SummaryFile summaryFile;
+        AiGeneratedSummary aiGeneratedSummary;
 
 
         switch (fileType){  //File 타입 체크
@@ -125,8 +129,8 @@ public class SummaryFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                    SummaryFile summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
-                    summary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
+                    summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+                    aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
 
                     UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
                 } catch (JsonProcessingException e) {
@@ -172,8 +176,8 @@ public class SummaryFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers); // // HTTP 요청 전송
                 aiGenerateSummaryFromAiDto = restTemplate.postForObject(url, request, AiGenerateSummaryFromAiDto.class); // http 응답 받아옴
 
-                SummaryFile summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
-                summary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
+                summaryFile = SaveSummaryFile(member, aiGenerateSummaryDto); //SUMMARY_FILE 테이블 저장
+                aiGeneratedSummary = SaveSummarys(summaryFile, aiGenerateSummaryFromAiDto); // AI_GENERATED_SUMMARY 테이블 저장
 
                 UploadS3(aiGenerateSummaryFromAiDto, aiGenerateSummaryDto, summaryFile.getFileId());
                 break;
@@ -181,8 +185,10 @@ public class SummaryFileService { //Service 추후 분할 예정
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
         }
 
+        AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto = AiGenerateSummaryResponseDto.ConvertToSummaryFileResponse(aiGeneratedSummary, summaryFile.getFileId());
 
-        return summary;
+
+        return aiGenerateSummaryResponseDto;
     }
 
 
@@ -322,7 +328,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
     public SummaryFile SaveSummaryFile(Member member , AiGenerateSummaryDto aiGenerateSummaryDto){
         SummaryFile summaryFile = SummaryFile.builder()
-                .memberId(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
+                .member(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateSummaryDto.getFileName())
                 .dtype(DType.SUMMARY)
                 .summaryAmount(aiGenerateSummaryDto.getAmount())
@@ -348,7 +354,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     public Page<FileListResponseDto> allAiSummaryFileList(Pageable pageable, HttpServletRequest httpServletRequest){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
         Member member = memberService.getLoginMember(httpServletRequest);
 
-        Page<SummaryFile> filePage = summaryFileRepository.findAllByMemberId(member,pageable); // 요점정리파일 이름 가져오기
+        Page<SummaryFile> filePage = summaryFileRepository.findAllByMember(member,pageable); // 요점정리파일 이름 가져오기
 
         List<FileListResponseDto> fileListResponseDtoList = filePage.getContent().stream()
                 .map(file -> new FileListResponseDto(

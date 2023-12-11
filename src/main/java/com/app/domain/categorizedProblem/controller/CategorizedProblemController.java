@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.io.IOException;
@@ -105,9 +106,16 @@ public class CategorizedProblemController {
     }
 
     @GetMapping("/{categorizedProblemId}")
-    public ResponseEntity getCategorizedProblem(@PathVariable @Positive Long categorizedProblemId){
+    public ResponseEntity getCategorizedProblem(@PathVariable @Positive Long categorizedProblemId,
+                                                HttpServletRequest httpServletRequest){
         CategorizedProblem categorizedProblem = categorizedProblemService.findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
-        CategorizedProblemDto.Response response = CategorizedProblemDto.Response.of(categorizedProblem);
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        Boolean isWriter = false;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            isWriter = categorizedProblemService.checkIsWriter(httpServletRequest, categorizedProblem);
+        }
+        CategorizedProblemDto.LinkedSharedResponse response =
+                new CategorizedProblemDto.LinkedSharedResponse(CategorizedProblemDto.Response.of(categorizedProblem), isWriter);
 
         return ResponseEntity.ok(response);
     }

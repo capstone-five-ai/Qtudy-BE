@@ -134,4 +134,11 @@ public class MemberSavedSummaryService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SUMMARY_NOT_EXISTS));
     }
 
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, MemberSavedSummary memberSavedSummary) {
+        Member member = memberService.getLoginMember(httpServletRequest);
+        if (memberSavedSummary.getMember().getMemberId() == member.getMemberId()) {
+            return true;
+        }
+        return false;
+    }
 }
