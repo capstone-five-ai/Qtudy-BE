@@ -2,24 +2,31 @@ package com.app.domain.summary.service;
 
 
 import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.member.entity.Member;
+import com.app.domain.member.service.MemberService;
 import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.memberSavedSummary.dto.MemberSavedSummaryDto;
 import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
 import com.app.domain.problem.entity.AiGeneratedProblem;
+import com.app.domain.problem.entity.ProblemFile;
 import com.app.domain.summary.entity.AiGeneratedSummary;
+import com.app.domain.summary.entity.SummaryFile;
 import com.app.domain.summary.repository.SummaryFileRepository;
 import com.app.global.config.S3.S3Service;
 import com.app.domain.summary.repository.AiGeneratedSummaryRepository;
 import com.app.global.error.ErrorCode;
+import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
@@ -35,15 +42,18 @@ public class SummaryService {
     @Autowired
     private AiGeneratedSummaryRepository aiGeneratedSummaryRepository;
     @Autowired
+    private MemberService memberService;
+    @Autowired
     private S3Service s3Service;
 
-    public AiGeneratedSummary GetSummary(int aiGeneratedSummaryId){
+    public AiGeneratedSummary GetSummary(int fileId){
 
-        Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId);
+
+        Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findBySummaryFile_FileId(fileId);
         if (aiGeneratedSummaryOptional.isPresent()) {
             return aiGeneratedSummaryOptional.get();
         } else {
-            return null; //추후 에러 처리 예정
+            throw new BusinessException(ErrorCode.NOT_EXIST_PROBLEM); // 파일없을경우.
         }
 
     }
@@ -121,6 +131,22 @@ public class SummaryService {
             return new MemberSavedSummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
         }
     }
+
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, int fileId) {
+        Member member = memberService.getLoginMember(httpServletRequest);
+        Optional<SummaryFile> optionalProblemFile = Optional.ofNullable(summaryFileRepository.findByFileId(fileId));
+
+        if(optionalProblemFile.isEmpty())
+            throw new BusinessException(ErrorCode.NOT_EXIST_FILE); // 파일없을경우.
+
+        if (optionalProblemFile.get().getMember().getMemberId() == member.getMemberId()) { // 인증 성공
+            return true;
+        }
+        return false; // 인증 실패
+    }
+
+
+
     public AiGeneratedSummary updateSummary(MemberSavedSummary summary, Integer summaryId){
         AiGeneratedSummary preSummary = findVerifiedSummaryBySummaryId(summaryId);
         Optional.ofNullable(summary.getSummaryTitle())

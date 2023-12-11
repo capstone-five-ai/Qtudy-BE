@@ -6,6 +6,8 @@ import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
 import com.app.domain.problem.dto.ProblemFile.Request.AiGenerateProblemDto;
 import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
+import com.app.domain.problem.dto.ProblemFile.Response.AiGeneratedProblemList;
+import com.app.domain.problem.dto.ProblemFile.Response.AiGeneratedProblemResponseDto;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.problem.entity.ProblemFile;
 import com.app.domain.problem.repository.AiGeneratedProblemRepository;
@@ -67,7 +69,7 @@ public class ProblemFileService { //Service 추후 분할 예정
 
 
     @Transactional
-    public List<AiGeneratedProblem> AiGenerateProblemFileByText(HttpServletRequest httpServletRequest, AiGenerateProblemDto aiGenerateProblemDto) {
+    public AiGeneratedProblemResponseDto AiGenerateProblemFileByText(HttpServletRequest httpServletRequest, AiGenerateProblemDto aiGenerateProblemDto) {
         Member member = memberService.getLoginMember(httpServletRequest);
         String text = aiGenerateProblemDto.getText();
         ProblemType type = aiGenerateProblemDto.getType();
@@ -114,18 +116,28 @@ public class ProblemFileService { //Service 추후 분할 예정
 
         UploadS3(aiGenerateProblemFromAiDto, aiGenerateProblemDto, problemFile.getFileId());
 
+        List<AiGeneratedProblemList> ProblemList = problems.stream()
+                .map(AiGeneratedProblemList::ConvertToProblem)
+                .collect(Collectors.toList());
 
-        return problems;
+        AiGeneratedProblemResponseDto aiGeneratedProblemResponseDto = AiGeneratedProblemResponseDto.ConvertToProblem(ProblemList,problemFile.getFileId());
+
+        return aiGeneratedProblemResponseDto;
 
     }
 
 
     @Transactional
-    public List<AiGeneratedProblem> AiGenerateProblemFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateProblemDto aiGenerateProblemDto, FileType fileType) {
+    public AiGeneratedProblemResponseDto AiGenerateProblemFileByFile(HttpServletRequest httpServletRequest, List<MultipartFile> File, AiGenerateProblemDto aiGenerateProblemDto, FileType fileType) {
         Member member = memberService.getLoginMember(httpServletRequest);
         String url;
         AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDto;
+        ProblemFile problemFile;
         List<AiGeneratedProblem> problems = new ArrayList<>();
+
+        if (problemFileRepository.findByFileName(aiGenerateProblemDto.getFileName()).isPresent()) { // 이미 파일이름이 존재하는 경우 에러
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_NAME);
+        }
 
 
         switch (aiGenerateProblemDto.getType()) {  //Problem 타입 체크
@@ -154,10 +166,11 @@ public class ProblemFileService { //Service 추후 분할 예정
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers); // // HTTP 요청 전송
                     aiGenerateProblemFromAiDto = restTemplate.postForObject(url, request, AiGenerateProblemFromAiDto[].class); // http 응답 받아옴
 
-                    ProblemFile problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
+                    problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
                     problems = SaveProblems(problemFile, aiGenerateProblemFromAiDto); // AI_GENERATED_PROBLEMS 테이블 및 객관식 보기 저장
 
                     UploadS3(aiGenerateProblemFromAiDto, aiGenerateProblemDto, problemFile.getFileId());// DTO 2개, FileId값 넘김
+
                 } catch (JsonProcessingException e) {
                     throw new BusinessException(ErrorCode.NOT_SENT_HTTP);
                 } catch (IOException e) {
@@ -203,7 +216,7 @@ public class ProblemFileService { //Service 추후 분할 예정
                 HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers); // // HTTP 요청 전송
                 aiGenerateProblemFromAiDto = restTemplate.postForObject(url, request, AiGenerateProblemFromAiDto[].class); // http 응답 받아옴
 
-                ProblemFile problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
+                problemFile = SaveProblemFile(member, aiGenerateProblemDto); //PROBLEM_FILE 테이블 저장
 
                 /*System.out.println(File.get(0).getResource());
                 try {
@@ -226,9 +239,15 @@ public class ProblemFileService { //Service 추후 분할 예정
                 throw new BusinessException(ErrorCode.NOT_GENERATE_PROBLEM);
         }
 
+        List<AiGeneratedProblemList> ProblemList = problems.stream()
+                .map(AiGeneratedProblemList::ConvertToProblem)
+                .collect(Collectors.toList());
+
+        AiGeneratedProblemResponseDto aiGeneratedProblemResponseDto = AiGeneratedProblemResponseDto.ConvertToProblem(ProblemList,problemFile.getFileId());
+
+        return aiGeneratedProblemResponseDto;
 
 
-        return problems;
     }
 
 
@@ -470,7 +489,7 @@ public class ProblemFileService { //Service 추후 분할 예정
 
     public ProblemFile SaveProblemFile(Member member, AiGenerateProblemDto aiGenerateProblemDto) {
         ProblemFile problemFile = ProblemFile.builder()
-                .memberId(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
+                .member(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateProblemDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
                 //.fileKey() // fileKey 삭제
                 .dtype(DType.PROBLEM)
@@ -508,7 +527,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     public Page<FileListResponseDto> allAiProblemFileList(Pageable pageable, HttpServletRequest httpServletRequest) { //사용자가 생성한 모든 문제파일 리스트 가져오기
         Member member = memberService.getLoginMember(httpServletRequest);
 
-        Page<ProblemFile> filePage = problemFileRepository.findAllByMemberId(member, pageable);
+        Page<ProblemFile> filePage = problemFileRepository.findAllByMember(member, pageable);
 
         List<FileListResponseDto> fileListResponseDtoList = filePage.getContent().stream()
                 .map(file -> new FileListResponseDto(

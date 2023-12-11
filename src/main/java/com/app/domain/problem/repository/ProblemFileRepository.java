@@ -19,7 +19,7 @@ public interface ProblemFileRepository extends JpaRepository<ProblemFile, Intege
 
     Optional<ProblemFile> findByFileName(String FileName);
 
-    Page<ProblemFile> findAllByMemberId(Member memberId, Pageable pageable);
+    Page<ProblemFile> findAllByMember(Member member, Pageable pageable);
 
 
 

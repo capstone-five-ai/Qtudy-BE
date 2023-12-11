@@ -32,13 +32,13 @@ public class AiGeneratedProblem extends BaseEntity {
 
 
 
-    @Column(name = "PROBLEM_NAME", length = 100,nullable = false)
+    @Column(name = "PROBLEM_NAME", length = 500,nullable = false)
     private String problemName;
 
     @ElementCollection
     private List<String> problemChoices;
 
-    @Column(name = "PROBLEM_ANSWER", length = 300)
+    @Column(name = "PROBLEM_ANSWER", length = 500)
     private String problemAnswer;
 
     @Column(name = "PROBLEM_COMMENTARY", columnDefinition = "TEXT", nullable = false)
