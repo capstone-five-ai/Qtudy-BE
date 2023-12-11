@@ -1,6 +1,7 @@
 package com.app.domain.memberSavedProblem.dto;
 
 import com.app.global.config.ENUM.ProblemType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -49,6 +50,27 @@ public class MemberSavedProblemDto {
 
         private List<String> problemChoices;
 
+    }
+
+
+    public static class LinkSharedResponse{
+        private Response response;
+
+        @JsonProperty("isWriter")
+        private boolean isWriter;
+
+        public Response getResponse() {
+            return response;
+        }
+
+        public boolean getisWriter() {
+            return isWriter;
+        }
+
+        public LinkSharedResponse(Response response, boolean isWriter) {
+            this.response = response;
+            this.isWriter = isWriter;
+        }
     }
 
 }

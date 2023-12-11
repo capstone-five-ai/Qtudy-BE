@@ -87,5 +87,21 @@ public class MemberSavedSummaryController {
         return new ModelAndView("pdfView");
     }
 
+    @GetMapping("/{memberSavedSummaryId}")
+    public ResponseEntity getMemberSavedSummary(@PathVariable @Positive Long memberSavedSummaryId,
+                                                HttpServletRequest httpServletRequest) {
+        MemberSavedSummary memberSavedSummary = memberSavedSummaryService.findVerifiedSummaryBySummaryId(memberSavedSummaryId);
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        Boolean isWriter = false;
+        // "Authorization" 헤더가 존재하면 checkIsWriter 함수 호출
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            isWriter = memberSavedSummaryService.checkIsWriter(httpServletRequest, memberSavedSummary);
+        }
+
+        MemberSavedSummaryDto.LinkedSharedResponse response = memberSavedSummaryMapper.summaryToLinkedSharedResponse(memberSavedSummary, isWriter);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.app.domain.memberSavedSummary.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,6 +31,26 @@ public class MemberSavedSummaryDto {
 
         private String summaryTitle;
         private String summaryContent;
+    }
+
+    public static class LinkedSharedResponse{
+        private Response response;
+
+        @JsonProperty("isWriter")
+        private boolean isWriter;
+
+        public LinkedSharedResponse(Response response, boolean isWriter) {
+            this.response = response;
+            this.isWriter = isWriter;
+        }
+
+        public Response getResponse() {
+            return response;
+        }
+
+        public boolean getisWriter() {
+            return isWriter;
+        }
     }
 
     @Getter

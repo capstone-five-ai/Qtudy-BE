@@ -12,4 +12,11 @@ public interface MemberSavedSummaryMapper {
     MemberSavedSummary summaryPatchDtoToSummary(MemberSavedSummaryDto.Patch summaryPatchDto);
 
     MemberSavedSummaryDto.Response summaryToResponse(MemberSavedSummary memberSavedSummary);
+
+    default MemberSavedSummaryDto.LinkedSharedResponse summaryToLinkedSharedResponse(MemberSavedSummary memberSavedSummary, boolean isWriter) {
+        MemberSavedSummaryDto.Response response = summaryToResponse(memberSavedSummary);
+        MemberSavedSummaryDto.LinkedSharedResponse linkedSharedResponse = new MemberSavedSummaryDto.LinkedSharedResponse(response, isWriter);
+
+        return linkedSharedResponse;
+    }
 }
