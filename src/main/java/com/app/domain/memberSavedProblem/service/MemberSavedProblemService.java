@@ -53,4 +53,11 @@ public class MemberSavedProblemService {
         return memberSavedProblemRepository.findById(problemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROBLEM_NOT_EXISTS));
     }
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, MemberSavedProblem memberSavedProblem) {
+        Member member = memberService.getLoginMember(httpServletRequest);
+        if (memberSavedProblem.getMember().getMemberId() == member.getMemberId()) {
+            return true;
+        }
+        return false;
+    }
 }

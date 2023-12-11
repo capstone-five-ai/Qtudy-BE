@@ -64,7 +64,9 @@ public class CategorizedProblemDto {
 
         private List<String> problemChoices;
 
-        private String CategoryName;
+        private String categoryName;
+
+        private Long categoryId;
 
         private List<CategorizedProblemResponse> categorizedProblems;
 
@@ -84,7 +86,8 @@ public class CategorizedProblemDto {
                         .problemCommentary(memberSavedProblem.getProblemCommentary())
                         .problemChoices(memberSavedProblem.getProblemChoices())
                         .problemType(memberSavedProblem.getProblemType())
-                        .CategoryName(categorizedProblem.getCategory().getCategoryName())
+                        .categoryName(categorizedProblem.getCategory().getCategoryName())
+                        .categoryId(categorizedProblem.getCategory().getCategoryId())
                         .categorizedProblems(categorizedProblemResponses);
             }
             else{
@@ -94,7 +97,8 @@ public class CategorizedProblemDto {
                         .problemCommentary(aiGeneratedProblem.getProblemCommentary())
                         .problemChoices(aiGeneratedProblem.getProblemChoices())
                         .problemType(aiGeneratedProblem.getProblemType())
-                        .CategoryName(categorizedProblem.getCategory().getCategoryName())
+                        .categoryName(categorizedProblem.getCategory().getCategoryName())
+                        .categoryId(categorizedProblem.getCategory().getCategoryId())
                         .categorizedProblems(categorizedProblemResponses);
             }
             return builder.build();
