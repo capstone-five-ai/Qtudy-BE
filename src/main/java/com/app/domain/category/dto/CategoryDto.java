@@ -191,7 +191,7 @@ public class CategoryDto {
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
                     .summaryGeneratedBy(categorizedSummary.getMemberSavedSummary() != null ?
                             GeneratedType.MEMBER : GeneratedType.AI)
-                    .summaryTilte(categorizedSummary.getMemberSavedSummary() != null ?
+                    .summaryTitle(categorizedSummary.getMemberSavedSummary() != null ?
                             categorizedSummary.getMemberSavedSummary().getSummaryTitle() :
                             categorizedSummary.getAiGeneratedSummary().getSummaryTitle())
                     .summaryContent(categorizedSummary.getMemberSavedSummary() != null ?
