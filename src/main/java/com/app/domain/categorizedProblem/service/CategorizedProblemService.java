@@ -142,7 +142,7 @@ public class CategorizedProblemService {
                         problemChoices = categorizedProblem.getMemberSavedProblem().getProblemChoices();
                     }
                 }else{
-                    if(categorizedProblem.getMemberSavedProblem().getProblemType() == ProblemType.MULTIPLE){
+                    if(categorizedProblem.getAiGeneratedProblem().getProblemType() == ProblemType.MULTIPLE){
                         problemChoices = categorizedProblem.getAiGeneratedProblem().getProblemChoices();
                     }
                 }
