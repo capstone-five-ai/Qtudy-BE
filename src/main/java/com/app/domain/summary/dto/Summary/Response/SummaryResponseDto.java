@@ -13,16 +13,16 @@ import lombok.*;
 public class SummaryResponseDto {
     @JsonProperty("isWriter")
     private boolean isWriter;
-    private int aiGeneratedSummaryId;
-    private String summaryTitle;
-    private String summaryContent;
+    private Response response;
 
-    public static SummaryResponseDto ConvertToSummary(boolean isWriter, AiGeneratedSummary aiGeneratedSummary){
+    public static SummaryResponseDto ConvertToSummary(boolean isWriter, AiGeneratedSummary aiGeneratedSummary) {
         return SummaryResponseDto.builder()
                 .isWriter(isWriter)
-                .aiGeneratedSummaryId(aiGeneratedSummary.getAiGeneratedSummaryId())
-                .summaryTitle(aiGeneratedSummary.getSummaryTitle())
-                .summaryContent(aiGeneratedSummary.getSummaryContent())
+                .response(Response.builder()
+                        .aiGeneratedSummaryId(aiGeneratedSummary.getAiGeneratedSummaryId())
+                        .summaryTitle(aiGeneratedSummary.getSummaryTitle())
+                        .summaryContent(aiGeneratedSummary.getSummaryContent())
+                        .build())
                 .build();
     }
 
@@ -30,15 +30,12 @@ public class SummaryResponseDto {
         return isWriter;
     }
 
-    public int getAiGeneratedSummaryId() {
-        return aiGeneratedSummaryId;
+    @Builder
+    @Getter
+    public static class Response {
+        private int aiGeneratedSummaryId;
+        private String summaryTitle;
+        private String summaryContent;
     }
 
-    public String getSummaryTitle() {
-        return summaryTitle;
-    }
-
-    public String getSummaryContent() {
-        return summaryContent;
-    }
 }
