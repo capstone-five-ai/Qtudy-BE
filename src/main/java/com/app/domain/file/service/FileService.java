@@ -66,23 +66,31 @@ public class FileService {
         PdfType pdfType = downloadPdfRequestDto.getPdfType();
         String UrlKey = null;
 
+
         Optional<File> optionalFiles = FileRepository.findByFileId(fileId);
         if(optionalFiles.isPresent()){
             File file = optionalFiles.get();
             switch(pdfType){
                 case PROBLEM: //문제PDF
+                    if(file.getDtype() != DType.PROBLEM)
+                        new BusinessException(ErrorCode.INVALID_DTYPE);
                     UrlKey = ConvertUrlByKey(file.getFileId() + "_PROBLEM.pdf");
                     break;
                 case ANSWER: //정답PDF
+                    if(file.getDtype() != DType.PROBLEM)
+                        new BusinessException(ErrorCode.INVALID_DTYPE);
                     UrlKey = ConvertUrlByKey(file.getFileId() + "_ANSWER.pdf");
                     break;
                 case SUMMARY: //요점정리PDF
+                    if(file.getDtype() != DType.SUMMARY)
+                        new BusinessException(ErrorCode.INVALID_DTYPE);
                     UrlKey = ConvertUrlByKey(file.getFileId() + "_SUMMARY.pdf");
                     break;
             }
         }else{
-            throw new BusinessException(ErrorCode.NOT_EXIST_FILE);
+            throw new BusinessException(ErrorCode.NOT_EXIST_FILE); //파일이 존재하지 않은경우
         }
+
         return UrlKey;
     }
 

@@ -52,6 +52,7 @@ public enum ErrorCode {
 
     //파일
     NOT_DOWNLOAD_FILE(HttpStatus.NOT_FOUND,"F-001","해당 파일이 존재하지 않습니다."),
+    INVALID_DTYPE(HttpStatus.BAD_REQUEST,"F-002","DTYPE이 일치하지않습니다."),
     ALREADY_EXISTS_NAME(HttpStatus.CONFLICT,"H-002","이미 존재하는 파일 이름입니다."),
 
     // 문제
