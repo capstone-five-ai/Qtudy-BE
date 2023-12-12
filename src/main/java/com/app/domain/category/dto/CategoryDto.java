@@ -178,7 +178,7 @@ public class CategoryDto {
 
         private GeneratedType summaryGeneratedBy;
 
-        private String summaryTilte;
+        private String summaryTitle;
 
         private String summaryContent;
 
