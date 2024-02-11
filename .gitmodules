@@ -1,3 +1,3 @@
-[submodule "BE_config_local"]
-	path = BE_config_local
-	url = https://github.com/capstone-five-ai/BE_config_local.git
+[submodule "BE_config"]
+	path = BE_config
+	url = https://github.com/capstone-five-ai/BE_config.git

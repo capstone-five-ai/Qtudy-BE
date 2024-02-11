@@ -4,7 +4,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-**/src/main/resources/application.yml
 
 ### STS ###
 .apt_generated
@@ -37,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-## application.yml ##
-application.yml
+## application.yml 제외 ##
+**/src/main/resources/*.yml
