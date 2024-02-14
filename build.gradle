@@ -42,7 +42,7 @@ dependencies {
 	implementation 'org.apache.pdfbox:pdfbox:2.0.30'
 	implementation 'mysql:mysql-connector-java:8.0.32'
 	runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
-//	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
