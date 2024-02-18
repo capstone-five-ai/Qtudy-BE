@@ -91,9 +91,7 @@ public class GPTResponseFormatTest {
             JsonNode arguments = responseMessage.getFunctionCall().getArguments();
 
             System.out.println(arguments.toPrettyString());
-            assertDoesNotThrow(() -> objectMapper.treeToValue(arguments, ProblemSchema.class), "예상치 못한 값이 Json 데이터에 포함되어 있습니다.");
-            ProblemSchema problemSchema = objectMapper.treeToValue(arguments, ProblemSchema.class);
-            assertProblemSchema(problemSchema);
+            assertProblemSchema(arguments);
         }
     }
 
@@ -114,9 +112,7 @@ public class GPTResponseFormatTest {
             JsonNode arguments = responseMessage.getFunctionCall().getArguments();
 
             System.out.println(arguments.toPrettyString());
-            assertDoesNotThrow(() -> objectMapper.treeToValue(arguments, ProblemSchema.class), "예상치 못한 값이 Json 데이터에 포함되어 있습니다.");
-            ProblemSchema problemSchema = objectMapper.treeToValue(arguments, ProblemSchema.class);
-            assertProblemSchema(problemSchema);
+            assertProblemSchema(arguments);
         }
     }
 
@@ -135,7 +131,9 @@ public class GPTResponseFormatTest {
         return tokens;
     }
 
-    private void assertProblemSchema(ProblemSchema problemSchema) {
+    private void assertProblemSchema(JsonNode arguments) throws JsonProcessingException {
+        assertDoesNotThrow(() -> objectMapper.treeToValue(arguments, ProblemSchema.class), "예상치 못한 값이 Json 데이터에 포함되어 있습니다.");
+        ProblemSchema problemSchema = objectMapper.treeToValue(arguments, ProblemSchema.class);
         ProblemChoices problemChoices = problemSchema.getProblemChoices();
         assertAll(
                 () -> assertThat(problemSchema.getProblemName()).isNotNull(),
