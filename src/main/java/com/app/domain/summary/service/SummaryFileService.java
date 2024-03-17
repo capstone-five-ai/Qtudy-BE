@@ -17,12 +17,14 @@ import com.app.global.config.ENUM.*;
 import com.app.global.config.S3.S3Service;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
+import com.app.global.pdf.SummaryPdfMaker;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +48,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class SummaryFileService { //Service 추후 분할 예정
 
-    private String base_url = "http://101.101.211.36:5000";;
+    private String base_url = "http://localhost:5000";;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -198,7 +201,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
         try { // 요점정리 PDF 생성
             String S3PdfName = fileId +"_SUMMARY.pdf";// 예시로 앞글자를 사용한 .txt 파일 이름 생성 (추후 변경 예정)
-            tempFile = CreatePdfFile(aiGenerateSummaryDto.getFileName(), aiGenerateSummaryFromAiDto,PdfType.SUMMARY); // 파일 생성
+            tempFile = SummaryPdfMaker.CreatePdfFile(aiGenerateSummaryDto.getFileName(), aiGenerateSummaryFromAiDto,PdfType.SUMMARY); // 파일 생성
 
             // 파일을 MultipartFile로 변환
             FileSystemResource resource = new FileSystemResource(tempFile);
@@ -218,59 +221,10 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    private File CreatePdfFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
-        File tempFile = File.createTempFile(fileName, ".pdf");
-        String content = ConvertToStringBySummary(fileName, aiGenerateSummaryFromAiDto); //파일 내용 변환
-
-
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
-
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-            contentStream.beginText();
-
-            PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
-            contentStream.setFont(font, 12);
-            contentStream.newLineAtOffset(10, 700);
-
-            String[] lines = content.split("\n");
-            int linesInCurrentPage = 0;
-            int maxLinesPerPage = 42;
-
-            for (String line : lines) {
-                if (linesInCurrentPage >= maxLinesPerPage) {
-                    // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
-                    contentStream.endText();
-                    contentStream.close();
-
-                    page = new PDPage();
-                    document.addPage(page);
-
-                    contentStream = new PDPageContentStream(document, page);
-                    contentStream.beginText();
-                    contentStream.setFont(font, 12);
-                    contentStream.newLineAtOffset(10, 700);
-
-                    linesInCurrentPage = 0;
-                }
-
-                contentStream.showText(line);
-                contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
-                linesInCurrentPage++;
-            }
-
-            contentStream.endText();
-            contentStream.close();
-            document.save(tempFile);
-        }
-
-        return tempFile;
-    }
 
     // 사용자 입력 PDF를 String 문자열로 바꾸는 함수
-    public static String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
+    public String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
         try (InputStream is = pdfFile.getInputStream()) {
             PDDocument document = PDDocument.load(is);
             PDFTextStripper textStripper = new PDFTextStripper();
@@ -279,50 +233,6 @@ public class SummaryFileService { //Service 추후 분할 예정
             return text;
         }
     }
-
-
-    //PDF 파일에 사용할 문자열변환 (요점정리PDF.ver)
-    public static String ConvertToStringBySummary(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDtoArray) { // 파일의 내용 변환 함수
-        if (aiGenerateSummaryFromAiDtoArray == null ) {
-            return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
-        }
-
-        StringBuffer stringBuffer = new StringBuffer();
-
-        int summaryNumber =1;
-
-        stringBuffer.append(fileName).append("\n\n");   //요점정리 이름
-        //stringBuffer.append(" ").append(aiGenerateSummaryFromAiDtoArray.getSummaryContent()).append("\n\n");   //문제 이름
-        stringBuffer.append(wrapText(aiGenerateSummaryFromAiDtoArray.getSummaryContent(), 55)).append("\n\n");
-
-
-        return stringBuffer.toString();
-    }
-
-    private static String wrapText(String content, int maxLineLength) {
-        StringBuilder result = new StringBuilder();
-        int currentIndex = 0;
-
-        while (currentIndex < content.length()) {// 현재 인덱스부터 최대 길이만큼의 부분 문자열을 추출
-            int endIndex = Math.min(currentIndex + maxLineLength, content.length());
-            // 추출한 부분 문자열을 결과에 추가
-
-            if(content.charAt(currentIndex) == ' ') // 맨앞에 공백있을시 스킵
-                currentIndex++;
-
-            result.append(content, currentIndex, endIndex);
-
-            // 다음 줄이 있다면 줄바꿈 문자를 추가
-            if (endIndex < content.length()) {
-                result.append("\n");
-            }
-            // 현재 인덱스 업데이트
-            currentIndex = endIndex;
-        }
-
-        return result.toString();
-    }
-
 
 
 
