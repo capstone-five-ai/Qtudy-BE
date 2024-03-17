@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProblemFileService { //Service 추후 분할 예정
 
-    private String base_url = "http://101.101.211.36:5000";
+    private String base_url = "http://3.38.135.177:5000";
 
     @Autowired
     private RestTemplate restTemplate;
