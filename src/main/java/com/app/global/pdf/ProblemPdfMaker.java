@@ -95,21 +95,27 @@ public class ProblemPdfMaker {
                     yPosition -= 5;
 
 
-                    // 문제보기 작성
-                    for (int i = 0; i < problem.getProblemChoices().size(); i++) {
-                        List<String> wrappedProblemChoice = wrapText(problem.getProblemChoices().get(i), font,12, maxWidth);
-                        contentStream.showText(i+1+". ");
-                        for(String line : wrappedProblemChoice) {
-                            contentStream.showText(line);
-                            contentStream.newLineAtOffset(0, -15);
-                            yPosition -= 15; // 줄 간의 간격
+                    // 문제보기 작성 (주관식인 경우 pass)
+                    if (problem.getProblemChoices() != null) {
+                        for (int i = 0; i < problem.getProblemChoices().size(); i++) {
+                            List<String> wrappedProblemChoice = wrapText(problem.getProblemChoices().get(i), font, 12, maxWidth);
+                            contentStream.showText(i + 1 + ". ");
+                            for (String line : wrappedProblemChoice) {
+                                contentStream.showText(line);
+                                contentStream.newLineAtOffset(0, -15);
+                                yPosition -= 15; // 줄 간의 간격
+                            }
                         }
-                    }
-                    contentStream.showText("");
-                    contentStream.newLineAtOffset(0, -15);
-                    yPosition -= 15; // 줄 간의 간격
+                        contentStream.showText("");
+                        contentStream.newLineAtOffset(0, -15);
+                        yPosition -= 15; // 줄 간의 간격
 
-                    linesInCurrentPage++; // 현재 페이지 라인 수 증가
+                        linesInCurrentPage++; // 현재 페이지 라인 수 증가
+                    } else { // 주관식인 경우엔 빈칸만 추가
+                        contentStream.showText("");
+                        contentStream.newLineAtOffset(0, -15);
+                        yPosition -= 15; // 줄 간의 간격
+                    }
                 }
 
                 contentStream.endText();
@@ -193,7 +199,7 @@ public class ProblemPdfMaker {
                     yPosition -= 5;
 
 
-                    // 문제 정답 작성
+                    // 문제 정답 작성 (주관식인 경우 pass)
                     contentStream.showText("정답 : " + problem.getProblemAnswer());
                     contentStream.newLineAtOffset(0, -15);
 
