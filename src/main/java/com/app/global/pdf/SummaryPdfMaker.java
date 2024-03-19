@@ -18,7 +18,7 @@ public class SummaryPdfMaker {
 
     public static File CreatePdfFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
-        File tempFile = File.createTempFile(fileName, ".pdf");
+        File tempFile = File.createTempFile("PDF-FILE", ".pdf");
 
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
@@ -110,6 +110,9 @@ public class SummaryPdfMaker {
         StringBuilder line = new StringBuilder();
 
         for (String word : words) {
+            // 줄바꿈 문자 제거
+            word = word.replaceAll("\\r|\\n", "");
+
             if (font.getStringWidth(line + word) / 1000 * fontSize > maxWidth) {
                 lines.add(line.toString().trim());
                 line = new StringBuilder();
@@ -123,4 +126,5 @@ public class SummaryPdfMaker {
 
         return lines;
     }
+
 }
