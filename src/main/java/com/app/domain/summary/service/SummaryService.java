@@ -66,22 +66,23 @@ public class SummaryService {
     public MemberSavedSummaryDto.pdfResponse createSummaryPdf(Integer summaryId) throws IOException {
         AiGeneratedSummary summary = findVerifiedSummaryBySummaryId(summaryId);
 
+        // SummaryPdfMaker를 사용하여 PDF 파일 생성
         File tempFile = SummaryPdfMaker.CreatePdfFile(summary.getSummaryTitle(), new AiGenerateSummaryFromAiDto(summary.getSummaryContent()), PdfType.SUMMARY);
 
+        // PDF 파일을 바이트 배열로 변환
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        // try-with-resources 구문 사용
         try (FileInputStream fis = new FileInputStream(tempFile)) {
-
             byte[] buffer = new byte[1024];
             int len;
             while ((len = fis.read(buffer)) > -1) {
                 byteArrayOutputStream.write(buffer, 0, len);
             }
             byteArrayOutputStream.flush();
-
         } catch (IOException e) {
             e.printStackTrace(); // 에러 처리
         }
+
+        // 바이트 배열을 사용자에게 반환
         return new MemberSavedSummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
     }
 

@@ -98,7 +98,6 @@ public class SummaryPdfMaker {
 
             contentStream.endText();
             contentStream.close();
-            document.save(tempFile);
         }
 
         return tempFile;
