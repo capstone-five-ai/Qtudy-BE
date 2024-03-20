@@ -120,7 +120,6 @@ public class ProblemPdfMaker {
 
                 contentStream.endText();
                 contentStream.close();
-                document.save(tempFile);
             }
 
             return tempFile;
@@ -225,7 +224,6 @@ public class ProblemPdfMaker {
 
                 contentStream.endText();
                 contentStream.close();
-                document.save(tempFile);
             }
 
             return tempFile;
