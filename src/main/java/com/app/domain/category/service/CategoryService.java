@@ -11,6 +11,7 @@ import com.app.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +57,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public Page<Category> findCategoriesByMemberIdAndType(int page, int size, CategoryType categoryType, HttpServletRequest httpServletRequest) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("categoryName"));
         Member member = memberService.getLoginMember(httpServletRequest);
 
         return categoryRepository.findByMemberMemberIdAndCategoryType(member.getMemberId(), categoryType, pageRequest);
