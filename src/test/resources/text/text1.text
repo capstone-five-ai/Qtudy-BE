@@ -1,0 +1,43 @@
+물리 주소와 가상 주소
+물리 주소(Physical Address)
+컴퓨터의 메인 메모리를 접근할 때 사용되는 주소
+기억 장치의 주소 레지스터에 적재되는 주소
+가상 주소(Logical Address or Virtual Address)
+Process 관점에서 사용하는 주소
+CPU 관점의 주소는 물리 주소, 가상 주소 모두 가능
+Logical이기 대문에 주소 공간을 의미 있는 단위로 나누어 사용하지 않음
+초창기 컴퓨터의 주소 관리
+물리 주소를 Compile Time에 생성
+컴파일러는 프로세스를 실제 물리 주소로 매핑함
+따라서 시작 주소의 위치가 바뀔 경우 다시 Compile 해야함
+다양한 Program이 실행됨에 따라 Compile Time에 물리 주소를 정하기 어려워짐
+1개의 Program이 실행될 경우 문제 없음
+멀티 프로그래밍의 경우, 여러개의 프로그램을 동시에 Memory에 Load 하기 어려움
+가상 주소를 생성하기 시작
+Compile Time
+컴파일러가 Symbol Table을 만들고, 주소는 Symbol Table Relative한 주소로 이루어짐
+컴파일된 .O 파일은 주소 0부터 시작(Relocatable)
+Link Time
+.O 파일들과 System에서 제공하는 Library를 묶어서 Symbol Table에 의존적이지 않은 주소를 만들어 냄
+만들어진 Executable 파일은 하나의 주소 공간으로, 주소는 0부터 시작함
+Load Time
+Program의 실행을 위해 Loader는 실행 파일을 Memory로 Load함
+주소 공간 전체가 Memory에 올라간다면, Load 시 물리 주소에 대한 Binding이 일어남
+Base Register를 통해 물리 주소로 바꿔서 실행
+메모리에 로드된 후 위치를 변경할 수 없음
+만일 Program의 시작 주소를 바꾸려면, Load를 다시 해야함
+Execution Time
+Process가 실행 되는동안 물리 주소가 결정되고 바뀜
+그때그때 필요에 따라 물리 주소로 변환됨
+주로 가상 메모리 시스템에서 흔히 사용
+MMU와 같은 특별한 Hardware가 필요
+CPU에서 사용하는 주소에 따른 변환 방법
+CPU에서 Physical Relative Address를 사용하는 경우
+image
+Program 내 Instruction들의 주소를 시작 주소(Base Address)로 부터 상대적인 Offset으로 표현
+시작 주소 결정 시, 시작 주소 + 상대 주소의 합으로 절대 주소 생성 가능
+CPU에서 Virtual Address를 사용하는 경우
+image
+Translation의 속도가 중요한 요소가 됨
+Memory Management Unit(MMU)
+Virtual Address와 Physical Address 간의 변환을 수행하는 Hadrware 장치
