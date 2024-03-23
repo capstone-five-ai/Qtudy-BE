@@ -6,8 +6,11 @@ import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
 import com.app.domain.memberSavedSummary.dto.MemberSavedSummaryDto;
 import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
 import com.app.domain.memberSavedSummary.repository.MemberSavedSummaryRepository;
+import com.app.domain.summary.dto.SummaryFile.AiRequest.AiGenerateSummaryFromAiDto;
+import com.app.global.config.ENUM.PdfType;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.EntityNotFoundException;
+import com.app.global.pdf.SummaryPdfMaker;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -20,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -42,76 +47,26 @@ public class MemberSavedSummaryService {
     public MemberSavedSummaryDto.pdfResponse createSummaryPdf(Long memberSavedSummaryId) throws IOException {
         MemberSavedSummary summary = findVerifiedSummaryBySummaryId(memberSavedSummaryId);
 
-        try (PDDocument document = new PDDocument()) {
-            PDType0Font font = PDType0Font.load(document, getClass().getResourceAsStream("/fonts/malgun.ttf"));
-            float fontSize = 12;
-            float titleFontSize = 18; // 제목의 글자 크기를 더 크게 설정
-            float leading = 1.5f * fontSize;
-            float margin = 50;
-            PDPage page = new PDPage();
-            document.addPage(page);
-            float width = page.getMediaBox().getWidth() - 2 * margin;
-            float startX = margin;
-            float startY = page.getMediaBox().getHeight() - margin;
+        // SummaryPdfMaker를 사용하여 PDF 파일 생성
+        File tempFile = SummaryPdfMaker.CreatePdfFile(summary.getSummaryTitle(), new AiGenerateSummaryFromAiDto(summary.getSummaryContent()), PdfType.SUMMARY);
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-            contentStream.setFont(font, titleFontSize);
-            contentStream.beginText();
-            contentStream.newLineAtOffset(startX, startY);
-
-            // 제목 추가
-            String title = summary.getSummaryTitle();
-            float titleWidth = font.getStringWidth(title) / 1000 * titleFontSize;
-            // 가운데 정렬을 위해 계산
-            float titleX = (page.getMediaBox().getWidth() - titleWidth) / 2;
-            contentStream.newLineAtOffset(titleX - startX, 0); // 제목의 시작 위치 조정
-            contentStream.showText(title);
-            contentStream.endText();
-
-            // 본문 내용 시작 위치를 제목 아래로 조정
-            startY -= titleFontSize + leading;
-
-            // 본문 폰트 크기 설정
-            contentStream.setFont(font, fontSize);
-
-            String[] lines = summary.getSummaryContent().split("\n");
-            for (String line : lines) {
-                String[] words = line.split(" ");
-                float currentX = startX;
-                float currentY = startY;
-                contentStream.beginText();
-                contentStream.newLineAtOffset(startX, currentY);
-                for (String word : words) {
-                    float wordWidth = font.getStringWidth(word) / 1000 * fontSize;
-                    if (currentX + wordWidth >= width) {
-                        contentStream.endText();
-                        currentY -= leading;
-                        currentX = startX;
-                        if (currentY <= margin) {
-                            contentStream.close();
-                            page = new PDPage();
-                            document.addPage(page);
-                            contentStream = new PDPageContentStream(document, page);
-                            contentStream.setFont(font, fontSize);
-                            currentY = page.getMediaBox().getHeight() - margin;
-                        }
-                        contentStream.beginText();
-                        contentStream.newLineAtOffset(startX, currentY);
-                    }
-                    contentStream.showText(word + " ");
-                    currentX += wordWidth + font.getStringWidth(" ") / 1000 * fontSize;
-                }
-                contentStream.endText();
-                startY = currentY - leading;
+        // PDF 파일을 바이트 배열로 변환
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (FileInputStream fis = new FileInputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) > -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
             }
-
-            contentStream.close();
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            document.save(byteArrayOutputStream);
-            return new MemberSavedSummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
+            byteArrayOutputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace(); // 에러 처리
         }
+
+        // 바이트 배열을 사용자에게 반환
+        return new MemberSavedSummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
     }
+
 
     public MemberSavedSummary updateSummary(MemberSavedSummary summary, Long summaryId) {
         MemberSavedSummary preSummary = findVerifiedSummaryBySummaryId(summaryId);

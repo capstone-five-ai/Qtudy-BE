@@ -17,12 +17,14 @@ import com.app.global.config.ENUM.*;
 import com.app.global.config.S3.S3Service;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
+import com.app.global.pdf.ProblemPdfMaker;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.jboss.jandex.Main;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +50,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.app.global.pdf.ProblemPdfMaker.CreatePdfFile;
+
 @Service
 public class ProblemFileService { //Service 추후 분할 예정
+
 
     private String base_url = "http://3.38.135.177:5000";
 
@@ -297,113 +300,8 @@ public class ProblemFileService { //Service 추후 분할 예정
         }
     }
 
-    //PDF 파일 생성함수
-    private File CreatePdfFile(String fileName, AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDtoArray, PdfType pdfType) throws IOException { // String 기반으로 File 생성
-
-
-        if (pdfType == PdfType.PROBLEM) { //문제 PDF 생성
-
-            File tempFile = File.createTempFile(fileName, ".pdf");
-            String content = ConvertToStringByProblem(aiGenerateProblemFromAiDtoArray); // 파일 내용 변환
-
-            try (PDDocument document = new PDDocument()) {
-                PDPage page = new PDPage();
-                document.addPage(page);
-
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-                contentStream.beginText();
-
-                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
-                contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(10, 700);
-
-                String[] lines = content.split("\n");
-                int linesInCurrentPage = 0;
-                int maxLinesPerPage = 42;
-
-                for (String line : lines) {
-                    if (linesInCurrentPage >= maxLinesPerPage) {
-                        // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
-                        contentStream.endText();
-                        contentStream.close();
-
-                        page = new PDPage();
-                        document.addPage(page);
-
-                        contentStream = new PDPageContentStream(document, page);
-                        contentStream.beginText();
-                        contentStream.setFont(font, 12);
-                        contentStream.newLineAtOffset(10, 700);
-
-                        linesInCurrentPage = 0;
-                    }
-
-                    contentStream.showText(line);
-                    contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
-                    linesInCurrentPage++;
-                }
-
-                contentStream.endText();
-                contentStream.close();
-                document.save(tempFile);
-            }
-
-            return tempFile;
-
-        } else if (pdfType == PdfType.ANSWER) { // 정답 PDF 생성
-            File tempFile = File.createTempFile(fileName, ".pdf");
-            String content = ConvertToStringByAnswer(aiGenerateProblemFromAiDtoArray); // 파일 내용 변환
-
-            try (PDDocument document = new PDDocument()) {
-                PDPage page = new PDPage();
-                document.addPage(page);
-
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-                contentStream.beginText();
-
-                PDType0Font font = PDType0Font.load(document, Main.class.getResourceAsStream("/fonts/malgun.ttf"));
-                contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(10, 700);
-
-                String[] lines = content.split("\n");
-                int linesInCurrentPage = 0;
-                int maxLinesPerPage = 42;
-
-                for (String line : lines) {
-                    if (linesInCurrentPage >= maxLinesPerPage) {
-                        // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
-                        contentStream.endText();
-                        contentStream.close();
-
-                        page = new PDPage();
-                        document.addPage(page);
-
-                        contentStream = new PDPageContentStream(document, page);
-                        contentStream.beginText();
-                        contentStream.setFont(font, 12);
-                        contentStream.newLineAtOffset(10, 700);
-
-                        linesInCurrentPage = 0;
-                    }
-
-                    contentStream.showText(line);
-                    contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
-                    linesInCurrentPage++;
-                }
-
-                contentStream.endText();
-                contentStream.close();
-                document.save(tempFile);
-            }
-
-            return tempFile;
-        }
-        return null;
-    }
-
-
     // 사용자 입력 PDF를 String 문자열로 바꾸는 함수
-    public static String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
+    public String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
         try (InputStream is = pdfFile.getInputStream()) {
             PDDocument document = PDDocument.load(is);
             PDFTextStripper textStripper = new PDFTextStripper();
@@ -412,82 +310,6 @@ public class ProblemFileService { //Service 추후 분할 예정
             return text;
         }
     }
-
-
-    //PDF 파일에 사용할 문자열변환 (문제PDF.ver)
-    public static String ConvertToStringByProblem(AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDtoArray) { // 파일의 내용 변환 함수 -> 문제 생성버전
-        if (aiGenerateProblemFromAiDtoArray == null || aiGenerateProblemFromAiDtoArray.length == 0) {
-            return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
-        }
-
-        StringBuffer stringBuffer = new StringBuffer();
-
-        int problemNumber = 1;
-
-        for (AiGenerateProblemFromAiDto aiDto : aiGenerateProblemFromAiDtoArray) {
-            stringBuffer.append(problemNumber++ + ". ").append(wrapText(aiDto.getProblemName(),55)).append("\n");   //문제 이름
-
-            List<String> choices = aiDto.getProblemChoices(); // 문제 보기
-            if (choices != null && !choices.isEmpty()) {
-                for (int i = 0; i < choices.size(); i++) {
-                    stringBuffer.append(" ").append(i + 1).append(" ").append(wrapText(choices.get(i),55)).append("\n");
-                }
-            }
-            stringBuffer.append("\n\n\n");
-        }
-
-        return stringBuffer.toString();
-    }
-
-
-    //PDF 파일에 사용할 문자열변환 (정답PDF.ver)
-    public static String ConvertToStringByAnswer(AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDtoArray) { // 파일의 내용 변환 함수 -> 정답 생성버전
-        if (aiGenerateProblemFromAiDtoArray == null || aiGenerateProblemFromAiDtoArray.length == 0) {
-            return ""; // 빈 문자열 반환 또는 예외 처리 등을 수행할 수 있습니다.
-        }
-
-        StringBuffer stringBuffer = new StringBuffer();
-
-        int problemNumber = 1;
-
-        for (AiGenerateProblemFromAiDto aiDto : aiGenerateProblemFromAiDtoArray) {
-
-            if (aiDto.getProblemAnswer() != null) {
-                stringBuffer.append(problemNumber++ + ".  \n")
-                        .append("정답 : "+aiDto.getProblemAnswer()+"\n"); // 문제 정답 (객관식인 경우에만)
-
-            }
-            stringBuffer.append(" " + wrapText(aiDto.getProblemCommentary(),55)); // 해설은 객관식,주관식 둘다 필수로 있음
-            stringBuffer.append("\n\n");
-        }
-
-        return stringBuffer.toString();
-    }
-
-    private static String wrapText(String content, int maxLineLength) {
-        StringBuilder result = new StringBuilder();
-        int currentIndex = 0;
-
-        while (currentIndex < content.length()) {// 현재 인덱스부터 최대 길이만큼의 부분 문자열을 추출
-            int endIndex = Math.min(currentIndex + maxLineLength, content.length());
-            // 추출한 부분 문자열을 결과에 추가
-
-            if(content.charAt(currentIndex) == ' ') // 맨앞에 공백있을시 스킵
-                currentIndex++;
-
-            result.append(content, currentIndex, endIndex);
-
-            // 다음 줄이 있다면 줄바꿈 문자를 추가
-            if (endIndex < content.length()) {
-                result.append("\n");
-            }
-            // 현재 인덱스 업데이트
-            currentIndex = endIndex;
-        }
-
-        return result.toString();
-    }
-
 
     public ProblemFile SaveProblemFile(Member member, AiGenerateProblemDto aiGenerateProblemDto) {
         ProblemFile problemFile = ProblemFile.builder()
