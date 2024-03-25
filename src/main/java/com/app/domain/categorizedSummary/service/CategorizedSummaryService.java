@@ -67,7 +67,7 @@ public class CategorizedSummaryService {
 
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, MemberSavedSummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
-        if (categorizedSummary.getMemberSavedSummary().getMemberSavedSummaryId() != null) {
+        if (categorizedSummary.getMemberSavedSummary() != null) {
             memberSavedSummaryService.updateSummary(memberSavedSummaryMapper.
                     summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getMemberSavedSummary().getMemberSavedSummaryId());
         }
