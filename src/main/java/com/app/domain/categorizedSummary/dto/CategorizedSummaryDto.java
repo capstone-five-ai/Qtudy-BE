@@ -1,13 +1,18 @@
 package com.app.domain.categorizedSummary.dto;
 
 import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.category.dto.CategoryDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CategorizedSummaryDto {
 
@@ -59,8 +64,27 @@ public class CategorizedSummaryDto {
 
         private Long categoryId;
 
+        private List<CategorizedSummaryResponse> categorizedSummaryResponseList;
 
         public static Response of(CategorizedSummary categorizedSummary) {
+
+            List<CategorizedSummary> summaries = categorizedSummary.getCategory().getCategorizedSummaries();
+
+            CategorizedSummary previousSummary = summaries.stream()
+                    .filter(cs -> cs.getCategorizedSummaryId() < categorizedSummary.getCategorizedSummaryId())
+                    .max(Comparator.comparing(CategorizedSummary::getCategorizedSummaryId))
+                    .orElse(null);
+
+            CategorizedSummary nextSummary = summaries.stream()
+                    .filter(cs -> cs.getCategorizedSummaryId() > categorizedSummary.getCategorizedSummaryId())
+                    .min(Comparator.comparing(CategorizedSummary::getCategorizedSummaryId))
+                    .orElse(null);
+
+            List<CategorizedSummaryResponse> categorizedSummaryResponses = Stream.of(previousSummary, nextSummary)
+                    .map(CategorizedSummaryResponse::of)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
             return Response.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
                     .summaryTitle(categorizedSummary.getMemberSavedSummary() != null ?
@@ -71,6 +95,7 @@ public class CategorizedSummaryDto {
                             categorizedSummary.getAiGeneratedSummary().getSummaryContent())
                     .categoryName(categorizedSummary.getCategory().getCategoryName())
                     .categoryId(categorizedSummary.getCategory().getCategoryId())
+                    .categorizedSummaryResponseList(categorizedSummaryResponses)
                     .build();
         }
     }
@@ -83,8 +108,24 @@ public class CategorizedSummaryDto {
         @JsonProperty("isWriter")
         private Boolean isWriter;
 
-        public Boolean getisWriter() {
-            return isWriter;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class CategorizedSummaryResponse{
+        private Long categorizedSummaryId;
+
+        private String categorizedSummaryName;
+
+        public static CategorizedSummaryResponse of(CategorizedSummary categorizedSummary) {
+            return CategorizedSummaryResponse.builder()
+                    .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
+                    .categorizedSummaryName(categorizedSummary.getMemberSavedSummary() != null ?
+                            categorizedSummary.getMemberSavedSummary().getSummaryTitle() :
+                            categorizedSummary.getAiGeneratedSummary().getSummaryTitle())
+                    .build();
         }
     }
 }

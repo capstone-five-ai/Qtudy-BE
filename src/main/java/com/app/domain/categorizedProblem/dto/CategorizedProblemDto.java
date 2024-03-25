@@ -76,8 +76,6 @@ public class CategorizedProblemDto {
         private List<CategorizedProblemResponse> categorizedProblems;
 
         public static Response of(CategorizedProblem categorizedProblem) {
-            ResponseBuilder builder = Response.builder()
-                    .categorizedProblemId(categorizedProblem.getCategorizedProblemId());
 
             List<CategorizedProblem> problems = categorizedProblem.getCategory().getCategorizedProblems();
             CategorizedProblem previousProblem = problems.stream()
@@ -95,6 +93,9 @@ public class CategorizedProblemDto {
                     .map(CategorizedProblemResponse::of)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
+
+            ResponseBuilder builder = Response.builder()
+                    .categorizedProblemId(categorizedProblem.getCategorizedProblemId());
 
             if(categorizedProblem.getMemberSavedProblem() != null){
                 MemberSavedProblem memberSavedProblem = categorizedProblem.getMemberSavedProblem();
