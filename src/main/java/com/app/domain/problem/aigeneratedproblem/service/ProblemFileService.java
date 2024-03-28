@@ -295,7 +295,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
     // 사용자 입력 PDF를 String 문자열로 바꾸는 함수
-    public String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
+    public static String convertFileToString(MultipartFile pdfFile) throws IOException { // PDF파일을 String으로 변환
         try (InputStream is = pdfFile.getInputStream()) {
             PDDocument document = PDDocument.load(is);
             PDFTextStripper textStripper = new PDFTextStripper();
