@@ -222,7 +222,7 @@ public class CategorizedProblemService {
 
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
-        if(categorizedProblem.getMemberSavedProblem().getMemberSavedProblemId() != null){
+        if(categorizedProblem.getMemberSavedProblem() != null){
             memberSavedProblemService.updateProblem(memberSavedProblemMapper.
                     problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getMemberSavedProblem().getMemberSavedProblemId());
         }

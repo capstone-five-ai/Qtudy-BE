@@ -12,8 +12,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CategorizedProblemDto {
 
@@ -73,13 +76,26 @@ public class CategorizedProblemDto {
         private List<CategorizedProblemResponse> categorizedProblems;
 
         public static Response of(CategorizedProblem categorizedProblem) {
+
+            List<CategorizedProblem> problems = categorizedProblem.getCategory().getCategorizedProblems();
+            CategorizedProblem previousProblem = problems.stream()
+                    .filter(cp -> cp.getCategorizedProblemId() < categorizedProblem.getCategorizedProblemId())
+                    .max(Comparator.comparing(CategorizedProblem::getCategorizedProblemId))
+                    .orElse(null);
+
+            CategorizedProblem nextProblem = problems.stream()
+                    .filter(cp -> cp.getCategorizedProblemId() > categorizedProblem.getCategorizedProblemId())
+                    .min(Comparator.comparing(CategorizedProblem::getCategorizedProblemId))
+                    .orElse(null);
+
+
+            List<CategorizedProblemResponse> categorizedProblemResponses = Stream.of(previousProblem, nextProblem)
+                    .map(CategorizedProblemResponse::of)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
             ResponseBuilder builder = Response.builder()
                     .categorizedProblemId(categorizedProblem.getCategorizedProblemId());
-
-            List<CategorizedProblemResponse> categorizedProblemResponses = categorizedProblem.getCategory().getCategorizedProblems()
-                    .stream()
-                    .map(CategorizedProblemResponse::of)
-                    .collect(Collectors.toList());
 
             if(categorizedProblem.getMemberSavedProblem() != null){
                 MemberSavedProblem memberSavedProblem = categorizedProblem.getMemberSavedProblem();
@@ -114,10 +130,6 @@ public class CategorizedProblemDto {
 
         @JsonProperty("isWriter")
         private Boolean isWriter;
-
-        public Boolean getisWriter() {
-            return isWriter;
-        }
     }
 
     @Getter
