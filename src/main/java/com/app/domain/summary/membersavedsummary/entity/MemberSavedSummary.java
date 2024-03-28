@@ -2,6 +2,7 @@ package com.app.domain.summary.membersavedsummary.entity;
 
 import com.app.domain.member.entity.Member;
 import com.app.domain.summary.entity.Summary;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -12,11 +13,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SuperBuilder
+@DiscriminatorValue("MEMBER")
+@Entity
 public class MemberSavedSummary extends Summary {
 
     @ManyToOne(fetch = FetchType.LAZY)
