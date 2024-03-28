@@ -2,7 +2,7 @@ package com.app.domain.problem.service;
 
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
-import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
+import com.app.domain.membersavedproblem.entity.MemberSavedProblem;
 import com.app.domain.problem.entity.AiGeneratedProblem;
 import com.app.domain.problem.entity.ProblemFile;
 import com.app.domain.problem.repository.AiGeneratedProblemRepository;

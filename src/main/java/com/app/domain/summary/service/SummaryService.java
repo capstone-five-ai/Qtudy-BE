@@ -1,14 +1,10 @@
 package com.app.domain.summary.service;
 
 
-import com.app.domain.categorizedSummary.entity.CategorizedSummary;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
-import com.app.domain.memberSavedProblem.entity.MemberSavedProblem;
-import com.app.domain.memberSavedSummary.dto.MemberSavedSummaryDto;
-import com.app.domain.memberSavedSummary.entity.MemberSavedSummary;
-import com.app.domain.problem.entity.AiGeneratedProblem;
-import com.app.domain.problem.entity.ProblemFile;
+import com.app.domain.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.domain.membersavedsummary.entity.MemberSavedSummary;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.AiGenerateSummaryFromAiDto;
 import com.app.domain.summary.entity.AiGeneratedSummary;
 import com.app.domain.summary.entity.SummaryFile;
@@ -20,12 +16,7 @@ import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
 import com.app.global.pdf.SummaryPdfMaker;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
