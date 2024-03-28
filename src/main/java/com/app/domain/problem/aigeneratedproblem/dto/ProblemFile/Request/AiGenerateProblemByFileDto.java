@@ -1,4 +1,4 @@
-package com.app.domain.summary.dto.SummaryFile.AiRequest;
+package com.app.domain.problem.aigeneratedproblem.dto.ProblemFile.Request;
 
 import com.app.global.config.ENUM.Amount;
 import com.app.global.config.ENUM.ProblemDifficulty;
@@ -12,11 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class RequestSummaryToAiByTextDto {
-    private String text;
+public class AiGenerateProblemByFileDto {
     private ProblemType type;
     private Amount amount;
     private ProblemDifficulty difficulty;
     private String fileName;
+
 
 }
