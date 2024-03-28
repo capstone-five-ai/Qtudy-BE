@@ -1,8 +1,8 @@
 package com.app.domain.categorizedproblem.dto;
 
 import com.app.domain.categorizedproblem.entity.CategorizedProblem;
-import com.app.domain.membersavedproblem.entity.MemberSavedProblem;
-import com.app.domain.problem.entity.AiGeneratedProblem;
+import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
+import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
 import com.app.global.config.ENUM.ProblemType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

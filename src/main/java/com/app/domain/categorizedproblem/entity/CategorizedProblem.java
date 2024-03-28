@@ -2,8 +2,8 @@ package com.app.domain.categorizedproblem.entity;
 
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
-import com.app.domain.membersavedproblem.entity.MemberSavedProblem;
-import com.app.domain.problem.entity.AiGeneratedProblem;
+import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
+import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import lombok.*;

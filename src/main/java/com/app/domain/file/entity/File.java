@@ -2,7 +2,6 @@ package com.app.domain.file.entity;
 
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
-import com.app.domain.problem.entity.ProblemFile;
 import com.app.global.config.ENUM.DType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

@@ -1,6 +1,5 @@
 package com.app.domain.summary.dto.SummaryFile.Request;
 
-import com.app.domain.problem.dto.ProblemFile.AiRequest.RequestProblemToAiByTextDto;
 import com.app.domain.summary.dto.SummaryFile.AiRequest.RequestSummaryToAiByTextDto;
 import com.app.global.config.ENUM.Amount;
 import lombok.AllArgsConstructor;
