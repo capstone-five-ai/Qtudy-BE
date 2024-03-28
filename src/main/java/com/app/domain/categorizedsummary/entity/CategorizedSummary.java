@@ -2,14 +2,20 @@ package com.app.domain.categorizedsummary.entity;
 
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
-import com.app.domain.summary.membersavedsummary.entity.MemberSavedSummary;
-import com.app.domain.summary.aigeneratedsummary.entity.AiGeneratedSummary;
-import lombok.*;
+import com.app.domain.summary.entity.Summary;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -29,15 +35,9 @@ public class CategorizedSummary extends BaseEntity {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_SAVED_SUMMARYS_ID", nullable = false)
+    @JoinColumn(name = "SUMMARY_ID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private MemberSavedSummary memberSavedSummary;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AI_GENERATED_SUMMARY_ID")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private AiGeneratedSummary aiGeneratedSummary;
-
+    private Summary summary;
 
     public void updateCategory(Category category){
         this.category = category;
