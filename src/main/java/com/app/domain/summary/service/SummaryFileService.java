@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 public class SummaryFileService { //Service 추후 분할 예정
 
 
-    private String base_url = "http://3.38.135.177:5000";;
+    private String base_url = "http://13.125.229.219:5000";;
   
     @Autowired
     private RestTemplate restTemplate;
