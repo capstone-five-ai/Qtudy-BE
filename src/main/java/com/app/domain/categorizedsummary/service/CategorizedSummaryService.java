@@ -55,11 +55,11 @@ public class CategorizedSummaryService {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         if (categorizedSummary.getMemberSavedSummary() != null) {
             // MemberSavedSummary와 연관된 경우
-            Long memberSavedSummaryId = categorizedSummary.getMemberSavedSummary().getMemberSavedSummaryId();
+            Long memberSavedSummaryId = categorizedSummary.getMemberSavedSummary().getSummaryId().longValue();
             return memberSavedSummaryService.createSummaryPdf(memberSavedSummaryId);
         }else{
             // AiGeneratedSummary와 연관된 경우
-            Integer aiGeneratedSummaryId = categorizedSummary.getAiGeneratedSummary().getAiGeneratedSummaryId();
+            Integer aiGeneratedSummaryId = categorizedSummary.getAiGeneratedSummary().getSummaryId();
             return aiGeneratedSummaryService.createSummaryPdf(aiGeneratedSummaryId);
         }
     }
@@ -68,11 +68,11 @@ public class CategorizedSummaryService {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         if (categorizedSummary.getMemberSavedSummary() != null) {
             memberSavedSummaryService.updateSummary(memberSavedSummaryMapper.
-                    summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getMemberSavedSummary().getMemberSavedSummaryId());
+                    summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getMemberSavedSummary().getSummaryId().longValue());
         }
         else{
             aiGeneratedSummaryService.updateSummary(memberSavedSummaryMapper.
-                    summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getAiGeneratedSummary().getAiGeneratedSummaryId());
+                    summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getAiGeneratedSummary().getSummaryId());
         }
 
         return categorizedSummaryRepository.save(categorizedSummary);
@@ -82,7 +82,7 @@ public class CategorizedSummaryService {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 
         Long memberSavedSummaryId = categorizedSummary.getMemberSavedSummary() != null
-                ? categorizedSummary.getMemberSavedSummary().getMemberSavedSummaryId()
+                ? categorizedSummary.getMemberSavedSummary().getSummaryId().longValue()
                 : null;
 
         categorizedSummaryRepository.deleteById(categorizedSummaryId);
