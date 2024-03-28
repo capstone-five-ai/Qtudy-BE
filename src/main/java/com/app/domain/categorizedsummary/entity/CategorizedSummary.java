@@ -2,8 +2,8 @@ package com.app.domain.categorizedsummary.entity;
 
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
-import com.app.domain.membersavedsummary.entity.MemberSavedSummary;
-import com.app.domain.summary.entity.AiGeneratedSummary;
+import com.app.domain.summary.membersavedsummary.entity.MemberSavedSummary;
+import com.app.domain.summary.aigeneratedsummary.entity.AiGeneratedSummary;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;

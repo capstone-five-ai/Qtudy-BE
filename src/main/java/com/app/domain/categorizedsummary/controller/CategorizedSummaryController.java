@@ -4,7 +4,7 @@ import com.app.domain.categorizedsummary.dto.CategorizedSummaryDto;
 import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.categorizedsummary.mapper.CategorizedSummaryMapper;
 import com.app.domain.categorizedsummary.service.CategorizedSummaryService;
-import com.app.domain.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

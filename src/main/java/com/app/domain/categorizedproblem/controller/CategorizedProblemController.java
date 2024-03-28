@@ -5,7 +5,7 @@ import com.app.domain.categorizedproblem.entity.CategorizedProblem;
 import com.app.domain.categorizedproblem.mapper.CategorizedProblemMapper;
 import com.app.domain.categorizedproblem.service.CategorizedProblemService;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
-import com.app.domain.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

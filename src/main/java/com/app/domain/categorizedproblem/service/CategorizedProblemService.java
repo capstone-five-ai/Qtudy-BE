@@ -10,7 +10,7 @@ import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
 import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
 import com.app.domain.problem.membersavedproblem.mapper.MemberSavedProblemMapper;
 import com.app.domain.problem.membersavedproblem.service.MemberSavedProblemService;
-import com.app.domain.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
 import com.app.domain.problem.aigeneratedproblem.service.ProblemService;
 import com.app.global.config.ENUM.ProblemType;
