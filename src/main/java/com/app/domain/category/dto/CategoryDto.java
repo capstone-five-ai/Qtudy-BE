@@ -1,7 +1,7 @@
 package com.app.domain.category.dto;
 
-import com.app.domain.categorizedProblem.entity.CategorizedProblem;
-import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.categorizedproblem.entity.CategorizedProblem;
+import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.MultiResponseDto;

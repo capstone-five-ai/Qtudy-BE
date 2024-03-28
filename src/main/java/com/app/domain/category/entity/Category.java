@@ -1,10 +1,9 @@
 package com.app.domain.category.entity;
 
-import com.app.domain.categorizedProblem.entity.CategorizedProblem;
-import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.categorizedproblem.entity.CategorizedProblem;
+import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.common.BaseEntity;
-import com.app.domain.member.constant.MemberType;
 import com.app.domain.member.entity.Member;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

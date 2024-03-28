@@ -1,9 +1,9 @@
 package com.app.domain.category.controller;
 
-import com.app.domain.categorizedProblem.entity.CategorizedProblem;
-import com.app.domain.categorizedProblem.service.CategorizedProblemService;
-import com.app.domain.categorizedSummary.entity.CategorizedSummary;
-import com.app.domain.categorizedSummary.service.CategorizedSummaryService;
+import com.app.domain.categorizedproblem.entity.CategorizedProblem;
+import com.app.domain.categorizedproblem.service.CategorizedProblemService;
+import com.app.domain.categorizedsummary.entity.CategorizedSummary;
+import com.app.domain.categorizedsummary.service.CategorizedSummaryService;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.dto.CategoryDto;
 import com.app.domain.category.entity.Category;

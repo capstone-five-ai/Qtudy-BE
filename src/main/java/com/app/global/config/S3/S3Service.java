@@ -1,6 +1,6 @@
 package com.app.global.config.S3;
 
-import com.app.domain.problem.value.S3FileInformation;
+import com.app.domain.problem.aigeneratedproblem.value.S3FileInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
