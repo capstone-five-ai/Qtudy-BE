@@ -223,11 +223,11 @@ public class CategorizedProblemService {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
         if(categorizedProblem.getMemberSavedProblem() != null){
             memberSavedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getMemberSavedProblem().getMemberSavedProblemId());
+                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getMemberSavedProblem().getProblemId());
         }
         else{
             aiGeneratedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblem().getAiGeneratedProblemId());
+                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblem().getProblemId().intValue());
         }
         return categorizedProblemRepository.save(categorizedProblem);
     }
@@ -290,7 +290,7 @@ public class CategorizedProblemService {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
 
         Long memberSavedProblemId = categorizedProblem.getMemberSavedProblem() != null
-                ? categorizedProblem.getMemberSavedProblem().getMemberSavedProblemId()
+                ? categorizedProblem.getMemberSavedProblem().getProblemId()
                 : null;
 
         categorizedProblemRepository.deleteById(categorizedProblemID);
