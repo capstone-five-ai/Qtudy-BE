@@ -22,7 +22,7 @@ public class AiGeneratedProblemList {
 
     public static AiGeneratedProblemList ConvertToProblem(AiGeneratedProblem aiGenerateProblem){
         return AiGeneratedProblemList.builder()
-                .aiGeneratedProblemId(aiGenerateProblem.getAiGeneratedProblemId())
+                .aiGeneratedProblemId(aiGenerateProblem.getProblemId().intValue())
                 .problemName(aiGenerateProblem.getProblemName())
                 .problemChoices(aiGenerateProblem.getProblemChoices())
                 .problemAnswer(aiGenerateProblem.getProblemAnswer())

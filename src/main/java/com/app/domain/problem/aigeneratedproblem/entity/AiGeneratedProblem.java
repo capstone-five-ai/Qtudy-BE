@@ -1,63 +1,27 @@
 package com.app.domain.problem.aigeneratedproblem.entity;
 
-import com.app.domain.common.BaseEntity;
-import com.app.global.config.ENUM.ProblemType;
+import com.app.domain.problem.entity.Problem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
-import java.util.List;
-
-
-@Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class AiGeneratedProblem extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AI_GENERATED_PROBLEM_ID")
-    private Integer aiGeneratedProblemId;
-
+@DiscriminatorValue("AI")
+@Entity
+public class AiGeneratedProblem extends Problem {
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "FILE_ID")
     private ProblemFile problemFile;
 
-
-
-
-    @Column(name = "PROBLEM_NAME", length = 500,nullable = false)
-    private String problemName;
-
-    @ElementCollection
-    private List<String> problemChoices;
-
-    @Column(name = "PROBLEM_ANSWER", length = 500)
-    private String problemAnswer;
-
-    @Column(name = "PROBLEM_COMMENTARY", columnDefinition = "TEXT", nullable = false)
-    private String problemCommentary;
-
-    @Column(name = "PROBLEM_TYPE",nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProblemType problemType;
-
-
-    public void updateProblemName(String problemName) {
-        this.problemName = problemName;
-    }
-
-    public void updateProblemAnswer(String problemAnswer) {
-        this.problemAnswer = problemAnswer;
-    }
-
-    public void updateProblemCommentary(String problemCommentary) {
-        this.problemCommentary = problemCommentary;
-    }
 }
