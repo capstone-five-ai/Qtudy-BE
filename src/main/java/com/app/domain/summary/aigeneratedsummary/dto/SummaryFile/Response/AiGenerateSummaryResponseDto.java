@@ -25,7 +25,7 @@ public class AiGenerateSummaryResponseDto {
             AiGeneratedSummary aiGeneratedSummary,int fileId){
         AiGenerateSummaryResponseDto aiGenerateSummaryResponseDto = AiGenerateSummaryResponseDto.builder()
                 .fileId(fileId)
-                .aiGeneratedSummaryId(aiGeneratedSummary.getAiGeneratedSummaryId())
+                .aiGeneratedSummaryId(aiGeneratedSummary.getSummaryId())
                 .summaryTitle(aiGeneratedSummary.getSummaryTitle())
                 .summaryContent(aiGeneratedSummary.getSummaryContent())
                 .createTime(aiGeneratedSummary.getSummaryFile().getCreateTime())

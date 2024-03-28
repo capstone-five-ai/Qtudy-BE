@@ -1,11 +1,15 @@
 package com.app.domain.summary.aigeneratedsummary.entity;
 
 
-import com.app.domain.common.BaseEntity;
-import lombok.*;
+import com.app.domain.summary.entity.Summary;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -13,32 +17,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class AiGeneratedSummary extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="AI_GENERATED_SUMMARY_ID")
-    private Integer aiGeneratedSummaryId;
+public class AiGeneratedSummary extends Summary {
 
     @ManyToOne
     @JoinColumn(name = "FILE_ID")
     private SummaryFile summaryFile;
-
-
-    @Column(name = "SUMMARY_TITLE",length = 500, nullable = false)
-    private String summaryTitle;
-
-
-    @Lob // TEXT 형식 변환
-    @Column(name = "SUMMARY_CONTENT", columnDefinition = "TEXT", nullable = false)
-    private String summaryContent;
-
-
-    public void updateSummaryTitle(String summaryTitle) {
-        this.summaryTitle = summaryTitle;
-    }
-
-    public void updateSummaryContent(String summaryContent) {
-        this.summaryContent = summaryContent;
-    }
 }

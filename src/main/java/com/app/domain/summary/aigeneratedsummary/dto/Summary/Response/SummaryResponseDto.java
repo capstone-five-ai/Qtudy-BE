@@ -19,7 +19,7 @@ public class SummaryResponseDto {
         return SummaryResponseDto.builder()
                 .isWriter(isWriter)
                 .response(Response.builder()
-                        .aiGeneratedSummaryId(aiGeneratedSummary.getAiGeneratedSummaryId())
+                        .aiGeneratedSummaryId(aiGeneratedSummary.getSummaryId())
                         .summaryTitle(aiGeneratedSummary.getSummaryTitle())
                         .summaryContent(aiGeneratedSummary.getSummaryContent())
                         .build())
