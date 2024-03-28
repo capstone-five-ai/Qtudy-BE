@@ -2,16 +2,21 @@ package com.app.domain.categorizedproblem.entity;
 
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.BaseEntity;
-import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
-import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
-import com.app.global.error.ErrorCode;
-import com.app.global.error.exception.BusinessException;
-import lombok.*;
+import com.app.domain.problem.entity.Problem;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -33,25 +38,9 @@ public class CategorizedProblem extends BaseEntity {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_SAVED_PROBLEM_ID")
+    @JoinColumn(name = "PROBLEM_ID")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private MemberSavedProblem memberSavedProblem;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AI_GENERATED_PROBLEM_ID")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private AiGeneratedProblem aiGeneratedProblem;
-
-    @PrePersist
-    @PreUpdate
-    private void validateFk() {
-        if (memberSavedProblem != null && aiGeneratedProblem != null) {
-            throw new BusinessException(ErrorCode.FK_BOTH_EXISTS);
-        }
-        else if(memberSavedProblem == null && aiGeneratedProblem == null){
-            throw new BusinessException(ErrorCode.FK_NOT_EXISTS);
-        }
-    }
+    private Problem problem;
 
     public void updateCategory(Category category){
         this.category = category;
