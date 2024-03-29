@@ -12,7 +12,7 @@ import com.app.domain.problem.membersavedproblem.mapper.MemberSavedProblemMapper
 import com.app.domain.problem.membersavedproblem.service.MemberSavedProblemService;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
-import com.app.domain.problem.aigeneratedproblem.service.ProblemService;
+import com.app.domain.problem.aigeneratedproblem.service.AiGeneratedProblemService;
 import com.app.global.config.ENUM.ProblemType;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
@@ -45,7 +45,7 @@ public class CategorizedProblemService {
 
     private final MemberSavedProblemMapper memberSavedProblemMapper;
 
-    private final ProblemService aiGeneratedProblemService;
+    private final AiGeneratedProblemService aiGeneratedProblemService;
 
     private final CategorizedProblemRepository categorizedProblemRepository;
 

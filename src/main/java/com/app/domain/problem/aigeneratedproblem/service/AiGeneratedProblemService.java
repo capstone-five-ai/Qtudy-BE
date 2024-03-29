@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProblemService { //Service 추후 분할 예정
+public class AiGeneratedProblemService { //Service 추후 분할 예정
 
     @Autowired
     private RestTemplate restTemplate;
