@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
-public class SummaryService {
+public class AiGeneratedSummaryService {
 
 
     @Autowired

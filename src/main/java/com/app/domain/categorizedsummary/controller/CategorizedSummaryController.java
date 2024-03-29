@@ -36,9 +36,10 @@ public class CategorizedSummaryController {
         List<Long> categorizedSummaryIdList = new ArrayList<>();
 
         for (Long categoryId : categorizedSummaryPostDto.getCategoryIdList()) {
-            CategorizedSummary categorizedSummary =
-                    categorizedSummaryService.createCategorizedSummary(categoryId,
-                            categorizedSummaryPostDto.getMemberSavedSummaryId(), categorizedSummaryPostDto.getAiGeneratedSummaryId());
+            CategorizedSummary categorizedSummary = categorizedSummaryService.createCategorizedSummary(
+                    categoryId,
+                    categorizedSummaryPostDto.getSummaryId()
+            );
             categorizedSummaryIdList.add(categorizedSummary.getCategorizedSummaryId());
         }
 

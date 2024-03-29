@@ -6,23 +6,22 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
+import com.app.domain.summary.aigeneratedsummary.service.AiGeneratedSummaryService;
+import com.app.domain.summary.entity.Summary;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
-import com.app.domain.summary.membersavedsummary.entity.MemberSavedSummary;
 import com.app.domain.summary.membersavedsummary.mapper.MemberSavedSummaryMapper;
 import com.app.domain.summary.membersavedsummary.service.MemberSavedSummaryService;
-import com.app.domain.summary.aigeneratedsummary.entity.AiGeneratedSummary;
-import com.app.domain.summary.aigeneratedsummary.service.SummaryService;
+import com.app.domain.summary.service.SummaryService;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 @Service
 @Transactional
@@ -36,19 +35,39 @@ public class CategorizedSummaryService {
 
     private final MemberService memberService;
 
-    private final SummaryService aiGeneratedSummaryService;
+    private final AiGeneratedSummaryService aiGeneratedSummaryService;
 
     private final CategorizedSummaryRepository categorizedSummaryRepository;
 
-    public CategorizedSummary createCategorizedSummary(Long categoryId, Long memberSavedSummaryId,
-                                                       Integer aiGeneratedSummaryId) {
-        validateCategorizedSummaryInputs(memberSavedSummaryId, aiGeneratedSummaryId);
-        checkForDuplicateCategorizedProblem(categoryId, memberSavedSummaryId, aiGeneratedSummaryId);
+    private final SummaryService summaryService;
+
+    public CategorizedSummary createCategorizedSummary(Long categoryId, Integer summaryId) {
+        checkForDuplicateCategorizedProblem(categoryId, summaryId);
 
         Category category = categoryService.findVerifiedCategoryByCategoryId(categoryId);
-        CategorizedSummary categorizedSummary = createCategorizedSummaryEntity(category, memberSavedSummaryId, aiGeneratedSummaryId);
+        CategorizedSummary categorizedSummary = createCategorizedSummaryEntity(category, summaryId);
 
         return categorizedSummaryRepository.save(categorizedSummary);
+    }
+
+    private void checkForDuplicateCategorizedProblem(Long categoryId, Integer summaryId) {
+        boolean exists = categorizedSummaryRepository.existsByCategoryCategoryIdAndSummarySummaryId(
+                categoryId,
+                summaryId
+        );
+        if (exists) {
+            throw new BusinessException(ErrorCode.DUPLICATE_CATEGORIZED_SUMMARY);
+        }
+    }
+
+    private CategorizedSummary createCategorizedSummaryEntity(Category category, Integer summaryId) {
+        Summary summary = summaryService.findVerifiedSummaryBySummaryId(summaryId);
+        CategorizedSummary categorizedSummary = CategorizedSummary.builder()
+                .summary(summary)
+                .build();
+
+        categorizedSummary.updateCategory(category);
+        return categorizedSummary;
     }
 
     public MemberSavedSummaryDto.pdfResponse createSummaryPdf(Long categorizedSummaryId) throws IOException{
@@ -77,7 +96,6 @@ public class CategorizedSummaryService {
 
         return categorizedSummaryRepository.save(categorizedSummary);
     }
-
     public void deleteCategorizedSummary(Long categorizedSummaryId) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 
@@ -94,43 +112,6 @@ public class CategorizedSummaryService {
 
     private boolean isMemberSavedSummaryUsedInOtherCategorizedSummarys(Long memberSavedSummaryId){
         return categorizedSummaryRepository.existsByMemberSavedSummaryMemberSavedSummaryId(memberSavedSummaryId);
-    }
-    private CategorizedSummary createCategorizedSummaryEntity(Category category, Long memberSavedSummaryId, Integer aiGeneratedSummaryId) {
-        CategorizedSummary categorizedSummary;
-
-        if(memberSavedSummaryId != null){
-            MemberSavedSummary memberSavedSummary = memberSavedSummaryService.findVerifiedSummaryBySummaryId(memberSavedSummaryId);
-            categorizedSummary = CategorizedSummary.builder()
-                    .memberSavedSummary(memberSavedSummary)
-                    .build();
-        }else{
-            AiGeneratedSummary aiGenerateSummary = aiGeneratedSummaryService.findVerifiedSummaryBySummaryId(aiGeneratedSummaryId);
-            categorizedSummary = CategorizedSummary.builder()
-                    .aiGeneratedSummary(aiGenerateSummary)
-                    .build();
-        }
-
-        categorizedSummary.updateCategory(category);
-        return categorizedSummary;
-    }
-
-    private void validateCategorizedSummaryInputs(Long memberSavedSummaryId, Integer aiGeneratedSummaryId) {
-        boolean bothNull = memberSavedSummaryId == null && aiGeneratedSummaryId == null;
-        boolean bothNotNull = memberSavedSummaryId != null && aiGeneratedSummaryId != null;
-
-        if (bothNull || bothNotNull) {
-            throw new BusinessException(bothNull ? ErrorCode.FK_NOT_EXISTS : ErrorCode.FK_BOTH_EXISTS);
-        }
-    }
-
-    private void checkForDuplicateCategorizedProblem(Long categoryId, Long memberSavedSummaryId, Integer aiGeneratedSummaryId) {
-        boolean exists = memberSavedSummaryId != null
-                ? categorizedSummaryRepository.existsByCategoryCategoryIdAndMemberSavedSummaryMemberSavedSummaryId(categoryId, memberSavedSummaryId)
-                : categorizedSummaryRepository.existsByCategoryCategoryIdAndAiGeneratedSummaryAiGeneratedSummaryId(categoryId, aiGeneratedSummaryId);
-
-    if(exists){
-        throw new BusinessException(ErrorCode.DUPLICATE_CATEGORIZED_SUMMARY);
-    }
     }
 
     public CategorizedSummary findVerifiedCategorizedSummaryByCategorizedSummaryId(Long categorizedSummaryId) {
