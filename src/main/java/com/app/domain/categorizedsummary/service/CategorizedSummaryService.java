@@ -8,7 +8,6 @@ import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
 import com.app.domain.summary.dto.SummaryDto;
 import com.app.domain.summary.entity.Summary;
-import com.app.domain.summary.mapper.SummaryMapper;
 import com.app.domain.summary.membersavedsummary.service.MemberSavedSummaryService;
 import com.app.domain.summary.repository.SummaryRepository;
 import com.app.domain.summary.service.SummaryService;
@@ -37,7 +36,6 @@ public class CategorizedSummaryService {
 
     private final SummaryService summaryService;
 
-    private SummaryMapper summaryMapper;
     private final SummaryRepository summaryRepository;
 
     public CategorizedSummary createCategorizedSummary(Long categoryId, Integer summaryId) {
@@ -78,7 +76,8 @@ public class CategorizedSummaryService {
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, SummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         summaryService.updateSummary(
-                summaryMapper.summaryPatchDtoToSummary(summaryPatchDto),
+                summaryPatchDto.getSummaryTitle(),
+                summaryPatchDto.getSummaryContent(),
                 categorizedSummary.getSummary().getSummaryId()
         );
         return categorizedSummaryRepository.save(categorizedSummary);

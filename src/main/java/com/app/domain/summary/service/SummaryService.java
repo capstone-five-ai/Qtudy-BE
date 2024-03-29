@@ -53,14 +53,14 @@ public class SummaryService {
         return new SummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
     }
 
-    public Summary updateSummary(Summary summary, Integer summaryId) {
+    public void updateSummary(String summaryTitle, String summaryContent, Integer summaryId) {
         Summary preSummary = findVerifiedSummaryBySummaryId(summaryId);
 
-        Optional.ofNullable(summary.getSummaryTitle())
-                .ifPresent(summaryTitle -> preSummary.updateSummaryTitle(summaryTitle));
-        Optional.ofNullable(summary.getSummaryContent())
-                .ifPresent(summaryContent -> preSummary.updateSummaryContent(summaryContent));
+        Optional.ofNullable(summaryTitle)
+                .ifPresent(preSummary::updateSummaryTitle);
+        Optional.ofNullable(summaryContent)
+                .ifPresent(preSummary::updateSummaryContent);
 
-        return summaryRepository.save(preSummary);
+        summaryRepository.save(preSummary);
     }
 }
