@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,5 +51,16 @@ public class SummaryService {
 
         // 바이트 배열을 사용자에게 반환
         return new SummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
+    }
+
+    public Summary updateSummary(Summary summary, Integer summaryId) {
+        Summary preSummary = findVerifiedSummaryBySummaryId(summaryId);
+
+        Optional.ofNullable(summary.getSummaryTitle())
+                .ifPresent(summaryTitle -> preSummary.updateSummaryTitle(summaryTitle));
+        Optional.ofNullable(summary.getSummaryContent())
+                .ifPresent(summaryContent -> preSummary.updateSummaryContent(summaryContent));
+
+        return summaryRepository.save(preSummary);
     }
 }

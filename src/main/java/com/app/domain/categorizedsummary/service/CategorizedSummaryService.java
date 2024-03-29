@@ -9,7 +9,7 @@ import com.app.domain.member.service.MemberService;
 import com.app.domain.summary.aigeneratedsummary.service.AiGeneratedSummaryService;
 import com.app.domain.summary.dto.SummaryDto;
 import com.app.domain.summary.entity.Summary;
-import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.domain.summary.mapper.SummaryMapper;
 import com.app.domain.summary.membersavedsummary.mapper.MemberSavedSummaryMapper;
 import com.app.domain.summary.membersavedsummary.service.MemberSavedSummaryService;
 import com.app.domain.summary.service.SummaryService;
@@ -32,15 +32,13 @@ public class CategorizedSummaryService {
 
     private final MemberSavedSummaryService memberSavedSummaryService;
 
-    private final MemberSavedSummaryMapper memberSavedSummaryMapper;
-
     private final MemberService memberService;
-
-    private final AiGeneratedSummaryService aiGeneratedSummaryService;
 
     private final CategorizedSummaryRepository categorizedSummaryRepository;
 
     private final SummaryService summaryService;
+
+    private SummaryMapper summaryMapper;
 
     public CategorizedSummary createCategorizedSummary(Long categoryId, Integer summaryId) {
         checkForDuplicateCategorizedProblem(categoryId, summaryId);
@@ -77,17 +75,12 @@ public class CategorizedSummaryService {
         return summaryService.createSummaryPdf(summaryId);
     }
 
-    public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, MemberSavedSummaryDto.Patch summaryPatchDto) {
+    public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, SummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
-        if (categorizedSummary.getMemberSavedSummary() != null) {
-            memberSavedSummaryService.updateSummary(memberSavedSummaryMapper.
-                    summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getMemberSavedSummary().getSummaryId().longValue());
-        }
-        else{
-            aiGeneratedSummaryService.updateSummary(memberSavedSummaryMapper.
-                    summaryPatchDtoToSummary(summaryPatchDto), categorizedSummary.getAiGeneratedSummary().getSummaryId());
-        }
-
+        summaryService.updateSummary(
+                summaryMapper.summaryPatchDtoToSummary(summaryPatchDto),
+                categorizedSummary.getSummary().getSummaryId()
+        );
         return categorizedSummaryRepository.save(categorizedSummary);
     }
     public void deleteCategorizedSummary(Long categorizedSummaryId) {

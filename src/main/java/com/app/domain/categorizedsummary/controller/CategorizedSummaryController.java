@@ -68,7 +68,7 @@ public class CategorizedSummaryController {
     }
     @PatchMapping("/edit/{categorizedSummaryId}")
     public ResponseEntity updateCategorizedSummary(@PathVariable @Positive Long categorizedSummaryId,
-                                                   @Valid @RequestBody MemberSavedSummaryDto.Patch problemPatchDto) {
+                                                   @Valid @RequestBody SummaryDto.Patch problemPatchDto) {
         CategorizedSummary categorizedSummary = categorizedSummaryService.
                 updateCategorizedSummary(categorizedSummaryId, problemPatchDto);
         CategorizedSummaryDto.Response response = categorizedSummaryMapper.categorizedSummaryToResponse(categorizedSummary);
