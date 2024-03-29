@@ -4,6 +4,7 @@ import com.app.domain.categorizedsummary.dto.CategorizedSummaryDto;
 import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.categorizedsummary.mapper.CategorizedSummaryMapper;
 import com.app.domain.categorizedsummary.service.CategorizedSummaryService;
+import com.app.domain.summary.dto.SummaryDto;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -51,7 +52,7 @@ public class CategorizedSummaryController {
 
     @PostMapping("/download-pdf/{categorizedSummaryId}")
     public ResponseEntity<byte[]> downloadSummaryPdf(@PathVariable @Positive Long categorizedSummaryId) throws IOException {
-        MemberSavedSummaryDto.pdfResponse response = categorizedSummaryService.createSummaryPdf(categorizedSummaryId);
+        SummaryDto.pdfResponse response = categorizedSummaryService.createSummaryPdf(categorizedSummaryId);
 
         byte[] pdfContent = response.getPdfContent();
         String title = response.getTitle();

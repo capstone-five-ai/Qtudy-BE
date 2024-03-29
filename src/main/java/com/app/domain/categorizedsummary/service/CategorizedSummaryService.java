@@ -7,6 +7,7 @@ import com.app.domain.category.service.CategoryService;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
 import com.app.domain.summary.aigeneratedsummary.service.AiGeneratedSummaryService;
+import com.app.domain.summary.dto.SummaryDto;
 import com.app.domain.summary.entity.Summary;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import com.app.domain.summary.membersavedsummary.mapper.MemberSavedSummaryMapper;
@@ -70,17 +71,10 @@ public class CategorizedSummaryService {
         return categorizedSummary;
     }
 
-    public MemberSavedSummaryDto.pdfResponse createSummaryPdf(Long categorizedSummaryId) throws IOException{
+    public SummaryDto.pdfResponse createSummaryPdf(Long categorizedSummaryId) throws IOException{
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
-        if (categorizedSummary.getMemberSavedSummary() != null) {
-            // MemberSavedSummary와 연관된 경우
-            Long memberSavedSummaryId = categorizedSummary.getMemberSavedSummary().getSummaryId().longValue();
-            return memberSavedSummaryService.createSummaryPdf(memberSavedSummaryId);
-        }else{
-            // AiGeneratedSummary와 연관된 경우
-            Integer aiGeneratedSummaryId = categorizedSummary.getAiGeneratedSummary().getSummaryId();
-            return aiGeneratedSummaryService.createSummaryPdf(aiGeneratedSummaryId);
-        }
+        Integer summaryId = categorizedSummary.getSummary().getSummaryId();
+        return summaryService.createSummaryPdf(summaryId);
     }
 
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, MemberSavedSummaryDto.Patch summaryPatchDto) {
