@@ -102,9 +102,7 @@ public class CategorizedProblemService {
 
             for (CategorizedProblem categorizedProblem : categorizedProblemList) {
                 commentaryNumber++;
-                String problemCommentary = commentaryNumber + ". " + (categorizedProblem.getMemberSavedProblem() != null
-                        ? categorizedProblem.getMemberSavedProblem().getProblemCommentary()
-                        : categorizedProblem.getAiGeneratedProblem().getProblemCommentary());
+                String problemCommentary = commentaryNumber + ". " + categorizedProblem.getProblem().getProblemCommentary();
 
                 float maxWidth = page.getMediaBox().getWidth() - 100; // 페이지 폭에서 양쪽 여백을 뺀 값
                 List<String> wrappedProblemCommentary = wrapText(problemCommentary, font, 12, maxWidth);
@@ -155,19 +153,12 @@ public class CategorizedProblemService {
 
             for (CategorizedProblem categorizedProblem : categorizedProblemList) {
                 problemNumber++;
-                String problemName = problemNumber + ". " + (categorizedProblem.getMemberSavedProblem() != null
-                        ? categorizedProblem.getMemberSavedProblem().getProblemName()
-                        : categorizedProblem.getAiGeneratedProblem().getProblemName());
+                Problem problem = categorizedProblem.getProblem();
+                String problemName = problemNumber + ". " + problem.getProblemName();
 
                 List<String> problemChoices = new ArrayList<>();
-                if(categorizedProblem.getMemberSavedProblem() != null){
-                    if(categorizedProblem.getMemberSavedProblem().getProblemType() == ProblemType.MULTIPLE){
-                        problemChoices = categorizedProblem.getMemberSavedProblem().getProblemChoices();
-                    }
-                }else{
-                    if(categorizedProblem.getAiGeneratedProblem().getProblemType() == ProblemType.MULTIPLE){
-                        problemChoices = categorizedProblem.getAiGeneratedProblem().getProblemChoices();
-                    }
+                if (problem.getProblemType() == ProblemType.MULTIPLE) {
+                    problemChoices = problem.getProblemChoices();
                 }
                 float maxWidth = page.getMediaBox().getWidth() - 100; // 페이지 폭에서 양쪽 여백을 뺀 값
                 List<String> wrappedProblemName = wrapText(problemName, font, 12, maxWidth);
@@ -245,14 +236,10 @@ public class CategorizedProblemService {
 
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
-        if(categorizedProblem.getMemberSavedProblem() != null){
-            memberSavedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getMemberSavedProblem().getProblemId());
-        }
-        else{
-            aiGeneratedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblem().getProblemId().intValue());
-        }
+        memberSavedProblemService.updateProblem(
+                memberSavedProblemMapper.problemPatchDtoToProblem(problemPatchDto),
+                categorizedProblem.getProblem().getProblemId()
+        );
         return categorizedProblemRepository.save(categorizedProblem);
     }
 
@@ -264,21 +251,17 @@ public class CategorizedProblemService {
 
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
-
-        Long memberSavedProblemId = categorizedProblem.getMemberSavedProblem() != null
-                ? categorizedProblem.getMemberSavedProblem().getProblemId()
-                : null;
-
         categorizedProblemRepository.deleteById(categorizedProblemID);
 
-        if (memberSavedProblemId != null && !isMemberSavedProblemUsedInOtherCategorizedProblems(memberSavedProblemId)) {
-            // MemberSavedProblem 삭제
-            memberSavedProblemService.deleteProblem(memberSavedProblemId);
+        Problem problem = categorizedProblem.getProblem();
+        Long problemId = problem.getProblemId();
+        if (problem.isMemberSavedProblem() && !isProblemUsedInOtherCategorizedProblems(problemId)) {
+            memberSavedProblemService.deleteProblem(problemId);
         }
     }
 
-    private boolean isMemberSavedProblemUsedInOtherCategorizedProblems(Long memberSavedProblemId) {
-        return categorizedProblemRepository.existsByMemberSavedProblemMemberSavedProblemId(memberSavedProblemId);
+    private boolean isProblemUsedInOtherCategorizedProblems(Long problemId) {
+        return categorizedProblemRepository.existsByProblemProblemId(problemId);
     }
 
     private List<String> wrapText(String text, PDType0Font font, float fontSize, float maxWidth) throws IOException {

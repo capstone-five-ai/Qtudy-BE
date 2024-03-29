@@ -1,6 +1,7 @@
 package com.app.domain.problem.entity;
 
 import com.app.domain.common.BaseEntity;
+import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
 import com.app.global.config.ENUM.ProblemType;
 import java.util.List;
 import javax.persistence.CollectionTable;
@@ -64,5 +65,9 @@ public abstract class Problem extends BaseEntity {
 
     public void updateProblemCommentary(String problemCommentary) {
         this.problemCommentary = problemCommentary;
+    }
+
+    public boolean isMemberSavedProblem() {
+        return this instanceof MemberSavedProblem;
     }
 }

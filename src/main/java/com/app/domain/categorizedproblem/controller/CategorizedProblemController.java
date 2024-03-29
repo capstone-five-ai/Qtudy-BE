@@ -99,8 +99,6 @@ public class CategorizedProblemController {
         CategorizedProblemDto.Response patchResponse = CategorizedProblemDto.Response.of(categorizedProblem);
 
         return ResponseEntity.ok(patchResponse);
-
-//        CategorizedProblemDto.PostResponse
     }
     @DeleteMapping("/delete/{categorizedProblemId}")
     public ResponseEntity<Void> deleteCategorizedProblem(@PathVariable @Positive Long categorizedProblemId){
