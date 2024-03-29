@@ -6,12 +6,11 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
-import com.app.domain.summary.aigeneratedsummary.service.AiGeneratedSummaryService;
 import com.app.domain.summary.dto.SummaryDto;
 import com.app.domain.summary.entity.Summary;
 import com.app.domain.summary.mapper.SummaryMapper;
-import com.app.domain.summary.membersavedsummary.mapper.MemberSavedSummaryMapper;
 import com.app.domain.summary.membersavedsummary.service.MemberSavedSummaryService;
+import com.app.domain.summary.repository.SummaryRepository;
 import com.app.domain.summary.service.SummaryService;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
@@ -39,6 +38,7 @@ public class CategorizedSummaryService {
     private final SummaryService summaryService;
 
     private SummaryMapper summaryMapper;
+    private final SummaryRepository summaryRepository;
 
     public CategorizedSummary createCategorizedSummary(Long categoryId, Integer summaryId) {
         checkForDuplicateCategorizedProblem(categoryId, summaryId);
@@ -83,22 +83,21 @@ public class CategorizedSummaryService {
         );
         return categorizedSummaryRepository.save(categorizedSummary);
     }
+
     public void deleteCategorizedSummary(Long categorizedSummaryId) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 
-        Long memberSavedSummaryId = categorizedSummary.getMemberSavedSummary() != null
-                ? categorizedSummary.getMemberSavedSummary().getSummaryId().longValue()
-                : null;
-
         categorizedSummaryRepository.deleteById(categorizedSummaryId);
 
-        if (memberSavedSummaryId != null && !isMemberSavedSummaryUsedInOtherCategorizedSummarys(memberSavedSummaryId)) {
-            memberSavedSummaryService.deleteSummary(memberSavedSummaryId);
+        Summary summary = categorizedSummary.getSummary();
+        Integer summaryId = summary.getSummaryId();
+        if (summary.isMemberSavedSummary() && !isSummaryUsedInOtherCategorizedSummarys(summaryId)) {
+            summaryRepository.deleteById(summaryId);
         }
     }
 
-    private boolean isMemberSavedSummaryUsedInOtherCategorizedSummarys(Long memberSavedSummaryId){
-        return categorizedSummaryRepository.existsByMemberSavedSummaryMemberSavedSummaryId(memberSavedSummaryId);
+    private boolean isSummaryUsedInOtherCategorizedSummarys(Integer summaryId){
+        return categorizedSummaryRepository.existsBySummarySummaryId(summaryId);
     }
 
     public CategorizedSummary findVerifiedCategorizedSummaryByCategorizedSummaryId(Long categorizedSummaryId) {
