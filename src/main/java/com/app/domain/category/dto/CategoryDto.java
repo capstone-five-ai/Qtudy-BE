@@ -5,18 +5,18 @@ import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.entity.Category;
 import com.app.domain.common.MultiResponseDto;
+import com.app.domain.summary.membersavedsummary.entity.MemberSavedSummary;
 import com.app.global.config.ENUM.GeneratedType;
 import com.app.global.config.ENUM.ProblemType;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class CategoryDto {
 
@@ -108,14 +108,10 @@ public class CategoryDto {
         public static CategorizedProblemResponse of(CategorizedProblem categorizedProblem) {
                         return CategorizedProblemResponse.builder()
                     .categorizedProblemId(categorizedProblem.getCategorizedProblemId())
-                    .problemGeneratedBy(categorizedProblem.getMemberSavedProblem() != null ?
+                    .problemGeneratedBy(categorizedProblem.getProblem().isMemberSavedProblem() ?
                             GeneratedType.MEMBER : GeneratedType.AI)
-                    .problemType(categorizedProblem.getMemberSavedProblem() != null ?
-                            categorizedProblem.getMemberSavedProblem().getProblemType() :
-                            categorizedProblem.getAiGeneratedProblem().getProblemType())
-                    .problemName(categorizedProblem.getMemberSavedProblem() != null ?
-                            categorizedProblem.getMemberSavedProblem().getProblemName() :
-                            categorizedProblem.getAiGeneratedProblem().getProblemName())
+                    .problemType(categorizedProblem.getProblem().getProblemType())
+                    .problemName(categorizedProblem.getProblem().getProblemName())
                     .createTime(categorizedProblem.getCreateTime())
                     .updateTime(categorizedProblem.getUpdateTime())
                     .build();
@@ -189,14 +185,10 @@ public class CategoryDto {
         public static CategorizedSummaryResponse of(CategorizedSummary categorizedSummary) {
             return CategorizedSummaryResponse.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
-                    .summaryGeneratedBy(categorizedSummary.getMemberSavedSummary() != null ?
+                    .summaryGeneratedBy(categorizedSummary.getSummary() instanceof MemberSavedSummary ?
                             GeneratedType.MEMBER : GeneratedType.AI)
-                    .summaryTitle(categorizedSummary.getMemberSavedSummary() != null ?
-                            categorizedSummary.getMemberSavedSummary().getSummaryTitle() :
-                            categorizedSummary.getAiGeneratedSummary().getSummaryTitle())
-                    .summaryContent(categorizedSummary.getMemberSavedSummary() != null ?
-                            categorizedSummary.getMemberSavedSummary().getSummaryContent() :
-                            categorizedSummary.getAiGeneratedSummary().getSummaryContent())
+                    .summaryTitle(categorizedSummary.getSummary().getSummaryTitle())
+                    .summaryContent(categorizedSummary.getSummary().getSummaryContent())
                     .createTime(categorizedSummary.getCreateTime())
                     .updateTime(categorizedSummary.getUpdateTime())
                     .build();
