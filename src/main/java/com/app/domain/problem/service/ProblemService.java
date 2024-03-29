@@ -15,6 +15,7 @@ public class ProblemService {
 
     private final ProblemRepository problemRepository;
 
+    @Transactional(readOnly = true)
     public Problem findVerifiedProblemByProblemId(Long problemId) {
         return problemRepository.findById(problemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROBLEM_NOT_EXISTS));
