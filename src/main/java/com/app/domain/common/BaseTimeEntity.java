@@ -1,6 +1,10 @@
 package com.app.domain.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,10 +15,14 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @EntityListeners(value = {AuditingEntityListener.class})
+@AllArgsConstructor
 @MappedSuperclass
 // 부모클래스는 테이블과 매핑하지 않고 부모클래스를 상속받는 자식클래스의 매핑 정보를 제공할 때 활용
 @Getter
+@SuperBuilder
 public abstract class BaseTimeEntity {
+
+    protected BaseTimeEntity(){}
 
     @CreatedDate
     @Column(updatable = false)

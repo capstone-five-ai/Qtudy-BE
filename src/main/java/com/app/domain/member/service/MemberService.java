@@ -6,10 +6,13 @@ import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.AuthenticationException;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
+import com.app.global.jwt.service.TokenManager;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -19,6 +22,18 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final TokenManager tokenManager;
+
+    @Transactional(readOnly = true)
+    public Member getLoginMember(HttpServletRequest httpServletRequest) {
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+        String accessToken = authorizationHeader.split(" ")[1];
+
+        Claims tokenClaims = tokenManager.getTokenClaims(accessToken);
+        Long memberId = Long.valueOf( (Integer) tokenClaims.get("memberId"));
+        return findVerifiedMemberByMemberId(memberId);
+    }
 
     public Member registerMember(Member member) {
         validateDuplicateMember(member); //동일 이메일있는지 확인
@@ -47,6 +62,12 @@ public class MemberService {
             throw new AuthenticationException(ErrorCode.REFRESH_TOKEN_EXPIRED); //refresh 토큰이 만료됐을 경우
         }
         return member;
+    }
+
+    @Transactional(readOnly = true)
+    public Member findVerifiedMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_EXISTS));
     }
 
     public Member findMemberByMemberId(Long memberId) {

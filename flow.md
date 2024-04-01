@@ -53,7 +53,7 @@
 - 카카오 로그인 버튼 클릭(2. 카카오 로그인 페이지 요청) -> /oauth/kakao/callback 리다이렉트(3.카카오 로그인 페이지 제공) -> requestKaKaoToken(43줄) 메서드 실행(4.카카오 계정 로그인) -> 토큰 받아와서 -> kakaoToken에 저장됨(5.Authorization code 발급)
     - ![image](https://user-images.githubusercontent.com/102513932/211471813-0a1e8022-8d5b-4bde-8cc9-802eb5a4122f.png)
     - ![image](https://user-images.githubusercontent.com/102513932/211472214-9578d322-ea35-4277-b7ff-9fd71e77621b.png)
-        - response 데이터 내용
+        - postResponse 데이터 내용
 
 # api 패키지
 ## 발급받은 카카오 Access 토큰 기반 로그인(회원가입)
