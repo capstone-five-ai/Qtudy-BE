@@ -25,6 +25,7 @@ public class CategorizedSummary extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)

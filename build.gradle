@@ -39,14 +39,20 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' //jwt 라이브러리 의존성 추가
 	implementation 'org.springframework:spring-test:5.3.30'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.30'
-	//implementation 'mysql:mysql-connector-java:8.0.32'
-	//runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
+	implementation 'mysql:mysql-connector-java:8.0.32'
+	runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
 	runtimeOnly 'com.h2database:h2'
-	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+	// GPT 스크립트 테스트 편의성을 위해 추가
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
+	testImplementation 'com.knuddels:jtokkit:1.0.0'
+	testImplementation 'com.fasterxml.jackson.module:jackson-module-jsonSchema-jakarta:2.15.0'
 }
 
 dependencyManagement {
