@@ -16,4 +16,6 @@ public interface FileRepository extends JpaRepository<File, Integer> {
 
     Optional<String> findFileKeyByFileId(int fileId);
 
+    Optional<String> findByFileName(String fileName);
+
 }
