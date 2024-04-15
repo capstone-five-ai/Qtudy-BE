@@ -12,4 +12,5 @@ import lombok.Setter;
 @Getter
 public class DuplicateFileNameRequestDto {
     String fileName;
+    String type;
 }
