@@ -267,7 +267,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     public Page<FileListResponseDto> allAiSummaryFileList(Pageable pageable, HttpServletRequest httpServletRequest){ //사용자가 생성한 모든 요점정리파일 리스트 가져오기
         Member member = memberService.getLoginMember(httpServletRequest);
 
-        Page<SummaryFile> filePage = summaryFileRepository.findAllByMember(member,pageable); // 요점정리파일 이름 가져오기
+        Page<SummaryFile> filePage = summaryFileRepository.findAllByMemberOrderByCreateTimeDesc(member,pageable); // 요점정리파일 이름 가져오기
 
         List<FileListResponseDto> fileListResponseDtoList = filePage.getContent().stream()
                 .map(file -> new FileListResponseDto(

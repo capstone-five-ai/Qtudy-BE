@@ -355,7 +355,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     public Page<FileListResponseDto> allAiProblemFileList(Pageable pageable, HttpServletRequest httpServletRequest) { //사용자가 생성한 모든 문제파일 리스트 가져오기
         Member member = memberService.getLoginMember(httpServletRequest);
 
-        Page<ProblemFile> filePage = problemFileRepository.findAllByMember(member, pageable);
+        Page<ProblemFile> filePage = problemFileRepository.findAllByMemberOrderByCreateTimeDesc(member, pageable);
 
         List<FileListResponseDto> fileListResponseDtoList = filePage.getContent().stream()
                 .map(file -> new FileListResponseDto(
