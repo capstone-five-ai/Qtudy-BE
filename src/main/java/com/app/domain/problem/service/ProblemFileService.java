@@ -20,6 +20,7 @@ import com.app.global.error.exception.BusinessException;
 import com.app.global.pdf.ProblemPdfMaker;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
 import static com.app.global.pdf.ProblemPdfMaker.CreatePdfFile;
 
 @Service
+@Slf4j
 public class ProblemFileService { //Service 추후 분할 예정
 
 
@@ -272,7 +274,8 @@ public class ProblemFileService { //Service 추후 분할 예정
 
 
         } catch (IOException e) {
-            //throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+
+            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제
@@ -292,7 +295,8 @@ public class ProblemFileService { //Service 추후 분할 예정
             S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
         } catch (IOException e) {
-            //throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제

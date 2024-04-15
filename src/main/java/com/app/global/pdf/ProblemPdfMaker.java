@@ -2,6 +2,7 @@ package com.app.global.pdf;
 
 import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
 import com.app.global.config.ENUM.PdfType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ProblemPdfMaker {
 
 
@@ -22,7 +24,12 @@ public class ProblemPdfMaker {
 
         if (pdfType == PdfType.PROBLEM) { //문제 PDF 생성
 
-            File tempFile = File.createTempFile(fileName, ".pdf");
+            File tempFile = null;
+            try {
+                tempFile = File.createTempFile(fileName, ".pdf");
+            } catch(IOException e){
+                e.printStackTrace();
+            }
 
             try (PDDocument document = new PDDocument()) {
                 PDPage page = new PDPage();
@@ -47,7 +54,7 @@ public class ProblemPdfMaker {
                     List<String> wrappedProblemName = wrapText(problem.getProblemName(), font, 13, maxWidth); // 문제명 나누기
                     int problemNameHeight = wrappedProblemName.size() * 15; // 문제명의 높이 계산 (줄 수 * 줄 간격)
 
-                    if (linesInCurrentPage+5 >= maxLinesPerPage || yPosition < 50) {
+                    if (linesInCurrentPage+9 >= maxLinesPerPage || yPosition < 70) {
                         // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
                         contentStream.endText();
                         contentStream.close();
@@ -86,6 +93,7 @@ public class ProblemPdfMaker {
 
                     // 문제명 작성
                     for(String line : wrappedProblemName){
+                        System.out.println(line);
                         contentStream.showText(line);
                         contentStream.newLineAtOffset(0, -15); // 12는 폰트 크기에 따라 조절
                         yPosition -= 15; // 줄 간의 간격
@@ -120,7 +128,11 @@ public class ProblemPdfMaker {
 
                 contentStream.endText();
                 contentStream.close();
+
+                document.save(tempFile); // PDF 문서 저장
             }
+
+            System.out.println(tempFile.length());
 
             return tempFile;
 
@@ -150,7 +162,7 @@ public class ProblemPdfMaker {
                     List<String> wrappedProblemName = wrapText(problem.getProblemName(), font, 13, maxWidth); // 문제명 나누기
                     int problemNameHeight = wrappedProblemName.size() * 15; // 문제명의 높이 계산 (줄 수 * 줄 간격)
 
-                    if (linesInCurrentPage+5 >= maxLinesPerPage || yPosition < 50) {
+                    if (linesInCurrentPage+9 >= maxLinesPerPage || yPosition < 70) {
                         // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
                         contentStream.endText();
                         contentStream.close();
@@ -224,6 +236,8 @@ public class ProblemPdfMaker {
 
                 contentStream.endText();
                 contentStream.close();
+
+                document.save(tempFile); // PDF 문서 저장
             }
 
             return tempFile;
