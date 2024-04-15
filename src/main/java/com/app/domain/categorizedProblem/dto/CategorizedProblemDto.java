@@ -73,29 +73,29 @@ public class CategorizedProblemDto {
 
         private Long categoryId;
 
-        private List<CategorizedProblemResponse> categorizedProblems;
+        private CategorizedProblemResponse previousProblem;
+
+        private CategorizedProblemResponse nextProblem;
 
         public static Response of(CategorizedProblem categorizedProblem) {
 
             List<CategorizedProblem> problems = categorizedProblem.getCategory().getCategorizedProblems();
-            CategorizedProblem previousProblem = problems.stream()
+            CategorizedProblemResponse previousProblemResponse = problems.stream()
                     .filter(cp -> cp.getCategorizedProblemId() < categorizedProblem.getCategorizedProblemId())
                     .max(Comparator.comparing(CategorizedProblem::getCategorizedProblemId))
+                    .map(CategorizedProblemResponse::of)
                     .orElse(null);
 
-            CategorizedProblem nextProblem = problems.stream()
+            CategorizedProblemResponse nextProblemResponse = problems.stream()
                     .filter(cp -> cp.getCategorizedProblemId() > categorizedProblem.getCategorizedProblemId())
                     .min(Comparator.comparing(CategorizedProblem::getCategorizedProblemId))
+                    .map(CategorizedProblemResponse::of)
                     .orElse(null);
 
-
-            List<CategorizedProblemResponse> categorizedProblemResponses = Stream.of(previousProblem, nextProblem)
-                    .map(CategorizedProblemResponse::of)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
             ResponseBuilder builder = Response.builder()
-                    .categorizedProblemId(categorizedProblem.getCategorizedProblemId());
+                    .categorizedProblemId(categorizedProblem.getCategorizedProblemId())
+                    .previousProblem(previousProblemResponse)
+                    .nextProblem(nextProblemResponse);
 
             if(categorizedProblem.getMemberSavedProblem() != null){
                 MemberSavedProblem memberSavedProblem = categorizedProblem.getMemberSavedProblem();
@@ -105,8 +105,7 @@ public class CategorizedProblemDto {
                         .problemChoices(memberSavedProblem.getProblemChoices())
                         .problemType(memberSavedProblem.getProblemType())
                         .categoryName(categorizedProblem.getCategory().getCategoryName())
-                        .categoryId(categorizedProblem.getCategory().getCategoryId())
-                        .categorizedProblems(categorizedProblemResponses);
+                        .categoryId(categorizedProblem.getCategory().getCategoryId());
             }
             else{
                 AiGeneratedProblem aiGeneratedProblem = categorizedProblem.getAiGeneratedProblem();
@@ -116,8 +115,7 @@ public class CategorizedProblemDto {
                         .problemChoices(aiGeneratedProblem.getProblemChoices())
                         .problemType(aiGeneratedProblem.getProblemType())
                         .categoryName(categorizedProblem.getCategory().getCategoryName())
-                        .categoryId(categorizedProblem.getCategory().getCategoryId())
-                        .categorizedProblems(categorizedProblemResponses);
+                        .categoryId(categorizedProblem.getCategory().getCategoryId());
             }
             return builder.build();
         }
