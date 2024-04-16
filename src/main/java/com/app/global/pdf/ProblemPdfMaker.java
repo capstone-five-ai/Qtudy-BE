@@ -26,7 +26,7 @@ public class ProblemPdfMaker {
 
             File tempFile = null;
             try {
-                tempFile = File.createTempFile(fileName, ".pdf");
+                tempFile = File.createTempFile("PROBLEM", ".pdf");
             } catch(IOException e){
                 e.printStackTrace();
             }
@@ -137,7 +137,7 @@ public class ProblemPdfMaker {
             return tempFile;
 
         } else if (pdfType == PdfType.ANSWER) { // 정답 PDF 생성
-            File tempFile = File.createTempFile(fileName, ".pdf");
+            File tempFile = File.createTempFile("ANSWER", ".pdf");
 
             try (PDDocument document = new PDDocument()) {
                 PDPage page = new PDPage();

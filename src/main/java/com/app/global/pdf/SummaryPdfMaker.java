@@ -18,7 +18,7 @@ public class SummaryPdfMaker {
 
     public static File CreatePdfFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
-        File tempFile = File.createTempFile("PDF-FILE", ".pdf");
+        File tempFile = File.createTempFile("SUMMARY", ".pdf");
 
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
