@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@DiscriminatorValue("SUMMARY")
 public class SummaryFile extends File {
 
     @OneToMany(mappedBy = "summaryFile", cascade = CascadeType.ALL, orphanRemoval = true)

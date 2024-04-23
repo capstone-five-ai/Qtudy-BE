@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@DiscriminatorValue("SUMMARY")
 public class ProblemFile extends File {
 
 
