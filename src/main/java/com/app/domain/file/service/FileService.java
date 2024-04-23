@@ -8,6 +8,10 @@ import com.app.domain.file.entity.File;
 import com.app.domain.file.repository.FileRepository;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
+import com.app.domain.problem.aigeneratedproblem.entity.ProblemFile;
+import com.app.domain.problem.aigeneratedproblem.repository.ProblemFileRepository;
+import com.app.domain.summary.aigeneratedsummary.entity.SummaryFile;
+import com.app.domain.summary.aigeneratedsummary.repository.SummaryFileRepository;
 import com.app.global.config.ENUM.DType;
 import com.app.global.config.ENUM.PdfType;
 import com.app.global.config.S3.S3Service;
@@ -30,6 +34,12 @@ public class FileService {
 
     @Autowired
     private FileRepository FileRepository;
+
+    @Autowired
+    private ProblemFileRepository problemFileRepository;
+
+    @Autowired
+    private SummaryFileRepository summaryFileRepository;
 
     @Autowired
     private MemberService memberService;
@@ -66,29 +76,25 @@ public class FileService {
         PdfType pdfType = downloadPdfRequestDto.getPdfType();
         String UrlKey = null;
 
-
-        Optional<File> optionalFiles = FileRepository.findByFileId(fileId);
-        if(optionalFiles.isPresent()){
-            File file = optionalFiles.get();
-            switch(pdfType){
-                case PROBLEM: //문제PDF
-                    if(file.getDtype() != DType.PROBLEM)
-                        new BusinessException(ErrorCode.INVALID_DTYPE);
-                    UrlKey = ConvertUrlByKey(file.getFileId() + "_PROBLEM.pdf");
-                    break;
-                case ANSWER: //정답PDF
-                    if(file.getDtype() != DType.PROBLEM)
-                        new BusinessException(ErrorCode.INVALID_DTYPE);
-                    UrlKey = ConvertUrlByKey(file.getFileId() + "_ANSWER.pdf");
-                    break;
-                case SUMMARY: //요점정리PDF
-                    if(file.getDtype() != DType.SUMMARY)
-                        new BusinessException(ErrorCode.INVALID_DTYPE);
-                    UrlKey = ConvertUrlByKey(file.getFileId() + "_SUMMARY.pdf");
-                    break;
-            }
-        }else{
-            throw new BusinessException(ErrorCode.NOT_EXIST_FILE); //파일이 존재하지 않은경우
+        switch(pdfType){
+            case PROBLEM: //문제PDF
+                if (problemFileRepository.findByFileId(fileId).isEmpty()) {
+                    throw new BusinessException(ErrorCode.NOT_EXIST_FILE);
+                }
+                UrlKey = ConvertUrlByKey(fileId + "_PROBLEM.pdf");
+                break;
+            case ANSWER: //정답PDF
+                if (problemFileRepository.findByFileId(fileId).isEmpty()) {
+                    throw new BusinessException(ErrorCode.NOT_EXIST_FILE);
+                }
+                UrlKey = ConvertUrlByKey(fileId + "_ANSWER.pdf");
+                break;
+            case SUMMARY: //요점정리PDF
+                if (summaryFileRepository.findByFileId(fileId).isEmpty()) {
+                    throw new BusinessException(ErrorCode.NOT_EXIST_FILE);
+                }
+                UrlKey = ConvertUrlByKey(fileId + "_SUMMARY.pdf");
+                break;
         }
 
         return UrlKey;
