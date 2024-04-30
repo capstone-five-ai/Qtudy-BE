@@ -1,8 +1,6 @@
 # 큐터디
 ![image](https://github.com/googoo9918/TIL/assets/102513932/b86bc53f-3182-41b0-b975-264cdb8a64dd)
 ![Qtudy_image](https://github.com/googoo9918/TIL/assets/102513932/87e0447f-3430-4a94-8f07-19fe536c1527)
-
-
 **"큐터디"는 강력한 학습 도구 서비스입니다**
 - 배포링크 : [큐터디](https://www.qtudy.com)
 
@@ -20,7 +18,7 @@
 |박재현|AI|
 |이규빈|디자인|
 
-<br>
+
 **기간**: 2023.09 ~ ing
 <br>
 
