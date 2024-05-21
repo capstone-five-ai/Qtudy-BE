@@ -1,6 +1,7 @@
 # 큐터디
 ![image](https://github.com/googoo9918/TIL/assets/102513932/b86bc53f-3182-41b0-b975-264cdb8a64dd)
 ![Qtudy_image](https://github.com/googoo9918/TIL/assets/102513932/87e0447f-3430-4a94-8f07-19fe536c1527)
+![KakaoTalk_20240521_211608567](https://github.com/googoo9918/TIL/assets/102513932/4e44a605-5df8-4480-aa0d-e16be990fb3c)
 **"큐터디"는 강력한 학습 도구 서비스입니다**
 - 배포링크 : [큐터디](https://www.qtudy.com)
 
