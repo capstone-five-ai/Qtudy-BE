@@ -2,7 +2,9 @@ package com.app.domain.file.service;
 
 
 import com.app.domain.file.dto.Request.DownloadPdfRequestDto;
+import com.app.domain.file.dto.Request.DuplicateFileNameRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
+import com.app.domain.file.dto.Response.DuplicateFileNameResponseDto;
 import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.file.entity.File;
 import com.app.domain.file.repository.FileRepository;
@@ -29,7 +31,7 @@ public class FileService {
     private  S3Service s3Service;
 
     @Autowired
-    private FileRepository FileRepository;
+    private FileRepository fileRepository;
 
     @Autowired
     private MemberService memberService;
@@ -55,11 +57,11 @@ public class FileService {
         String newFileName = updateFileRequestDto.getNewFileName();
 
 
-        File file = FileRepository.findByFileId(fileId)
+        File file = fileRepository.findByFileId(fileId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
 
         file.setFileName(newFileName);
-        FileRepository.save(file);
+        fileRepository.save(file);
     }
 
     public String downloadFile( int fileId, DownloadPdfRequestDto downloadPdfRequestDto){
@@ -67,7 +69,7 @@ public class FileService {
         String UrlKey = null;
 
 
-        Optional<File> optionalFiles = FileRepository.findByFileId(fileId);
+        Optional<File> optionalFiles = fileRepository.findByFileId(fileId);
         if(optionalFiles.isPresent()){
             File file = optionalFiles.get();
             switch(pdfType){
@@ -101,10 +103,16 @@ public class FileService {
 
     @Transactional
     public void DeleteProblemFile(int fileId) {
-        File file = FileRepository.findById(fileId)
+        File file = fileRepository.findById(fileId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
 
-        FileRepository.delete(file);
+        fileRepository.delete(file);
+    }
+
+    public DuplicateFileNameResponseDto duplicateFileName(DuplicateFileNameRequestDto duplicateFileNameRequestDto){
+        if(fileRepository.findByFileName(duplicateFileNameRequestDto.getFileName()).isPresent())
+            return new DuplicateFileNameResponseDto(true); // 중복
+        return new DuplicateFileNameResponseDto(false); // 중복 X
     }
 
 }

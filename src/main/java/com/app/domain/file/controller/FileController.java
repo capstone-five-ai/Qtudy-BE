@@ -1,7 +1,9 @@
 package com.app.domain.file.controller;
 
 import com.app.domain.file.dto.Request.DownloadPdfRequestDto;
+import com.app.domain.file.dto.Request.DuplicateFileNameRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
+import com.app.domain.file.dto.Response.DuplicateFileNameResponseDto;
 import com.app.global.config.ENUM.PdfType;
 import com.app.domain.file.dto.Response.DownloadPdfResponseDto;
 import com.app.domain.file.service.FileService;
@@ -42,6 +44,11 @@ public class FileController {
         fileService.DeleteProblemFile(fileId);
 
         return ResponseEntity.ok("Sucess");
+    }
+
+    @PostMapping("/check-duplicate")
+    public ResponseEntity<DuplicateFileNameResponseDto> duplicateFileName (@RequestBody DuplicateFileNameRequestDto duplicateFileNameRequestDto){
+        return new ResponseEntity<>(fileService.duplicateFileName(duplicateFileNameRequestDto), HttpStatus.OK);
     }
 
 
