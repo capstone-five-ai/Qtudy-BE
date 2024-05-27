@@ -19,6 +19,7 @@ import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
 import static com.app.global.pdf.ProblemPdfMaker.CreatePdfFile;
 
 @Service
+@Slf4j
 public class ProblemFileService { //Service 추후 분할 예정
 
 
@@ -266,7 +268,8 @@ public class ProblemFileService { //Service 추후 분할 예정
 
 
         } catch (IOException e) {
-            //throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+
+            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제
@@ -286,7 +289,8 @@ public class ProblemFileService { //Service 추후 분할 예정
             S3FileInformation fileInfo = s3Service.uploadFile(multipartFile);
 
         } catch (IOException e) {
-            //throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제
@@ -345,7 +349,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     public Page<FileListResponseDto> allAiProblemFileList(Pageable pageable, HttpServletRequest httpServletRequest) { //사용자가 생성한 모든 문제파일 리스트 가져오기
         Member member = memberService.getLoginMember(httpServletRequest);
 
-        Page<ProblemFile> filePage = problemFileRepository.findAllByMember(member, pageable);
+        Page<ProblemFile> filePage = problemFileRepository.findAllByMemberOrderByCreateTimeDesc(member, pageable);
 
         List<FileListResponseDto> fileListResponseDtoList = filePage.getContent().stream()
                 .map(file -> new FileListResponseDto(

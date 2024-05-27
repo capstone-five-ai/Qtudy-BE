@@ -18,5 +18,5 @@ public interface SummaryFileRepository extends JpaRepository<SummaryFile,Integer
 
     Optional<SummaryFile> findByFileName(String FileName);
 
-    Page<SummaryFile> findAllByMember(Member member, Pageable pageable);
+    Page<SummaryFile> findAllByMemberOrderByCreateTimeDesc(Member member, Pageable pageable);
 }

@@ -18,7 +18,7 @@ public class SummaryPdfMaker {
 
     public static File CreatePdfFile(String fileName, AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, PdfType pdfType)  throws IOException { // String 기반으로 File 생성
 
-        File tempFile = File.createTempFile("PDF-FILE", ".pdf");
+        File tempFile = File.createTempFile("SUMMARY", ".pdf");
 
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
@@ -74,7 +74,7 @@ public class SummaryPdfMaker {
             //요점정리내용 작성
             List<String> wrappedSummaryContent = wrapText(aiGenerateSummaryFromAiDto.getSummaryContent(), font,12, maxWidth);
             for(String line : wrappedSummaryContent) {
-                if (linesInCurrentPage+5 >= maxLinesPerPage || yPosition < 50) {
+                if (linesInCurrentPage+5 >= maxLinesPerPage || yPosition < 70) {
                     // 현재 페이지의 줄 수가 기준을 넘으면 새 페이지 추가
                     contentStream.endText();
                     contentStream.close();
@@ -98,6 +98,8 @@ public class SummaryPdfMaker {
 
             contentStream.endText();
             contentStream.close();
+
+            document.save(tempFile); // PDF 문서 저장
         }
 
         return tempFile;
