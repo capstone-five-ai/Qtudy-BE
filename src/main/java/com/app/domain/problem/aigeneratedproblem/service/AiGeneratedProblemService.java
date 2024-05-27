@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProblemService { //Service 추후 분할 예정
+public class AiGeneratedProblemService { //Service 추후 분할 예정
 
     @Autowired
     private RestTemplate restTemplate;
@@ -39,7 +39,7 @@ public class ProblemService { //Service 추후 분할 예정
         ProblemFile problemFile;
         List<AiGeneratedProblem> problems;
 
-        problemFile = problemFileRepository.findByFileId(fileId);
+        problemFile = problemFileRepository.getByFileId(fileId);
         problems = aiGeneratedProblemRepository.findByProblemFile_FileId(problemFile.getFileId());
 
         return problems;
@@ -61,12 +61,9 @@ public class ProblemService { //Service 추후 분할 예정
 
     public Boolean checkIsWriter(HttpServletRequest httpServletRequest, int fileId) {
         Member member = memberService.getLoginMember(httpServletRequest);
-        Optional<ProblemFile> optionalProblemFile = Optional.ofNullable(problemFileRepository.findByFileId(fileId));
+        ProblemFile problemFile = problemFileRepository.getByFileId(fileId);
 
-        if(optionalProblemFile.isEmpty())
-            throw new BusinessException(ErrorCode.NOT_EXIST_FILE); // 파일없을경우.
-
-        if (optionalProblemFile.get().getMember().getMemberId() == member.getMemberId()) { // 인증 성공
+        if (problemFile.getMember().getMemberId().equals(member.getMemberId())) { // 인증 성공
             return true;
         }
         return false; // 인증 실패

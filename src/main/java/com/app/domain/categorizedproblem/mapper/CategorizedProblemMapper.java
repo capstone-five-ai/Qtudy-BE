@@ -8,12 +8,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CategorizedProblemMapper {
 
-//    CategorizedProblem categoryProblemPostdtoToCategoryProblem(CategorizedProblemDto.Post categorizedProblemPostDto);
-
     default CategorizedProblemDto.PostResponse categorizedProblemToPostResponse(List<Long> categorizedProblemIdList, List<Long> categoryIdList,
-                                                                                Long memberSavedProblemId, Integer aiGeneratedProblemId){
+                                                                                Long problemId){
         CategorizedProblemDto.PostResponse postResponse = new CategorizedProblemDto.PostResponse(categorizedProblemIdList, categoryIdList
-                , memberSavedProblemId, aiGeneratedProblemId);
+                , problemId);
 
         return postResponse;
     }

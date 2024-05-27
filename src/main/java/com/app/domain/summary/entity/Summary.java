@@ -1,6 +1,7 @@
 package com.app.domain.summary.entity;
 
 import com.app.domain.common.BaseEntity;
+import com.app.domain.summary.membersavedsummary.entity.MemberSavedSummary;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -41,5 +42,9 @@ public abstract class Summary extends BaseEntity {
 
     public void updateSummaryContent(String summaryContent) {
         this.summaryContent = summaryContent;
+    }
+
+    public boolean isMemberSavedSummary() {
+        return this instanceof MemberSavedSummary;
     }
 }

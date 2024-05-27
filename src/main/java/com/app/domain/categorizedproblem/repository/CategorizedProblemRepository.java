@@ -8,11 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CategorizedProblemRepository extends JpaRepository<CategorizedProblem, Long> {
-    boolean existsByCategoryCategoryIdAndMemberSavedProblemMemberSavedProblemId(Long categoryId, Long memberSavedProblemId);
+    boolean existsByCategoryCategoryIdAndProblemProblemId(Long categoryId, Long problemId);
 
-    boolean existsByCategoryCategoryIdAndAiGeneratedProblemAiGeneratedProblemId(Long categoryId, Integer aiGeneratedProblemId);
-
-    boolean existsByMemberSavedProblemMemberSavedProblemId(Long memberSavedProblemId);
+    boolean existsByProblemProblemId(Long problemId);
 
     Page<CategorizedProblem> findByCategoryCategoryId(Long categoryId, Pageable pageable);
 

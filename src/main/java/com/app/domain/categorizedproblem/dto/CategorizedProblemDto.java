@@ -1,8 +1,7 @@
 package com.app.domain.categorizedproblem.dto;
 
 import com.app.domain.categorizedproblem.entity.CategorizedProblem;
-import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
-import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
+import com.app.domain.problem.entity.Problem;
 import com.app.global.config.ENUM.ProblemType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -23,9 +22,7 @@ public class CategorizedProblemDto {
 
         private List<Long> categoryIdList;
 
-        private Long memberSavedProblemId;
-
-        private Integer aiGeneratedProblemId;
+        private Long problemId;
     }
 
     @Getter
@@ -45,9 +42,7 @@ public class CategorizedProblemDto {
         private List<Long> categorizedProblemId;
         private List<Long> categoryId;
 
-        private Long memberSavedProblemId;
-
-        private Integer aiGeneratedProblemId;
+        private Long problemId;
     }
 
     @Getter
@@ -95,27 +90,15 @@ public class CategorizedProblemDto {
                     .previousProblem(previousProblemResponse)
                     .nextProblem(nextProblemResponse);
 
-            if(categorizedProblem.getMemberSavedProblem() != null){
-                MemberSavedProblem memberSavedProblem = categorizedProblem.getMemberSavedProblem();
-                builder.problemName(memberSavedProblem.getProblemName())
-                        .problemAnswer(memberSavedProblem.getProblemAnswer())
-                        .problemCommentary(memberSavedProblem.getProblemCommentary())
-                        .problemChoices(memberSavedProblem.getProblemChoices())
-                        .problemType(memberSavedProblem.getProblemType())
-                        .categoryName(categorizedProblem.getCategory().getCategoryName())
-                        .categoryId(categorizedProblem.getCategory().getCategoryId());
-            }
-            else{
-                AiGeneratedProblem aiGeneratedProblem = categorizedProblem.getAiGeneratedProblem();
-                builder.problemName(aiGeneratedProblem.getProblemName())
-                        .problemAnswer(aiGeneratedProblem.getProblemAnswer())
-                        .problemCommentary(aiGeneratedProblem.getProblemCommentary())
-                        .problemChoices(aiGeneratedProblem.getProblemChoices())
-                        .problemType(aiGeneratedProblem.getProblemType())
-                        .categoryName(categorizedProblem.getCategory().getCategoryName())
-                        .categoryId(categorizedProblem.getCategory().getCategoryId());
-            }
-            return builder.build();
+            Problem problem = categorizedProblem.getProblem();
+            return builder.problemName(problem.getProblemName())
+                    .problemAnswer(problem.getProblemAnswer())
+                    .problemCommentary(problem.getProblemCommentary())
+                    .problemChoices(problem.getProblemChoices())
+                    .problemType(problem.getProblemType())
+                    .categoryName(categorizedProblem.getCategory().getCategoryName())
+                    .categoryId(categorizedProblem.getCategory().getCategoryId())
+                    .build();
         }
     }
 
@@ -140,9 +123,7 @@ public class CategorizedProblemDto {
         public static CategorizedProblemResponse of(CategorizedProblem categorizedProblem){
             return CategorizedProblemResponse.builder()
                     .categorizedProblemId(categorizedProblem.getCategorizedProblemId())
-                    .categorizedProblemName(categorizedProblem.getMemberSavedProblem() != null ?
-                            categorizedProblem.getMemberSavedProblem().getProblemName() :
-                            categorizedProblem.getAiGeneratedProblem().getProblemName())
+                    .categorizedProblemName(categorizedProblem.getProblem().getProblemName())
                     .build();
 
         }

@@ -6,17 +6,22 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
+import com.app.domain.problem.aigeneratedproblem.service.AiGeneratedProblemService;
+import com.app.domain.problem.entity.Problem;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
-import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
 import com.app.domain.problem.membersavedproblem.mapper.MemberSavedProblemMapper;
 import com.app.domain.problem.membersavedproblem.service.MemberSavedProblemService;
+import com.app.domain.problem.service.ProblemService;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
-import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
-import com.app.domain.problem.aigeneratedproblem.service.ProblemService;
 import com.app.global.config.ENUM.ProblemType;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.BusinessException;
 import com.app.global.error.exception.EntityNotFoundException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -26,12 +31,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional
@@ -45,19 +44,44 @@ public class CategorizedProblemService {
 
     private final MemberSavedProblemMapper memberSavedProblemMapper;
 
-    private final ProblemService aiGeneratedProblemService;
+    private final AiGeneratedProblemService aiGeneratedProblemService;
 
     private final CategorizedProblemRepository categorizedProblemRepository;
 
-    public CategorizedProblem createCategorizedProblem(Long categoryId, Long memberSavedProblemId,
-                                                       Integer aiGeneratedProblemId) {
-        validateCategorizedProblemInputs(memberSavedProblemId, aiGeneratedProblemId);
-        checkForDuplicateCategorizedProblem(categoryId, memberSavedProblemId, aiGeneratedProblemId);
+    private final ProblemService problemService;
+
+    public CategorizedProblem createCategorizedProblem(Long categoryId, Long problemId) {
+        checkForDuplicateCategorizedProblem(categoryId, problemId);
 
         Category category = categoryService.findVerifiedCategoryByCategoryId(categoryId);
-        CategorizedProblem categorizedProblem = createCategorizedProblemEntity(category,memberSavedProblemId, aiGeneratedProblemId);
+        CategorizedProblem categorizedProblem = createCategorizedProblemEntity(category, problemId);
 
         return categorizedProblemRepository.save(categorizedProblem);
+    }
+
+    /**
+     * 카테고리화 문제의 카테고리에 이미 같은 문제가 저장되어있는지 확인
+     * @param categoryId
+     * @param problemId
+     */
+    private void checkForDuplicateCategorizedProblem(Long categoryId, Long problemId) {
+        boolean exists = categorizedProblemRepository.existsByCategoryCategoryIdAndProblemProblemId(
+                categoryId,
+                problemId
+        );
+
+        if (exists) {
+            throw new BusinessException(ErrorCode.DUPLICATE_CATEGORIZED_PROBLEM);
+        }
+    }
+
+    private CategorizedProblem createCategorizedProblemEntity(Category category, Long problemId) {
+        Problem problem = problemService.findVerifiedProblemByProblemId(problemId);
+        CategorizedProblem categorizedProblem = CategorizedProblem.builder()
+                .problem(problem)
+                .build();
+        categorizedProblem.updateCategory(category);
+        return categorizedProblem;
     }
 
     public MemberSavedSummaryDto.pdfResponse createCategorizedProblemsAnswerPdf(Long categoryId) throws IOException {
@@ -78,9 +102,7 @@ public class CategorizedProblemService {
 
             for (CategorizedProblem categorizedProblem : categorizedProblemList) {
                 commentaryNumber++;
-                String problemCommentary = commentaryNumber + ". " + (categorizedProblem.getMemberSavedProblem() != null
-                        ? categorizedProblem.getMemberSavedProblem().getProblemCommentary()
-                        : categorizedProblem.getAiGeneratedProblem().getProblemCommentary());
+                String problemCommentary = commentaryNumber + ". " + categorizedProblem.getProblem().getProblemCommentary();
 
                 float maxWidth = page.getMediaBox().getWidth() - 100; // 페이지 폭에서 양쪽 여백을 뺀 값
                 List<String> wrappedProblemCommentary = wrapText(problemCommentary, font, 12, maxWidth);
@@ -131,19 +153,12 @@ public class CategorizedProblemService {
 
             for (CategorizedProblem categorizedProblem : categorizedProblemList) {
                 problemNumber++;
-                String problemName = problemNumber + ". " + (categorizedProblem.getMemberSavedProblem() != null
-                        ? categorizedProblem.getMemberSavedProblem().getProblemName()
-                        : categorizedProblem.getAiGeneratedProblem().getProblemName());
+                Problem problem = categorizedProblem.getProblem();
+                String problemName = problemNumber + ". " + problem.getProblemName();
 
                 List<String> problemChoices = new ArrayList<>();
-                if(categorizedProblem.getMemberSavedProblem() != null){
-                    if(categorizedProblem.getMemberSavedProblem().getProblemType() == ProblemType.MULTIPLE){
-                        problemChoices = categorizedProblem.getMemberSavedProblem().getProblemChoices();
-                    }
-                }else{
-                    if(categorizedProblem.getAiGeneratedProblem().getProblemType() == ProblemType.MULTIPLE){
-                        problemChoices = categorizedProblem.getAiGeneratedProblem().getProblemChoices();
-                    }
+                if (problem.getProblemType() == ProblemType.MULTIPLE) {
+                    problemChoices = problem.getProblemChoices();
                 }
                 float maxWidth = page.getMediaBox().getWidth() - 100; // 페이지 폭에서 양쪽 여백을 뺀 값
                 List<String> wrappedProblemName = wrapText(problemName, font, 12, maxWidth);
@@ -221,14 +236,10 @@ public class CategorizedProblemService {
 
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
-        if(categorizedProblem.getMemberSavedProblem() != null){
-            memberSavedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getMemberSavedProblem().getProblemId());
-        }
-        else{
-            aiGeneratedProblemService.updateProblem(memberSavedProblemMapper.
-                    problemPatchDtoToProblem(problemPatchDto), categorizedProblem.getAiGeneratedProblem().getProblemId().intValue());
-        }
+        memberSavedProblemService.updateProblem(
+                memberSavedProblemMapper.problemPatchDtoToProblem(problemPatchDto),
+                categorizedProblem.getProblem().getProblemId()
+        );
         return categorizedProblemRepository.save(categorizedProblem);
     }
 
@@ -237,72 +248,20 @@ public class CategorizedProblemService {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
-    private CategorizedProblem createCategorizedProblemEntity(Category category, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
-        CategorizedProblem categorizedProblem;
-
-        if (memberSavedProblemId != null) {
-            MemberSavedProblem memberSavedProblem = memberSavedProblemService.findVerifiedProblemByProblemId(memberSavedProblemId);
-            categorizedProblem = CategorizedProblem.builder()
-                    .memberSavedProblem(memberSavedProblem)
-                    .build();
-        } else {
-            AiGeneratedProblem aiGeneratedProblem = aiGeneratedProblemService.findVerifiedProblemByProblemId(aiGeneratedProblemId);
-            categorizedProblem = CategorizedProblem.builder()
-                    .aiGeneratedProblem(aiGeneratedProblem)
-                    .build();
-        }
-
-        categorizedProblem.updateCategory(category);
-        return categorizedProblem;
-    }
-
-    /**
-     * 카테고리화 문제에 fk값이 둘 중 하나만 있는지 확인
-     * @param memberSavedProblemId
-     * @param aiGeneratedProblemId
-     */
-    private void validateCategorizedProblemInputs(Long memberSavedProblemId, Integer aiGeneratedProblemId) {
-        boolean bothNull = memberSavedProblemId == null && aiGeneratedProblemId == null;
-        boolean bothNotNull = memberSavedProblemId != null && aiGeneratedProblemId != null;
-
-        if (bothNull || bothNotNull) {
-            throw new BusinessException(bothNull ? ErrorCode.FK_NOT_EXISTS : ErrorCode.FK_BOTH_EXISTS);
-        }
-    }
-
-    /**
-     * 카테고리화 문제의 카테고리에 이미 같은 문제가 저장되어있는지 확인
-     * @param categoryId
-     * @param memberSavedProblemId
-     * @param aiGeneratedProblemId
-     */
-    private void checkForDuplicateCategorizedProblem(Long categoryId, Long memberSavedProblemId, Integer aiGeneratedProblemId) {
-        boolean exists = memberSavedProblemId != null
-                ? categorizedProblemRepository.existsByCategoryCategoryIdAndMemberSavedProblemMemberSavedProblemId(categoryId, memberSavedProblemId)
-                : categorizedProblemRepository.existsByCategoryCategoryIdAndAiGeneratedProblemAiGeneratedProblemId(categoryId, aiGeneratedProblemId);
-
-        if (exists) {
-            throw new BusinessException(ErrorCode.DUPLICATE_CATEGORIZED_PROBLEM);
-        }
-    }
 
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
-
-        Long memberSavedProblemId = categorizedProblem.getMemberSavedProblem() != null
-                ? categorizedProblem.getMemberSavedProblem().getProblemId()
-                : null;
-
         categorizedProblemRepository.deleteById(categorizedProblemID);
 
-        if (memberSavedProblemId != null && !isMemberSavedProblemUsedInOtherCategorizedProblems(memberSavedProblemId)) {
-            // MemberSavedProblem 삭제
-            memberSavedProblemService.deleteProblem(memberSavedProblemId);
+        Problem problem = categorizedProblem.getProblem();
+        Long problemId = problem.getProblemId();
+        if (problem.isMemberSavedProblem() && !isProblemUsedInOtherCategorizedProblems(problemId)) {
+            memberSavedProblemService.deleteProblem(problemId);
         }
     }
 
-    private boolean isMemberSavedProblemUsedInOtherCategorizedProblems(Long memberSavedProblemId) {
-        return categorizedProblemRepository.existsByMemberSavedProblemMemberSavedProblemId(memberSavedProblemId);
+    private boolean isProblemUsedInOtherCategorizedProblems(Long problemId) {
+        return categorizedProblemRepository.existsByProblemProblemId(problemId);
     }
 
     private List<String> wrapText(String text, PDType0Font font, float fontSize, float maxWidth) throws IOException {

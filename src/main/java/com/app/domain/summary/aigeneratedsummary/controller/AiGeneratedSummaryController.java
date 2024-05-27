@@ -2,7 +2,7 @@ package com.app.domain.summary.aigeneratedsummary.controller;
 
 import com.app.domain.summary.aigeneratedsummary.dto.Summary.Response.SummaryResponseDto;
 import com.app.domain.summary.aigeneratedsummary.entity.AiGeneratedSummary;
-import com.app.domain.summary.aigeneratedsummary.service.SummaryService;
+import com.app.domain.summary.aigeneratedsummary.service.AiGeneratedSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,21 +11,21 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/summary")
-public class SummaryController {
+public class AiGeneratedSummaryController {
 
     @Autowired
-    SummaryService summaryService;
+    AiGeneratedSummaryService aiGeneratedSummaryService;
 
 
     @GetMapping("/getSummary/{fileId}") // 요점정리 가져오기
     public ResponseEntity<SummaryResponseDto> GetSummary(HttpServletRequest httpServletRequest, @PathVariable int fileId) {
-        AiGeneratedSummary aiGeneratedSummary = summaryService.GetSummary(fileId);
+        AiGeneratedSummary aiGeneratedSummary = aiGeneratedSummaryService.GetSummary(fileId);
 
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
         Boolean isWriter = false;
         // "Authorization" 헤더가 존재하면 checkIsWriter 함수 호출
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            isWriter = summaryService.checkIsWriter(httpServletRequest,fileId); // 인증 변수추가
+            isWriter = aiGeneratedSummaryService.checkIsWriter(httpServletRequest,fileId); // 인증 변수추가
         }
 
         //boolean isWriter = summaryService.checkIsWriter(httpServletRequest,fileId);
