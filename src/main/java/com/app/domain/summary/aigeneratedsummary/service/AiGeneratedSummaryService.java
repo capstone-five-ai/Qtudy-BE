@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
-public class SummaryService {
+public class AiGeneratedSummaryService {
 
 
     @Autowired
@@ -79,12 +79,9 @@ public class SummaryService {
 
     public Boolean checkIsWriter(HttpServletRequest httpServletRequest, int fileId) {
         Member member = memberService.getLoginMember(httpServletRequest);
-        Optional<SummaryFile> optionalProblemFile = Optional.ofNullable(summaryFileRepository.findByFileId(fileId));
+        SummaryFile summaryFile = summaryFileRepository.getByFileId(fileId);
 
-        if(optionalProblemFile.isEmpty())
-            throw new BusinessException(ErrorCode.NOT_EXIST_FILE); // 파일없을경우.
-
-        if (optionalProblemFile.get().getMember().getMemberId() == member.getMemberId()) { // 인증 성공
+        if (summaryFile.getMember().getMemberId().equals(member.getMemberId())) { // 인증 성공
             return true;
         }
         return false; // 인증 실패

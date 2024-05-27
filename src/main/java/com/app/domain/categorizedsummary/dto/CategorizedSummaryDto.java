@@ -20,9 +20,7 @@ public class CategorizedSummaryDto {
     public static class Post{
         private List<Long> categoryIdList;
 
-        private Long memberSavedSummaryId;
-
-        private Integer aiGeneratedSummaryId;
+        private Integer summaryId;
     }
 
     @Getter
@@ -34,16 +32,13 @@ public class CategorizedSummaryDto {
 
         private List<Long> categoryId;
 
-        private Long memberSavedSummaryId;
-
-        private Integer aiGeneratedSummaryId;
+        private Integer summaryId;
 
         public static PostResponse of(List<Long> categorizedSummaryIdList, CategorizedSummaryDto.Post categorizedSummaryPostDto){
             return PostResponse.builder()
                     .categorizedSummaryId(categorizedSummaryIdList)
                     .categoryId(categorizedSummaryPostDto.getCategoryIdList())
-                    .memberSavedSummaryId(categorizedSummaryPostDto.getMemberSavedSummaryId())
-                    .aiGeneratedSummaryId(categorizedSummaryPostDto.getAiGeneratedSummaryId())
+                    .summaryId(categorizedSummaryPostDto.getSummaryId())
                     .build();
         }
 
@@ -86,12 +81,8 @@ public class CategorizedSummaryDto {
 
             return Response.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
-                    .summaryTitle(categorizedSummary.getMemberSavedSummary() != null ?
-                            categorizedSummary.getMemberSavedSummary().getSummaryTitle() :
-                            categorizedSummary.getAiGeneratedSummary().getSummaryTitle())
-                    .summaryContent(categorizedSummary.getMemberSavedSummary() != null ?
-                            categorizedSummary.getMemberSavedSummary().getSummaryContent() :
-                            categorizedSummary.getAiGeneratedSummary().getSummaryContent())
+                    .summaryTitle(categorizedSummary.getSummary().getSummaryTitle())
+                    .summaryContent(categorizedSummary.getSummary().getSummaryContent())
                     .categoryName(categorizedSummary.getCategory().getCategoryName())
                     .categoryId(categorizedSummary.getCategory().getCategoryId())
                     .previousSummary(previousSummaryResponse)
@@ -122,9 +113,7 @@ public class CategorizedSummaryDto {
         public static CategorizedSummaryResponse of(CategorizedSummary categorizedSummary) {
             return CategorizedSummaryResponse.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
-                    .categorizedSummaryName(categorizedSummary.getMemberSavedSummary() != null ?
-                            categorizedSummary.getMemberSavedSummary().getSummaryTitle() :
-                            categorizedSummary.getAiGeneratedSummary().getSummaryTitle())
+                    .categorizedSummaryName(categorizedSummary.getSummary().getSummaryTitle())
                     .build();
         }
     }

@@ -4,23 +4,29 @@ import com.app.domain.categorizedsummary.dto.CategorizedSummaryDto;
 import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.categorizedsummary.mapper.CategorizedSummaryMapper;
 import com.app.domain.categorizedsummary.service.CategorizedSummaryService;
-import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.domain.summary.dto.SummaryDto;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/categorized-summary")
@@ -36,9 +42,10 @@ public class CategorizedSummaryController {
         List<Long> categorizedSummaryIdList = new ArrayList<>();
 
         for (Long categoryId : categorizedSummaryPostDto.getCategoryIdList()) {
-            CategorizedSummary categorizedSummary =
-                    categorizedSummaryService.createCategorizedSummary(categoryId,
-                            categorizedSummaryPostDto.getMemberSavedSummaryId(), categorizedSummaryPostDto.getAiGeneratedSummaryId());
+            CategorizedSummary categorizedSummary = categorizedSummaryService.createCategorizedSummary(
+                    categoryId,
+                    categorizedSummaryPostDto.getSummaryId()
+            );
             categorizedSummaryIdList.add(categorizedSummary.getCategorizedSummaryId());
         }
 
@@ -50,7 +57,7 @@ public class CategorizedSummaryController {
 
     @PostMapping("/download-pdf/{categorizedSummaryId}")
     public ResponseEntity<byte[]> downloadSummaryPdf(@PathVariable @Positive Long categorizedSummaryId) throws IOException {
-        MemberSavedSummaryDto.pdfResponse response = categorizedSummaryService.createSummaryPdf(categorizedSummaryId);
+        SummaryDto.pdfResponse response = categorizedSummaryService.createSummaryPdf(categorizedSummaryId);
 
         byte[] pdfContent = response.getPdfContent();
         String title = response.getTitle();
@@ -66,7 +73,7 @@ public class CategorizedSummaryController {
     }
     @PatchMapping("/edit/{categorizedSummaryId}")
     public ResponseEntity updateCategorizedSummary(@PathVariable @Positive Long categorizedSummaryId,
-                                                   @Valid @RequestBody MemberSavedSummaryDto.Patch problemPatchDto) {
+                                                   @Valid @RequestBody SummaryDto.Patch problemPatchDto) {
         CategorizedSummary categorizedSummary = categorizedSummaryService.
                 updateCategorizedSummary(categorizedSummaryId, problemPatchDto);
         CategorizedSummaryDto.Response response = categorizedSummaryMapper.categorizedSummaryToResponse(categorizedSummary);

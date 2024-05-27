@@ -236,7 +236,6 @@ public class SummaryFileService { //Service 추후 분할 예정
         SummaryFile summaryFile = SummaryFile.builder()
                 .member(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateSummaryDto.getFileName())
-                .dtype(DType.SUMMARY)
                 .summaryAmount(aiGenerateSummaryDto.getAmount())
                 .build();
 
@@ -266,7 +265,7 @@ public class SummaryFileService { //Service 추후 분할 예정
                 .map(file -> new FileListResponseDto(
                         file.getFileId(),
                         file.getFileName(),
-                        file.getDtype(),
+                        DType.SUMMARY,
                         file.getCreateTime()
                 ))
                 .collect(Collectors.toList());

@@ -27,7 +27,7 @@ public class MemberSavedSummaryDto {
     @Getter
     @AllArgsConstructor
     public static class Response{
-        private Long memberSavedSummaryId;
+        private Long summaryId;
 
         private String summaryTitle;
         private String summaryContent;

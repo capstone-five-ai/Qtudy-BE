@@ -42,15 +42,18 @@ public class CategorizedProblemController {
         List<Long> categorizedProblemIdList = new ArrayList<>();
 
         for (Long categoryId: categorizedProblemPostDto.getCategoryIdList()) {
-            CategorizedProblem categorizedProblem =
-                    categorizedProblemService.createCategorizedProblem(categoryId
-                            ,categorizedProblemPostDto.getMemberSavedProblemId(), categorizedProblemPostDto.getAiGeneratedProblemId());
+            CategorizedProblem categorizedProblem = categorizedProblemService.createCategorizedProblem(
+                    categoryId,
+                    categorizedProblemPostDto.getProblemId()
+            );
             categorizedProblemIdList.add(categorizedProblem.getCategorizedProblemId());
         }
 
         CategorizedProblemDto.PostResponse postResponse = categorizedProblemMapper.categorizedProblemToPostResponse(
-                categorizedProblemIdList, categorizedProblemPostDto.getCategoryIdList(),
-                categorizedProblemPostDto.getMemberSavedProblemId(), categorizedProblemPostDto.getAiGeneratedProblemId());
+                categorizedProblemIdList,
+                categorizedProblemPostDto.getCategoryIdList(),
+                categorizedProblemPostDto.getProblemId()
+        );
 
         return ResponseEntity.ok(postResponse);
     }
@@ -96,8 +99,6 @@ public class CategorizedProblemController {
         CategorizedProblemDto.Response patchResponse = CategorizedProblemDto.Response.of(categorizedProblem);
 
         return ResponseEntity.ok(patchResponse);
-
-//        CategorizedProblemDto.PostResponse
     }
     @DeleteMapping("/delete/{categorizedProblemId}")
     public ResponseEntity<Void> deleteCategorizedProblem(@PathVariable @Positive Long categorizedProblemId){

@@ -314,7 +314,6 @@ public class ProblemFileService { //Service 추후 분할 예정
                 .member(member)   //추후에 member 토큰으로 변경해야함.(추후 변경 예정)
                 .fileName(aiGenerateProblemDto.getFileName()) //추후에 member가 지정한 이름으로 변경해야함.
                 //.fileKey() // fileKey 삭제
-                .dtype(DType.PROBLEM)
                 .problemDifficulty(aiGenerateProblemDto.getDifficulty())
                 .problemAmount(aiGenerateProblemDto.getAmount())
                 .problemType(aiGenerateProblemDto.getType())
@@ -355,7 +354,7 @@ public class ProblemFileService { //Service 추후 분할 예정
                 .map(file -> new FileListResponseDto(
                         file.getFileId(),
                         file.getFileName(),
-                        file.getDtype(),
+                        DType.PROBLEM,
                         file.getCreateTime()
                 ))
                 .collect(Collectors.toList());

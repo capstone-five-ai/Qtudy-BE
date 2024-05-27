@@ -38,7 +38,7 @@ public class MemberSavedProblemDto {
     @Getter
     @AllArgsConstructor
     public static class Response {
-        private Long memberSavedProblemId;
+        private Long problemId;
 
         private String problemName;
 
