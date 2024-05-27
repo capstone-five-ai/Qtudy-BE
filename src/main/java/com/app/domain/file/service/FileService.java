@@ -5,10 +5,8 @@ import com.app.domain.file.dto.Request.DownloadPdfRequestDto;
 import com.app.domain.file.dto.Request.DuplicateFileNameRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
 import com.app.domain.file.dto.Response.DuplicateFileNameResponseDto;
-import com.app.domain.file.dto.Response.FileListResponseDto;
 import com.app.domain.file.entity.File;
 import com.app.domain.file.repository.FileRepository;
-import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
 import com.app.global.config.ENUM.DType;
 import com.app.global.config.ENUM.PdfType;
@@ -19,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class FileService {
@@ -110,9 +105,14 @@ public class FileService {
     }
 
     public DuplicateFileNameResponseDto duplicateFileName(DuplicateFileNameRequestDto duplicateFileNameRequestDto){
-        if(fileRepository.findByFileName(duplicateFileNameRequestDto.getFileName()).isPresent())
-            return new DuplicateFileNameResponseDto(true); // 중복
-        return new DuplicateFileNameResponseDto(false); // 중복 X
-    }
+        Optional<File> duplicatedFile = fileRepository.findByFileNameAndDtype(
+                duplicateFileNameRequestDto.getFileName(),
+                duplicateFileNameRequestDto.getType()
+        );
 
+        if (duplicatedFile.isPresent()) {
+            return new DuplicateFileNameResponseDto(true);
+        }
+        return new DuplicateFileNameResponseDto(false);
+    }
 }

@@ -1,6 +1,6 @@
 package com.app.gpt;
 
-import com.app.domain.problem.service.ProblemFileService;
+import com.app.domain.problem.aigeneratedproblem.service.ProblemFileService;
 import com.app.gpt.dto.ProblemSchema;
 import com.app.gpt.dto.SummarySchema;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +22,6 @@ import com.theokanning.openai.service.OpenAiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;

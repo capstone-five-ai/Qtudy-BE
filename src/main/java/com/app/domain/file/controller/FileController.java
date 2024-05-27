@@ -3,17 +3,20 @@ package com.app.domain.file.controller;
 import com.app.domain.file.dto.Request.DownloadPdfRequestDto;
 import com.app.domain.file.dto.Request.DuplicateFileNameRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
-import com.app.domain.file.dto.Response.DuplicateFileNameResponseDto;
-import com.app.global.config.ENUM.PdfType;
 import com.app.domain.file.dto.Response.DownloadPdfResponseDto;
+import com.app.domain.file.dto.Response.DuplicateFileNameResponseDto;
 import com.app.domain.file.service.FileService;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/file")
@@ -21,9 +24,6 @@ public class FileController {
 
     @Autowired
     FileService fileService;
-
-
-
 
     @PatchMapping("/updateFile/{fileId}") //사용자가 생성한 파일 이름 update
     public ResponseEntity<String> updateFile(@PathVariable int fileId, @Valid @RequestBody UpdateFileRequestDto updateFileRequestDto){
@@ -48,10 +48,6 @@ public class FileController {
 
     @PostMapping("/check-duplicate")
     public ResponseEntity<DuplicateFileNameResponseDto> duplicateFileName (@RequestBody DuplicateFileNameRequestDto duplicateFileNameRequestDto){
-        return new ResponseEntity<>(fileService.duplicateFileName(duplicateFileNameRequestDto), HttpStatus.OK);
+        return ResponseEntity.ok(fileService.duplicateFileName(duplicateFileNameRequestDto));
     }
-
-
-
-
 }

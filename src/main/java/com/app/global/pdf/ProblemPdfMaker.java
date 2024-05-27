@@ -1,6 +1,6 @@
 package com.app.global.pdf;
 
-import com.app.domain.problem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
+import com.app.domain.problem.aigeneratedproblem.dto.ProblemFile.AiRequest.AiGenerateProblemFromAiDto;
 import com.app.global.config.ENUM.PdfType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
