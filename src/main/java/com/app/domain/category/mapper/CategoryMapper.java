@@ -1,7 +1,7 @@
 package com.app.domain.category.mapper;
 
-import com.app.domain.categorizedProblem.entity.CategorizedProblem;
-import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.categorizedproblem.entity.CategorizedProblem;
+import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.category.dto.CategoryDto;
 import com.app.domain.category.entity.Category;
 import org.mapstruct.Mapper;

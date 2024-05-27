@@ -2,7 +2,6 @@ package com.app.domain.file.entity;
 
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
-import com.app.global.config.ENUM.DType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +28,14 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 public class File extends BaseEntity {
-
+@DiscriminatorColumn
+@Table( // MemberId와 fileName을 섞어 Unique 조건 생성
+        name = "FILE",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_member_id_file_name", columnNames = {"MEMBER_ID", "FILE_NAME"})
+        }
+)
+public abstract class File extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FILE_ID")
@@ -47,7 +53,6 @@ public class File extends BaseEntity {
 
     /*@Column(name = "FILE_KEY", length = 100, unique = true)
     private String fileKey;*/
-
     @Column(name = "DTYPE")
     @Enumerated(EnumType.STRING)
     private DType dtype;
