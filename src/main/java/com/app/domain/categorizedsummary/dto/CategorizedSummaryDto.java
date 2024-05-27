@@ -1,6 +1,7 @@
-package com.app.domain.categorizedsummary.dto;
+package com.app.domain.categorizedSummary.dto;
 
-import com.app.domain.categorizedsummary.entity.CategorizedSummary;
+import com.app.domain.categorizedSummary.entity.CategorizedSummary;
+import com.app.domain.category.dto.CategoryDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,26 +59,25 @@ public class CategorizedSummaryDto {
 
         private Long categoryId;
 
-        private List<CategorizedSummaryResponse> categorizedSummaryResponseList;
+        private CategorizedSummaryResponse previousSummary;
+
+        private CategorizedSummaryResponse nextSummary;
 
         public static Response of(CategorizedSummary categorizedSummary) {
 
             List<CategorizedSummary> summaries = categorizedSummary.getCategory().getCategorizedSummaries();
 
-            CategorizedSummary previousSummary = summaries.stream()
-                    .filter(cs -> cs.getCategorizedSummaryId() < categorizedSummary.getCategorizedSummaryId())
+            CategorizedSummaryResponse previousSummaryResponse = summaries.stream()
+                    .filter(cp -> cp.getCategorizedSummaryId() < categorizedSummary.getCategorizedSummaryId())
                     .max(Comparator.comparing(CategorizedSummary::getCategorizedSummaryId))
+                    .map(CategorizedSummaryResponse ::of)
                     .orElse(null);
 
-            CategorizedSummary nextSummary = summaries.stream()
-                    .filter(cs -> cs.getCategorizedSummaryId() > categorizedSummary.getCategorizedSummaryId())
+            CategorizedSummaryResponse nextSummaryResponse = summaries.stream()
+                    .filter(cp -> cp.getCategorizedSummaryId() > categorizedSummary.getCategorizedSummaryId())
                     .min(Comparator.comparing(CategorizedSummary::getCategorizedSummaryId))
+                    .map(CategorizedSummaryResponse ::of)
                     .orElse(null);
-
-            List<CategorizedSummaryResponse> categorizedSummaryResponses = Stream.of(previousSummary, nextSummary)
-                    .map(CategorizedSummaryResponse::of)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
 
             return Response.builder()
                     .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
@@ -85,7 +85,8 @@ public class CategorizedSummaryDto {
                     .summaryContent(categorizedSummary.getSummary().getSummaryContent())
                     .categoryName(categorizedSummary.getCategory().getCategoryName())
                     .categoryId(categorizedSummary.getCategory().getCategoryId())
-                    .categorizedSummaryResponseList(categorizedSummaryResponses)
+                    .previousSummary(previousSummaryResponse)
+                    .nextSummary(nextSummaryResponse)
                     .build();
         }
     }
