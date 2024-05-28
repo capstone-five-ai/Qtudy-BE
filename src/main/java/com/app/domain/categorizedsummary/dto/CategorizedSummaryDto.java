@@ -1,7 +1,6 @@
-package com.app.domain.categorizedSummary.dto;
+package com.app.domain.categorizedsummary.dto;
 
-import com.app.domain.categorizedSummary.entity.CategorizedSummary;
-import com.app.domain.category.dto.CategoryDto;
+import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

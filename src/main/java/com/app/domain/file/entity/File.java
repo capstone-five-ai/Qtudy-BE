@@ -3,22 +3,10 @@ package com.app.domain.file.entity;
 import com.app.domain.common.BaseEntity;
 import com.app.domain.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -27,8 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
-public class File extends BaseEntity {
-@DiscriminatorColumn
+@DiscriminatorColumn(name = "dtype")
 @Table( // MemberId와 fileName을 섞어 Unique 조건 생성
         name = "FILE",
         uniqueConstraints = {
@@ -36,6 +23,7 @@ public class File extends BaseEntity {
         }
 )
 public abstract class File extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FILE_ID")
@@ -51,9 +39,8 @@ public abstract class File extends BaseEntity {
     @Column(name = "FILE_NAME", length = 100)
     private String fileName;
 
+    @Column(name = "dtype", insertable = false, updatable = false)
+    private String dtype;
     /*@Column(name = "FILE_KEY", length = 100, unique = true)
     private String fileKey;*/
-    @Column(name = "DTYPE")
-    @Enumerated(EnumType.STRING)
-    private DType dtype;
 }
