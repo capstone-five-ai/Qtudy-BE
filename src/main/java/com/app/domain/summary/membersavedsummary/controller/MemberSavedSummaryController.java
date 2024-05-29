@@ -1,5 +1,6 @@
 package com.app.domain.summary.membersavedsummary.controller;
 
+import com.app.domain.summary.membersavedsummary.doc.MemberSavedSummaryApi;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import com.app.domain.summary.membersavedsummary.entity.MemberSavedSummary;
 import com.app.domain.summary.membersavedsummary.mapper.MemberSavedSummaryMapper;
@@ -25,7 +26,7 @@ import java.util.Base64;
 @RequestMapping("/api/member-saved-summary")
 @Validated
 @RequiredArgsConstructor
-public class MemberSavedSummaryController {
+public class MemberSavedSummaryController implements MemberSavedSummaryApi {
 
     private final MemberSavedSummaryService memberSavedSummaryService;
 
