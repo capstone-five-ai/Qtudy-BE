@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 public class CategorizedSummaryDto {
 
     @Getter
-    @Schema(name = "CategorizedSummaryPost", description = "새 분류된 요약 생성 요청 DTO")
+    @Schema(name = "CategorizedSummaryPost", description = "새 카테고리화 요약 생성 요청 DTO")
     public static class Post {
         @Schema(description = "카테고리 ID 목록", example = "[1, 2]")
         private List<Long> categoryIdList;
@@ -30,9 +30,9 @@ public class CategorizedSummaryDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @Schema(name = "CategorizedSummaryPostResponse", description = "새 분류된 요약 생성 응답 DTO")
+    @Schema(name = "CategorizedSummaryPostResponse", description = "새 카테고리화 요약 생성 응답 DTO")
     public static class PostResponse {
-        @Schema(description = "분류된 요약 ID 목록", example = "[1, 2]")
+        @Schema(description = "카테고리화 요약 ID 목록", example = "[1, 2]")
         private List<Long> categorizedSummaryId;
 
         @Schema(description = "카테고리 ID 목록", example = "[1, 2]")
@@ -54,9 +54,9 @@ public class CategorizedSummaryDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(name = "CategorizedSummaryResponse", description = "분류된 요약 응답 DTO")
+    @Schema(name = "CategorizedSummaryResponse", description = "카테고리화 요약 응답 DTO")
     public static class Response {
-        @Schema(description = "분류된 요약 ID", example = "1")
+        @Schema(description = "카테고리화 요약 ID", example = "1")
         private Long categorizedSummaryId;
 
         @Schema(description = "요약 제목", example = "샘플 요약 제목")
@@ -107,7 +107,7 @@ public class CategorizedSummaryDto {
 
     @AllArgsConstructor
     @Getter
-    @Schema(name = "CategorizedSummaryLinkedSharedResponse", description = "공유된 분류된 요약 응답 DTO")
+    @Schema(name = "CategorizedSummaryLinkedSharedResponse", description = "공유된 카테고리화 요약 응답 DTO")
     public static class LinkedSharedResponse {
         @Schema(description = "요약 응답", implementation = Response.class)
         private Response response;
@@ -121,12 +121,12 @@ public class CategorizedSummaryDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(name = "CategorizedSummarySimpleResponse", description = "분류된 요약 기본 응답 DTO")
+    @Schema(name = "CategorizedSummarySimpleResponse", description = "카테고리화 요약 기본 응답 DTO")
     public static class CategorizedSummaryResponse {
-        @Schema(description = "분류된 요약 ID", example = "1")
+        @Schema(description = "카테고리화 요약 ID", example = "1")
         private Long categorizedSummaryId;
 
-        @Schema(description = "분류된 요약 이름", example = "샘플 요약 이름")
+        @Schema(description = "카테고리화 요약 이름", example = "샘플 요약 이름")
         private String categorizedSummaryName;
 
         public static CategorizedSummaryResponse of(CategorizedSummary categorizedSummary) {

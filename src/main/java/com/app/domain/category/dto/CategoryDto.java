@@ -58,7 +58,7 @@ public class CategoryDto {
         @Schema(description = "카테고리 이름", example = "샘플 카테고리")
         private String categoryName;
 
-        @Schema(description = "분류된 문제 응답 목록", implementation = MultiResponseDto.class)
+        @Schema(description = "카테고리화 문제 응답 목록", implementation = MultiResponseDto.class)
         private MultiResponseDto<CategorizedProblemResponse> categorizedProblemResponses;
 
         public static CategoryProblemPageResponse of(Category category,
@@ -89,7 +89,7 @@ public class CategoryDto {
         @Schema(description = "카테고리 이름", example = "샘플 카테고리")
         private String categoryName;
 
-        @Schema(description = "분류된 문제 응답 목록", implementation = CategorizedProblemResponse.class)
+        @Schema(description = "카테고리화 문제 응답 목록", implementation = CategorizedProblemResponse.class)
         private List<CategorizedProblemResponse> categorizedProblemResponses;
 
         public static CategoryProblemResponse of(Category category){
@@ -109,9 +109,9 @@ public class CategoryDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(name = "CategorizedProblemResponse", description = "분류된 문제 응답 DTO")
+    @Schema(name = "CategorizedProblemResponse", description = "카테고리화 문제 응답 DTO")
     public static class CategorizedProblemResponse {
-        @Schema(description = "분류된 문제 ID", example = "1")
+        @Schema(description = "카테고리화 문제 ID", example = "1")
         private Long categorizedProblemId;
 
         @Schema(description = "문제 생성 유형", example = "MEMBER")
@@ -154,7 +154,7 @@ public class CategoryDto {
         @Schema(description = "카테고리 이름", example = "샘플 카테고리")
         private String categoryName;
 
-        @Schema(description = "분류된 요약 응답 목록", implementation = MultiResponseDto.class)
+        @Schema(description = "카테고리화 요약 응답 목록", implementation = MultiResponseDto.class)
         private MultiResponseDto<CategorizedSummaryResponse> categorizedSummaryResponses;
 
         public static CategorySummaryPageResponse of(Category category,
@@ -185,7 +185,7 @@ public class CategoryDto {
         @Schema(description = "카테고리 이름", example = "샘플 카테고리")
         private String categoryName;
 
-        @Schema(description = "분류된 요약 응답 목록", implementation = CategorizedSummaryResponse.class)
+        @Schema(description = "카테고리화 요약 응답 목록", implementation = CategorizedSummaryResponse.class)
         private List<CategorizedSummaryResponse> categorizedSummaryResponses;
 
         public static CategorySummaryResponse of(Category category){
@@ -205,9 +205,9 @@ public class CategoryDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(name = "CategorizedSummaryResponse", description = "분류된 요약 응답 DTO")
+    @Schema(name = "CategorizedSummaryResponse", description = "카테고리화 요약 응답 DTO")
     public static class CategorizedSummaryResponse {
-        @Schema(description = "분류된 요약 ID", example = "1")
+        @Schema(description = "카테고리화 요약 ID", example = "1")
         private Long categorizedSummaryId;
 
         @Schema(description = "요약 생성 유형", example = "MEMBER")

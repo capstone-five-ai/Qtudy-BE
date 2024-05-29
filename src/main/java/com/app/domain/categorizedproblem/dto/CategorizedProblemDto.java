@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public class CategorizedProblemDto {
 
     @Getter
-    @Schema(name = "CategorizedProblemPost", description = "새 분류된 문제 생성 요청 DTO")
+    @Schema(name = "CategorizedProblemPost", description = "새 카테고리화 문제 생성 요청 DTO")
     public static class Post {
 
         @Schema(description = "카테고리 ID 목록", example = "[1, 2]")
@@ -30,7 +30,7 @@ public class CategorizedProblemDto {
     }
 
     @Getter
-    @Schema(name = "CategorizedProblemPatch", description = "분류된 문제 수정 요청 DTO")
+    @Schema(name = "CategorizedProblemPatch", description = "카테고리화 문제 수정 요청 DTO")
     public static class Patch{
         @Schema(description = "문제 이름", example = "수정된 문제 이름")
         private String problemName;
@@ -47,9 +47,9 @@ public class CategorizedProblemDto {
 
     @Getter
     @AllArgsConstructor
-    @Schema(name = "CategorizedProblemPostResponse", description = "새 분류된 문제 생성 응답 DTO")
+    @Schema(name = "CategorizedProblemPostResponse", description = "새 카테고리화 문제 생성 응답 DTO")
     public static class PostResponse {
-        @Schema(description = "분류된 문제 ID 목록", example = "[1, 2]")
+        @Schema(description = "카테고리화 문제 ID 목록", example = "[1, 2]")
         private List<Long> categorizedProblemId;
 
         @Schema(description = "카테고리 ID 목록", example = "[1, 2]")
@@ -63,9 +63,9 @@ public class CategorizedProblemDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(name = "CategorizedProblemResponse", description = "분류된 문제 응답 DTO")
+    @Schema(name = "CategorizedProblemResponse", description = "카테고리화 문제 응답 DTO")
     public static class Response {
-        @Schema(description = "분류된 문제 ID", example = "1")
+        @Schema(description = "카테고리화 문제 ID", example = "1")
         private Long categorizedProblemId;
 
         @Schema(description = "문제 이름", example = "샘플 문제")
@@ -129,7 +129,7 @@ public class CategorizedProblemDto {
 
     @AllArgsConstructor
     @Getter
-    @Schema(name = "CategorizedProblemLinkedSharedResponse", description = "공유된 분류된 문제 응답 DTO")
+    @Schema(name = "CategorizedProblemLinkedSharedResponse", description = "공유된 카테고리화 문제 응답 DTO")
     public static class LinkedSharedResponse{
         @Schema(description = "문제 응답", implementation = Response.class)
         private Response response;
@@ -143,12 +143,12 @@ public class CategorizedProblemDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @Schema(name = "CategorizedProblemSimpleResponse", description = "분류된 문제 기본 응답 DTO")
+    @Schema(name = "CategorizedProblemSimpleResponse", description = "카테고리화 문제 기본 응답 DTO")
     public static class CategorizedProblemResponse{
-        @Schema(description = "분류된 문제 ID", example = "1")
+        @Schema(description = "카테고리화 문제 ID", example = "1")
         private Long categorizedProblemId;
 
-        @Schema(description = "분류된 문제 이름", example = "샘플 문제 이름")
+        @Schema(description = "카테고리화 문제 이름", example = "샘플 문제 이름")
         private String categorizedProblemName;
 
         public static CategorizedProblemResponse of(CategorizedProblem categorizedProblem){

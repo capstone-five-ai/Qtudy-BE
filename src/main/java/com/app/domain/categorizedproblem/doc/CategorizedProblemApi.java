@@ -21,10 +21,10 @@ import javax.validation.constraints.Positive;
 import java.io.IOException;
 import org.springframework.web.servlet.ModelAndView;
 
-@Tag(name = "분류된 문제", description = "분류된 문제 API")
+@Tag(name = "카테고리화 문제", description = "카테고리화 문제 API")
 public interface CategorizedProblemApi {
 
-  @Operation(summary = "새 문제 생성", description = "새 분류된 문제를 생성합니다.")
+  @Operation(summary = "새 문제 생성", description = "새 카테고리화 문제를 생성합니다.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "문제가 성공적으로 생성되었습니다.",
           content = @Content(mediaType = "application/json",
@@ -54,7 +54,7 @@ public interface CategorizedProblemApi {
       @Parameter(description = "카테고리 ID", required = true, example = "1")
       @PathVariable @Positive Long categoryId) throws IOException;
 
-  @Operation(summary = "문제 수정", description = "분류된 문제를 수정합니다.")
+  @Operation(summary = "문제 수정", description = "카테고리화 문제를 수정합니다.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "문제가 성공적으로 수정되었습니다.",
           content = @Content(mediaType = "application/json",
@@ -62,20 +62,20 @@ public interface CategorizedProblemApi {
       @ApiResponse(responseCode = "404", description = "문제를 찾을 수 없습니다.")
   })
   ResponseEntity<CategorizedProblemDto.Response> updateCategorizedProblem(
-      @Parameter(description = "분류된 문제 ID", required = true, example = "1")
+      @Parameter(description = "카테고리화 문제 ID", required = true, example = "1")
       @PathVariable @Positive Long categorizedProblemId,
       @Valid @RequestBody MemberSavedProblemDto.Patch problemPatchDto);
 
-  @Operation(summary = "문제 삭제", description = "분류된 문제를 삭제합니다.")
+  @Operation(summary = "문제 삭제", description = "카테고리화 문제를 삭제합니다.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "문제가 성공적으로 삭제되었습니다."),
       @ApiResponse(responseCode = "404", description = "문제를 찾을 수 없습니다.")
   })
   ResponseEntity<Void> deleteCategorizedProblem(
-      @Parameter(description = "분류된 문제 ID", required = true, example = "1")
+      @Parameter(description = "카테고리화 문제 ID", required = true, example = "1")
       @PathVariable @Positive Long categorizedProblemId);
 
-  @Operation(summary = "문제 조회", description = "ID로 분류된 문제를 조회합니다.")
+  @Operation(summary = "문제 조회", description = "ID로 카테고리화 문제를 조회합니다.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "문제가 성공적으로 조회되었습니다.",
           content = @Content(mediaType = "application/json",
@@ -83,7 +83,7 @@ public interface CategorizedProblemApi {
       @ApiResponse(responseCode = "404", description = "문제를 찾을 수 없습니다.")
   })
   ResponseEntity<CategorizedProblemDto.LinkedSharedResponse> getCategorizedProblem(
-      @Parameter(description = "분류된 문제 ID", required = true, example = "1")
+      @Parameter(description = "카테고리화 문제 ID", required = true, example = "1")
       @PathVariable @Positive Long categorizedProblemId,
       HttpServletRequest httpServletRequest);
 
