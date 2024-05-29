@@ -1,6 +1,7 @@
 package com.app.domain.summary.aigeneratedsummary.controller;
 
 import com.app.domain.file.dto.Response.FileListResponseDto;
+import com.app.domain.summary.aigeneratedsummary.doc.SummaryFileApi;
 import com.app.domain.summary.aigeneratedsummary.dto.SummaryFile.Request.AiGenerateSummaryDto;
 import com.app.domain.summary.aigeneratedsummary.dto.SummaryFile.Response.AiGenerateSummaryResponseDto;
 import com.app.domain.summary.aigeneratedsummary.service.SummaryFileService;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/summaryFile")
-public class SummaryFileController {
+public class SummaryFileController implements SummaryFileApi {
 
     @Autowired
     SummaryFileService summaryFileService;

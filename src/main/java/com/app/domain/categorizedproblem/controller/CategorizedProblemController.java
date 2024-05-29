@@ -1,5 +1,6 @@
 package com.app.domain.categorizedproblem.controller;
 
+import com.app.domain.categorizedproblem.doc.CategorizedProblemApi;
 import com.app.domain.categorizedproblem.dto.CategorizedProblemDto;
 import com.app.domain.categorizedproblem.entity.CategorizedProblem;
 import com.app.domain.categorizedproblem.mapper.CategorizedProblemMapper;
@@ -30,7 +31,7 @@ import java.util.List;
 @RequestMapping("/api/categorized-problem")
 @Validated
 @RequiredArgsConstructor
-public class CategorizedProblemController {
+public class CategorizedProblemController implements CategorizedProblemApi{
 
     private final CategorizedProblemService categorizedProblemService;
 

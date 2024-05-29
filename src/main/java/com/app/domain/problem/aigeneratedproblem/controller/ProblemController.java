@@ -1,5 +1,6 @@
 package com.app.domain.problem.aigeneratedproblem.controller;
 
+import com.app.domain.problem.aigeneratedproblem.doc.ProblemApi;
 import com.app.domain.problem.aigeneratedproblem.dto.Problem.Response.ProblemResponseDto;
 import com.app.domain.problem.aigeneratedproblem.dto.ProblemFile.Response.AiGeneratedProblemList;
 import com.app.domain.problem.aigeneratedproblem.entity.AiGeneratedProblem;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/problem")
-public class ProblemController { // Controller 추후 분할 예정
+public class ProblemController implements ProblemApi { // Controller 추후 분할 예정
     @Autowired
     AiGeneratedProblemService aiGeneratedProblemService;
 

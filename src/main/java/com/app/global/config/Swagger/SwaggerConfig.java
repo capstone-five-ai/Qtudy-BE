@@ -1,38 +1,53 @@
 package com.app.global.config.Swagger;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
+import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import io.swagger.v3.oas.models.servers.Server;
+import java.util.List;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
-    private static final String API_NAME = "Qtudy Swagger";
-    private static final String API_VERSION = "1.0.0";
-    private static final String API_DESCRIPTION = "Test 중입니다....";
 
     @Bean
-    public Docket api() {   // http://[ip주소]:[포트번호]/swagger-ui.html
-        return new Docket(DocumentationType.SWAGGER_2)
-                .useDefaultResponseMessages(false) // 기본 응답코드 표시
-                .apiInfo(apiInfo()) // Api 정보
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.app.domain")) // 적용할 패키지명
-                .paths(PathSelectors.any()) // 패키지 하위에서 적용할 URL path 지정
-                .build();
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("Qtudy API")
+                .version("1.0.0")
+                .description("Qtudy 리팩토링 API")
+                .contact(new Contact()
+                    .url("http://qtudy.com"))
+                .license(new License()
+                    .name("Apache 2.0")
+                    .url("http://springdoc.org")))
+            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+            .components(new io.swagger.v3.oas.models.Components()
+                .addSecuritySchemes("bearerAuth",
+                    new SecurityScheme()
+                        .name("Authorization")
+                        .type(Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                        .in(In.HEADER)))
+            .servers(List.of(
+                new Server().url("http://localhost:8080").description("Local server"),
+                new Server().url("https://api.qtudy.com").description("Production server")));
     }
 
-    public ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title(API_NAME)
-                .version(API_VERSION)
-                .description(API_DESCRIPTION)
-                .build();
+    @Bean
+    public GroupedOpenApi publicApi() {
+        return GroupedOpenApi.builder()
+            .group("public")
+            .pathsToMatch("/api/**")
+            .build();
     }
 }

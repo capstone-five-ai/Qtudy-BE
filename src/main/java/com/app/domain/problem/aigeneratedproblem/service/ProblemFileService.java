@@ -355,7 +355,8 @@ public class ProblemFileService { //Service 추후 분할 예정
                         file.getFileId(),
                         file.getFileName(),
                         DType.PROBLEM,
-                        file.getCreateTime()
+                        file.getCreateTime(),
+                        file.getUpdateTime()
                 ))
                 .collect(Collectors.toList());
 
