@@ -31,7 +31,7 @@ import java.util.List;
 @RequestMapping("/api/categorized-problem")
 @Validated
 @RequiredArgsConstructor
-public class CategorizedProblemController{
+public class CategorizedProblemController implements CategorizedProblemApi{
 
     private final CategorizedProblemService categorizedProblemService;
 

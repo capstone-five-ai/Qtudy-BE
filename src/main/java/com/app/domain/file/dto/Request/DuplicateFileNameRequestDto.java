@@ -13,8 +13,8 @@ import lombok.Setter;
 @Getter
 @Schema(name = "DuplicateFileNameRequestDto", description = "파일 이름 중복 체크 요청 DTO")
 public class DuplicateFileNameRequestDto {
-    @Schema(description = "파일 이름", example = "sample.pdf")
+    @Schema(description = "파일 이름", example = "파일명")
     private String fileName;
-    @Schema(description = "파일 타입", example = "PDF")
+    @Schema(description = "파일 타입", example = "PROBLEM")
     private String type;
 }

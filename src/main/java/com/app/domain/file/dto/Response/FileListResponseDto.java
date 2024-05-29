@@ -22,7 +22,7 @@ public class FileListResponseDto {
     @Schema(description = "파일 이름", example = "sample.pdf")
     private String fileName;
 
-    @Schema(description = "파일 타입", example = "PDF")
+    @Schema(description = "파일 타입", example = "PROBLEM")
     private DType dtype;
 
     @Schema(description = "생성 시간", example = "2023-05-29T12:34:56")
