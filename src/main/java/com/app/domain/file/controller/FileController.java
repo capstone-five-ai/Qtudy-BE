@@ -1,5 +1,6 @@
 package com.app.domain.file.controller;
 
+import com.app.domain.file.doc.FileApi;
 import com.app.domain.file.dto.Request.DownloadPdfRequestDto;
 import com.app.domain.file.dto.Request.DuplicateFileNameRequestDto;
 import com.app.domain.file.dto.Request.UpdateFileRequestDto;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/file")
-public class FileController {
+public class FileController implements FileApi {
 
     @Autowired
     FileService fileService;
