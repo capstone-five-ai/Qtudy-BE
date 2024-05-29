@@ -1,6 +1,7 @@
 package com.app.domain.problem.aigeneratedproblem.controller;
 
 import com.app.domain.file.dto.Response.FileListResponseDto;
+import com.app.domain.problem.aigeneratedproblem.doc.ProblemFileApi;
 import com.app.domain.problem.aigeneratedproblem.dto.ProblemFile.Request.AiGenerateProblemDto;
 import com.app.domain.problem.aigeneratedproblem.dto.ProblemFile.Response.AiGeneratedProblemResponseDto;
 import com.app.global.config.ENUM.FileType;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/problemFile")
-public class ProblemFileController { // Controller 추후 분할 예정
+public class ProblemFileController implements ProblemFileApi { // Controller 추후 분할 예정
     @Autowired
     ProblemFileService problemFileService;
 
