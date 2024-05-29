@@ -1,5 +1,6 @@
 package com.app.domain.problem.membersavedproblem.controller;
 
+import com.app.domain.problem.membersavedproblem.doc.MemberSavedProblemApi;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
 import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
 import com.app.domain.problem.membersavedproblem.mapper.MemberSavedProblemMapper;
@@ -17,7 +18,7 @@ import javax.validation.constraints.Positive;
 @RequestMapping("/api/member-saved-problem")
 @Validated
 @RequiredArgsConstructor
-public class MemberSavedProblemController {
+public class MemberSavedProblemController implements MemberSavedProblemApi{
 
     private final MemberSavedProblemService memberSavedProblemService;
 
