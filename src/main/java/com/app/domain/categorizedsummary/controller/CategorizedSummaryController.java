@@ -1,5 +1,6 @@
 package com.app.domain.categorizedsummary.controller;
 
+import com.app.domain.categorizedsummary.doc.CategorizedSummaryApi;
 import com.app.domain.categorizedsummary.dto.CategorizedSummaryDto;
 import com.app.domain.categorizedsummary.entity.CategorizedSummary;
 import com.app.domain.categorizedsummary.mapper.CategorizedSummaryMapper;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/categorized-summary")
 @Validated
 @RequiredArgsConstructor
-public class CategorizedSummaryController {
+public class CategorizedSummaryController implements CategorizedSummaryApi {
     private final CategorizedSummaryService categorizedSummaryService;
 
     private final CategorizedSummaryMapper categorizedSummaryMapper;
@@ -82,7 +83,7 @@ public class CategorizedSummaryController {
     }
 
     @DeleteMapping("/delete/{categorizedSummaryId}")
-    public ResponseEntity<Void> deleteCategorizedProblem(@PathVariable @Positive Long categorizedSummaryId) {
+    public ResponseEntity<Void> deleteCategorizedSummary(@PathVariable @Positive Long categorizedSummaryId) {
         categorizedSummaryService.deleteCategorizedSummary(categorizedSummaryId);
 
         return ResponseEntity.ok().build();
