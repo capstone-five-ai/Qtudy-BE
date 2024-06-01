@@ -9,7 +9,6 @@ env:
   AWS_ACCESS_KEY: ${{ secrets.STG_AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.STG_AWS_SECRET_KEY }}
   AWS_S3_BUCKET_NAME: ${{ secrets.STG_AWS_S3_BUCKET_NAME }}
-  AWS_S3_REGION: ${{ secrets.STG_AWS_S3_REGION }}
 
 jobs:
   deploy:
@@ -43,11 +42,11 @@ jobs:
         with:
           aws-access-key-id: $AWS_ACCESS_KEY
           aws-secret-access-key: $AWS_SECRET_KEY
-          aws-region: $AWS_S3_REGION
+          aws-region: ap-northeast-2
 
       - name: S3에 zip 파일 업로드
         run: aws s3 cp \
-              --region $AWS_S3_REGION \
+              --region ap-northeast-2 \
               ./qtudy.zip s3://$AWS_S3_BUCKET_NAME/qtudy.zip
 
       - name: Code Deploy 통해 배포
@@ -57,7 +56,7 @@ jobs:
               --deployment-config-name QtudyStageCodeDeploy \
               --deployment-group-name QtudyStageCodeDeploy-DepGrp \
               --s3-location bucket=$AWS_S3_BUCKET_NAME, bundleType=zip, key=qtudy.zip \
-              --region $AWS_S3_REGION
+              --region ap-northeast-2
 
 
 
