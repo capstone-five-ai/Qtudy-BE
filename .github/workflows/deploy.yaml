@@ -1,0 +1,64 @@
+name: deploy
+
+on:
+  pull_request:
+    branches: [dev, test/cd]
+    types: [closed]
+
+env:
+  AWS_ACCESS_KEY: ${{ secrets.STG_AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.STG_AWS_SECRET_KEY }}
+  AWS_S3_BUCKET_NAME: ${{ secrets.STG_AWS_S3_BUCKET_NAME }}
+  AWS_S3_REGION: ${{ secrets.STG_AWS_S3_REGION }}
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v4
+
+      - name: JDK 11 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: Gradle에 실행 권한 부여
+        run: chmod +x gradlew
+
+      - name: 빌드
+        run: ./gradlew build -x test
+
+      - name: zip 파일 생성
+        run: zip -r ./qtudy.zip .
+        shell: bash
+
+      - name: AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: $AWS_ACCESS_KEY
+          aws-secret-access-key: $AWS_SECRET_KEY
+          aws-region: $AWS_S3_REGION
+
+      - name: S3에 zip 파일 업로드
+        run: aws s3 cp \
+              --region $AWS_S3_REGION \
+              ./qtudy.zip s3://$AWS_S3_BUCKET_NAME/qtudy.zip
+
+      - name: Code Deploy 통해 배포
+        run: aws deploy create-deployment \
+              --application-name $AWS_CODE_DEPLOY_APPLICATION_NAME \
+              --file-exists-behavior OVERWRITE \
+              --deployment-config-name QtudyStageCodeDeploy \
+              --deployment-group-name QtudyStageCodeDeploy-DepGrp \
+              --s3-location bucket=$AWS_S3_BUCKET_NAME, bundleType=zip, key=qtudy.zip \
+              --region $AWS_S3_REGION
+
+
+
+
