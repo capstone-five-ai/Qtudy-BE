@@ -52,7 +52,7 @@ jobs:
           --deployment-group-name QtudyStageCodeDeploy-DepGrp
           --file-exists-behavior OVERWRITE
           --deployment-config-name CodeDeployDefault.AllAtOnce
-          --s3-location bucket=${{ secrets.STG_AWS_S3_BUCKET_NAME }}, bundleType=zip, key=qtudy.zip
+          --s3-location bucket=${{ secrets.STG_AWS_S3_BUCKET_NAME }},bundleType=zip,key=qtudy.zip
           --region ap-northeast-2
 
 
