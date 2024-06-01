@@ -48,7 +48,7 @@ jobs:
       - name: Code Deploy 통해 배포
         run: >
           aws deploy create-deployment
-          --application-name $AWS_CODE_DEPLOY_APPLICATION_NAME 
+          --application-name $AWS_CODE_DEPLOY_APPLICATION_NAME
           --file-exists-behavior OVERWRITE
           --deployment-config-name QtudyStageCodeDeploy
           --deployment-group-name QtudyStageCodeDeploy-DepGrp
