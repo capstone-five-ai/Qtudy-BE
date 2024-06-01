@@ -40,18 +40,20 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: S3에 zip 파일 업로드
-        run: aws s3 cp \
-              --region ap-northeast-2 \
-              ./qtudy.zip s3://${{ secrets.STG_AWS_S3_BUCKET_NAME }}/qtudy.zip
+        run: >
+          aws s3 cp
+          --region ap-northeast-2
+          ./qtudy.zip s3://${{ secrets.STG_AWS_S3_BUCKET_NAME }}/qtudy.zip
 
       - name: Code Deploy 통해 배포
-        run: aws deploy create-deployment \
-              --application-name $AWS_CODE_DEPLOY_APPLICATION_NAME \
-              --file-exists-behavior OVERWRITE \
-              --deployment-config-name QtudyStageCodeDeploy \
-              --deployment-group-name QtudyStageCodeDeploy-DepGrp \
-              --s3-location bucket=${{ secrets.STG_AWS_S3_BUCKET_NAME }}, bundleType=zip, key=qtudy.zip \
-              --region ap-northeast-2
+        run: >
+          aws deploy create-deployment
+          --application-name $AWS_CODE_DEPLOY_APPLICATION_NAME 
+          --file-exists-behavior OVERWRITE
+          --deployment-config-name QtudyStageCodeDeploy
+          --deployment-group-name QtudyStageCodeDeploy-DepGrp
+          --s3-location bucket=${{ secrets.STG_AWS_S3_BUCKET_NAME }}, bundleType=zip, key=qtudy.zip
+          --region ap-northeast-2
 
 
 
