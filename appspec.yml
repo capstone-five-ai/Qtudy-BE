@@ -12,10 +12,12 @@ permissions:
     group: ubuntu
 
 hooks:
-  BeforeInstall:
-    - location: scripts/shutdown-prev-application.sh
+  AfterInstall:
+    - location: /home/ubuntu/scripts/shutdown-prev-application.sh
+      timeout: 120
       runas: ubuntu
 
-  AfterInstall:
-    - location: scripts/build-and-run-new-application.sh
+  ApplicationStart:
+    - location: /home/ubuntu/scripts/build-and-run-new-application.sh
+      timeout: 120
       runas: ubuntu
