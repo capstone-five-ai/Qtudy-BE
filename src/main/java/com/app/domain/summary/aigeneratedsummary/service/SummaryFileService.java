@@ -191,7 +191,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public void UploadS3(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, AiGenerateSummaryDto aiGenerateSummaryDto, int fileId) {
+    public void UploadS3(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, AiGenerateSummaryDto aiGenerateSummaryDto, Long fileId) {
         File tempFile = null;
 
         try { // 요점정리 PDF 생성

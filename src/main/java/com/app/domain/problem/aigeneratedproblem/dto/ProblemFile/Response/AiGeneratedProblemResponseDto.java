@@ -16,12 +16,12 @@ import java.util.List;
 @Schema(name = "AiGeneratedProblemResponseDto", description = "AI 생성 문제 응답 DTO")
 public class AiGeneratedProblemResponseDto {
     @Schema(description = "파일 ID", example = "1")
-    private int fileId;
+    private Long fileId;
 
     @Schema(description = "AI 생성 문제 목록", implementation = AiGeneratedProblemList.class)
     private List<AiGeneratedProblemList> problems;
 
-    public static AiGeneratedProblemResponseDto ConvertToProblem(List<AiGeneratedProblemList> aiGeneratedProblemList, int fileId){
+    public static AiGeneratedProblemResponseDto ConvertToProblem(List<AiGeneratedProblemList> aiGeneratedProblemList, Long fileId){
         return AiGeneratedProblemResponseDto.builder()
             .fileId(fileId)
             .problems(aiGeneratedProblemList)

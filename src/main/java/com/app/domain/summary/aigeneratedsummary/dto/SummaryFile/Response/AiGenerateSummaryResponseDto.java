@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 public class AiGenerateSummaryResponseDto {
 
     @Schema(description = "파일 ID", example = "1")
-    private int fileId;
+    private Long fileId;
 
     @Schema(description = "AI 생성 요약 ID", example = "1")
-    private int aiGeneratedSummaryId;
+    private Long aiGeneratedSummaryId;
 
     @Schema(description = "요약 제목", example = "요약 제목 예시")
     private String summaryTitle;
@@ -32,7 +32,7 @@ public class AiGenerateSummaryResponseDto {
     @Schema(description = "업데이트 시간", example = "2023-05-30T10:15:30")
     private LocalDateTime updateTime;
 
-    public static AiGenerateSummaryResponseDto ConvertToSummaryFileResponse(AiGeneratedSummary aiGeneratedSummary, int fileId) {
+    public static AiGenerateSummaryResponseDto ConvertToSummaryFileResponse(AiGeneratedSummary aiGeneratedSummary, Long fileId) {
         return AiGenerateSummaryResponseDto.builder()
             .fileId(fileId)
             .aiGeneratedSummaryId(aiGeneratedSummary.getSummaryId())

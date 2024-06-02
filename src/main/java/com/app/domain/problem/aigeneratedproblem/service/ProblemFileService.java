@@ -252,7 +252,7 @@ public class ProblemFileService { //Service 추후 분할 예정
     }
 
 
-    public void UploadS3(AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDto, AiGenerateProblemDto aiGenerateProblemDto , int fileId) {
+    public void UploadS3(AiGenerateProblemFromAiDto[] aiGenerateProblemFromAiDto, AiGenerateProblemDto aiGenerateProblemDto , Long fileId) {
         File tempFile = null;
 
         try { // 문제 PDF 생성

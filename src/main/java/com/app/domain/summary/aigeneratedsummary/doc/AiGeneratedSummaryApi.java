@@ -28,7 +28,7 @@ public interface AiGeneratedSummaryApi {
   })
   ResponseEntity<SummaryResponseDto> GetSummary(
       @Parameter(description = "파일 ID", required = true, example = "1")
-      @PathVariable @Positive int fileId,
+      @PathVariable @Positive Long fileId,
       HttpServletRequest httpServletRequest
   );
 }
