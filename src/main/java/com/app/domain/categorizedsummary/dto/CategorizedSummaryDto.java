@@ -23,7 +23,7 @@ public class CategorizedSummaryDto {
         private List<Long> categoryIdList;
 
         @Schema(description = "요약 ID", example = "1")
-        private Integer summaryId;
+        private Long summaryId;
     }
 
     @Getter
@@ -39,7 +39,7 @@ public class CategorizedSummaryDto {
         private List<Long> categoryId;
 
         @Schema(description = "요약 ID", example = "1")
-        private Integer summaryId;
+        private Long summaryId;
 
         public static PostResponse of(List<Long> categorizedSummaryIdList, CategorizedSummaryDto.Post categorizedSummaryPostDto){
             return PostResponse.builder()

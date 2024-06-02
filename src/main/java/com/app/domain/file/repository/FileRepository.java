@@ -7,12 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface FileRepository extends JpaRepository<File, Integer> {
+public interface FileRepository extends JpaRepository<File, Long> {
 
 
-    Optional<File> findByFileId(int FileId);
+    Optional<File> findByFileId(long FileId);
 
-    Optional<String> findFileKeyByFileId(int fileId);
+    Optional<String> findFileKeyByFileId(long fileId);
 
     Optional<File> findByFileNameAndDtype(String fileName, String type);
 

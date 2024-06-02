@@ -29,6 +29,6 @@ public interface ProblemApi {
   ResponseEntity<ProblemResponseDto> GetFileProblems(
       HttpServletRequest httpServletRequest,
       @Parameter(description = "파일 ID", required = true, example = "1")
-      @PathVariable int fileId
+      @PathVariable Long fileId
   );
 }

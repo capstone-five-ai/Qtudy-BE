@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AiGeneratedProblemRepository extends JpaRepository<AiGeneratedProblem, Integer> {
+public interface AiGeneratedProblemRepository extends JpaRepository<AiGeneratedProblem, Long> {
 
-    List<AiGeneratedProblem> findByProblemFile_FileId(int fileId);
+    List<AiGeneratedProblem> findByProblemFile_FileId(long fileId);
 }

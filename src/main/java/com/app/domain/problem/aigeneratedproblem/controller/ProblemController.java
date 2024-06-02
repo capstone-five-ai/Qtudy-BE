@@ -20,7 +20,7 @@ public class ProblemController implements ProblemApi { // Controller 추후 분�
     AiGeneratedProblemService aiGeneratedProblemService;
 
     @GetMapping("/getFileProblems/{fileId}") // 파일의 전체 문제정보를 가져옴
-    public ResponseEntity<ProblemResponseDto> GetFileProblems(HttpServletRequest httpServletRequest, @PathVariable int fileId) {
+    public ResponseEntity<ProblemResponseDto> GetFileProblems(HttpServletRequest httpServletRequest, @PathVariable Long fileId) {
         List<AiGeneratedProblem> problems = aiGeneratedProblemService.GetFileProblems(fileId);
 
         String authorizationHeader = httpServletRequest.getHeader("Authorization");

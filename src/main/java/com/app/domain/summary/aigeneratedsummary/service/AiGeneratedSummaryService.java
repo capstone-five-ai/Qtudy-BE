@@ -54,7 +54,7 @@ public class AiGeneratedSummaryService {
 
     }
 
-    public pdfResponse createSummaryPdf(Integer summaryId) throws IOException {
+    public pdfResponse createSummaryPdf(Long summaryId) throws IOException {
         AiGeneratedSummary summary = findVerifiedSummaryBySummaryId(summaryId);
 
         // SummaryPdfMaker를 사용하여 PDF 파일 생성
@@ -89,7 +89,7 @@ public class AiGeneratedSummaryService {
 
 
 
-    public AiGeneratedSummary updateSummary(MemberSavedSummary summary, Integer summaryId){
+    public AiGeneratedSummary updateSummary(MemberSavedSummary summary, Long summaryId){
         AiGeneratedSummary preSummary = findVerifiedSummaryBySummaryId(summaryId);
         Optional.ofNullable(summary.getSummaryTitle())
                 .ifPresent(summaryTitle -> preSummary.updateSummaryTitle(summaryTitle));
@@ -98,7 +98,7 @@ public class AiGeneratedSummaryService {
         return aiGeneratedSummaryRepository.save(preSummary);
     }
 
-    public AiGeneratedSummary findVerifiedSummaryBySummaryId(Integer aiGeneratedSummaryId) {
+    public AiGeneratedSummary findVerifiedSummaryBySummaryId(Long aiGeneratedSummaryId) {
         return aiGeneratedSummaryRepository.findById(aiGeneratedSummaryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SUMMARY_NOT_EXISTS));
     }
