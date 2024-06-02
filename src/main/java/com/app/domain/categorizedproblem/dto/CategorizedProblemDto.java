@@ -65,6 +65,10 @@ public class CategorizedProblemDto {
     @AllArgsConstructor
     @Schema(name = "CategorizedProblemResponse", description = "카테고리화 문제 응답 DTO")
     public static class Response {
+
+        @Schema(description = "문제 ID", example = "1")
+        private Long problemId;
+
         @Schema(description = "카테고리화 문제 ID", example = "1")
         private Long categorizedProblemId;
 
@@ -116,7 +120,8 @@ public class CategorizedProblemDto {
                 .nextProblem(nextProblemResponse);
 
             Problem problem = categorizedProblem.getProblem();
-            return builder.problemName(problem.getProblemName())
+            return builder.problemId(problem.getProblemId())
+                .problemName(problem.getProblemName())
                 .problemAnswer(problem.getProblemAnswer())
                 .problemCommentary(problem.getProblemCommentary())
                 .problemChoices(problem.getProblemChoices())
