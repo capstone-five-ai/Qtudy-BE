@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Schema(name = "FileListResponseDto", description = "파일 목록 응답 DTO")
 public class FileListResponseDto {
     @Schema(description = "파일 ID", example = "1")
-    private int fileId;
+    private Long fileId;
 
     @Schema(description = "파일 이름", example = "sample.pdf")
     private String fileName;

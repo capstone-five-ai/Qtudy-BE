@@ -12,11 +12,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ProblemFileRepository extends JpaRepository<ProblemFile, Integer> {
+public interface ProblemFileRepository extends JpaRepository<ProblemFile, Long> {
 
-    Optional<ProblemFile> findByFileId(int FileId);
+    Optional<ProblemFile> findByFileId(long FileId);
 
-    default ProblemFile getByFileId(int fileId) {
+    default ProblemFile getByFileId(long fileId) {
         return findByFileId(fileId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
     }

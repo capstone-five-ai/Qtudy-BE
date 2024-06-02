@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategorizedSummaryRepository extends JpaRepository<CategorizedSummary, Long> {
-    boolean existsByCategoryCategoryIdAndSummarySummaryId(Long categoryId, Integer summaryId);
+    boolean existsByCategoryCategoryIdAndSummarySummaryId(Long categoryId, Long summaryId);
 
-    boolean existsBySummarySummaryId(Integer summaryId);
+    boolean existsBySummarySummaryId(Long summaryId);
 
     Page<CategorizedSummary> findByCategoryCategoryId(Long categoryId, Pageable pageable);
 }

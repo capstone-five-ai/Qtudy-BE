@@ -38,7 +38,7 @@ public class CategorizedSummaryService {
 
     private final SummaryRepository summaryRepository;
 
-    public CategorizedSummary createCategorizedSummary(Long categoryId, Integer summaryId) {
+    public CategorizedSummary createCategorizedSummary(Long categoryId, Long summaryId) {
         checkForDuplicateCategorizedProblem(categoryId, summaryId);
 
         Category category = categoryService.findVerifiedCategoryByCategoryId(categoryId);
@@ -47,7 +47,7 @@ public class CategorizedSummaryService {
         return categorizedSummaryRepository.save(categorizedSummary);
     }
 
-    private void checkForDuplicateCategorizedProblem(Long categoryId, Integer summaryId) {
+    private void checkForDuplicateCategorizedProblem(Long categoryId, Long summaryId) {
         boolean exists = categorizedSummaryRepository.existsByCategoryCategoryIdAndSummarySummaryId(
                 categoryId,
                 summaryId
@@ -57,7 +57,7 @@ public class CategorizedSummaryService {
         }
     }
 
-    private CategorizedSummary createCategorizedSummaryEntity(Category category, Integer summaryId) {
+    private CategorizedSummary createCategorizedSummaryEntity(Category category, Long summaryId) {
         Summary summary = summaryService.findVerifiedSummaryBySummaryId(summaryId);
         CategorizedSummary categorizedSummary = CategorizedSummary.builder()
                 .summary(summary)
@@ -69,7 +69,7 @@ public class CategorizedSummaryService {
 
     public SummaryDto.pdfResponse createSummaryPdf(Long categorizedSummaryId) throws IOException{
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
-        Integer summaryId = categorizedSummary.getSummary().getSummaryId();
+        Long summaryId = categorizedSummary.getSummary().getSummaryId();
         return summaryService.createSummaryPdf(summaryId);
     }
 
@@ -89,13 +89,13 @@ public class CategorizedSummaryService {
         categorizedSummaryRepository.deleteById(categorizedSummaryId);
 
         Summary summary = categorizedSummary.getSummary();
-        Integer summaryId = summary.getSummaryId();
+        Long summaryId = summary.getSummaryId();
         if (summary.isMemberSavedSummary() && !isSummaryUsedInOtherCategorizedSummarys(summaryId)) {
             summaryRepository.deleteById(summaryId);
         }
     }
 
-    private boolean isSummaryUsedInOtherCategorizedSummarys(Integer summaryId){
+    private boolean isSummaryUsedInOtherCategorizedSummarys(Long summaryId){
         return categorizedSummaryRepository.existsBySummarySummaryId(summaryId);
     }
 

@@ -13,5 +13,5 @@ import lombok.Setter;
 @Schema(name = "DeleteProblemFileDto", description = "문제 파일 삭제 요청 DTO")
 public class DeleteProblemFileDto {
     @Schema(description = "파일 ID", example = "1")
-    private int fileId;
+    private Long fileId;
 }

@@ -25,12 +25,12 @@ public class SummaryService {
     private final SummaryRepository summaryRepository;
 
     @Transactional(readOnly = true)
-    public Summary findVerifiedSummaryBySummaryId(Integer summaryId){
+    public Summary findVerifiedSummaryBySummaryId(Long summaryId){
         return summaryRepository.findById(summaryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SUMMARY_NOT_EXISTS));
     }
 
-    public SummaryDto.pdfResponse createSummaryPdf(Integer summaryId) throws IOException {
+    public SummaryDto.pdfResponse createSummaryPdf(Long summaryId) throws IOException {
         Summary summary = findVerifiedSummaryBySummaryId(summaryId);
 
         // SummaryPdfMaker를 사용하여 PDF 파일 생성
@@ -53,7 +53,7 @@ public class SummaryService {
         return new SummaryDto.pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
     }
 
-    public void updateSummary(String summaryTitle, String summaryContent, Integer summaryId) {
+    public void updateSummary(String summaryTitle, String summaryContent, Long summaryId) {
         Summary preSummary = findVerifiedSummaryBySummaryId(summaryId);
 
         Optional.ofNullable(summaryTitle)

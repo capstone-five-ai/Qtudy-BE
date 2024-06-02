@@ -35,7 +35,7 @@ public class AiGeneratedProblemService { //Service 추후 분할 예정
 
 
 
-    public List<AiGeneratedProblem> GetFileProblems( int fileId) {
+    public List<AiGeneratedProblem> GetFileProblems(Long fileId) {
         ProblemFile problemFile;
         List<AiGeneratedProblem> problems;
 
@@ -45,7 +45,7 @@ public class AiGeneratedProblemService { //Service 추후 분할 예정
         return problems;
     }
 
-    public AiGeneratedProblem GetProblem(String token,int aiGeneratedProblemId) { //삭제 예정
+    public AiGeneratedProblem GetProblem(String token,Long aiGeneratedProblemId) { //삭제 예정
 
         Optional<AiGeneratedProblem> optionalAiGeneratedProblem;
 
@@ -59,7 +59,7 @@ public class AiGeneratedProblemService { //Service 추후 분할 예정
         return null; //추후 에러처리 예정
     }
 
-    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, int fileId) {
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, Long fileId) {
         Member member = memberService.getLoginMember(httpServletRequest);
         ProblemFile problemFile = problemFileRepository.getByFileId(fileId);
 
@@ -69,7 +69,7 @@ public class AiGeneratedProblemService { //Service 추후 분할 예정
         return false; // 인증 실패
     }
 
-    public AiGeneratedProblem updateProblem(MemberSavedProblem problem, Integer problemId){
+    public AiGeneratedProblem updateProblem(MemberSavedProblem problem, Long problemId){
         AiGeneratedProblem preProblem = findVerifiedProblemByProblemId(problemId);
         Optional.ofNullable(problem.getProblemName())
                 .ifPresent(problemName -> preProblem.updateProblemName(problemName));
@@ -85,7 +85,7 @@ public class AiGeneratedProblemService { //Service 추후 분할 예정
         return aiGeneratedProblemRepository.save(preProblem);
     }
 
-    public AiGeneratedProblem findVerifiedProblemByProblemId(Integer problemId){
+    public AiGeneratedProblem findVerifiedProblemByProblemId(Long problemId){
         return aiGeneratedProblemRepository.findById(problemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROBLEM_NOT_EXISTS));
     }
