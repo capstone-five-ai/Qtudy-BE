@@ -20,7 +20,7 @@ public class AiGeneratedSummaryController implements AiGeneratedSummaryApi {
     @Override
     @GetMapping("/getSummary/{fileId}") // 요점정리 가져오기
     public ResponseEntity<SummaryResponseDto> GetSummary(
-        @PathVariable int fileId,
+        @PathVariable Long fileId,
         HttpServletRequest httpServletRequest) {
 
         AiGeneratedSummary aiGeneratedSummary = aiGeneratedSummaryService.GetSummary(fileId);

@@ -42,7 +42,7 @@ public class AiGeneratedSummaryService {
     @Autowired
     private S3Service s3Service;
 
-    public AiGeneratedSummary GetSummary(int fileId){
+    public AiGeneratedSummary GetSummary(Long fileId){
 
 
         Optional<AiGeneratedSummary> aiGeneratedSummaryOptional = aiGeneratedSummaryRepository.findBySummaryFile_FileId(fileId);
@@ -77,7 +77,7 @@ public class AiGeneratedSummaryService {
         return new pdfResponse(byteArrayOutputStream.toByteArray(), summary.getSummaryTitle());
     }
 
-    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, int fileId) {
+    public Boolean checkIsWriter(HttpServletRequest httpServletRequest, Long fileId) {
         Member member = memberService.getLoginMember(httpServletRequest);
         SummaryFile summaryFile = summaryFileRepository.getByFileId(fileId);
 

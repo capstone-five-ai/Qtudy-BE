@@ -17,7 +17,7 @@ import java.util.List;
 @Schema(name = "AiGeneratedProblemList", description = "AI 생성 문제 목록 DTO")
 public class AiGeneratedProblemList {
     @Schema(description = "AI 생성 문제 ID", example = "1")
-    private int aiGeneratedProblemId;
+    private Long aiGeneratedProblemId;
 
     @Schema(description = "문제 이름", example = "문제 이름 예시")
     private String problemName;
@@ -33,7 +33,7 @@ public class AiGeneratedProblemList {
 
     public static AiGeneratedProblemList ConvertToProblem(AiGeneratedProblem aiGenerateProblem){
         return AiGeneratedProblemList.builder()
-            .aiGeneratedProblemId(aiGenerateProblem.getProblemId().intValue())
+            .aiGeneratedProblemId(aiGenerateProblem.getProblemId())
             .problemName(aiGenerateProblem.getProblemName())
             .problemChoices(aiGenerateProblem.getProblemChoices())
             .problemAnswer(aiGenerateProblem.getProblemAnswer())

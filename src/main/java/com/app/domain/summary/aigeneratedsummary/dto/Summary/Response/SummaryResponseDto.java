@@ -40,7 +40,7 @@ public class SummaryResponseDto {
     @Schema(description = "요약 응답 내부 클래스")
     public static class Response {
         @Schema(description = "AI 생성 요약 ID", example = "1")
-        private int aiGeneratedSummaryId;
+        private Long aiGeneratedSummaryId;
 
         @Schema(description = "요약 제목", example = "샘플 요약")
         private String summaryTitle;
