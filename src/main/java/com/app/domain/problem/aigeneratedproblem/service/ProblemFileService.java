@@ -55,7 +55,7 @@ import static com.app.global.pdf.ProblemPdfMaker.CreatePdfFile;
 public class ProblemFileService { //Service 추후 분할 예정
 
 
-    private String base_url = "http://44.210.94.241:5000";
+    private String base_url = "http://3.35.231.206:5000";
 
     @Autowired
     private RestTemplate restTemplate;
