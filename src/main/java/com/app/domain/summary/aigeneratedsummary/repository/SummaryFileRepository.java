@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SummaryFileRepository extends JpaRepository<SummaryFile,Integer> {
+public interface SummaryFileRepository extends JpaRepository<SummaryFile,Long> {
 
 
 
-    Optional<SummaryFile> findByFileId(int FileId);
+    Optional<SummaryFile> findByFileId(long FileId);
 
-    default SummaryFile getByFileId(int fileId) {
+    default SummaryFile getByFileId(long fileId) {
         return findByFileId(fileId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
     }

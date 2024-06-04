@@ -27,7 +27,7 @@ public abstract class File extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FILE_ID")
-    private int fileId;
+    private Long fileId;
 
     //@Column(name = "MEMBER_ID") //추후에 Members 엔티티와 연결
     //private String memberId;

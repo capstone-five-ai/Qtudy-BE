@@ -28,7 +28,7 @@ public abstract class Summary extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="SUMMARY_ID")
-    private Integer summaryId;
+    private Long summaryId;
 
     @Column(name = "SUMMARY_TITLE", length = 100, nullable = false)
     private String summaryTitle;

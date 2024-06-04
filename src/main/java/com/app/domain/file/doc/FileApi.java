@@ -29,7 +29,7 @@ public interface FileApi {
   })
   ResponseEntity<String> updateFile(
       @Parameter(description = "파일 ID", required = true, example = "1")
-      @PathVariable int fileId,
+      @PathVariable Long fileId,
       @Valid @RequestBody UpdateFileRequestDto updateFileRequestDto);
 
   @Operation(summary = "문제 PDF 다운로드", description = "문제 PDF를 다운로드합니다.")
@@ -41,7 +41,7 @@ public interface FileApi {
   })
   ResponseEntity<DownloadPdfResponseDto> downloadProblemPdf(
       @Parameter(description = "파일 ID", required = true, example = "1")
-      @PathVariable int fileId,
+      @PathVariable Long fileId,
       @RequestBody DownloadPdfRequestDto downloadPdfRequestDto);
 
   @Operation(summary = "파일 삭제", description = "문제 파일을 삭제합니다.")
@@ -52,7 +52,7 @@ public interface FileApi {
   })
   ResponseEntity<String> deleteProblemFile(
       @Parameter(description = "파일 ID", required = true, example = "1")
-      @PathVariable int fileId);
+      @PathVariable Long fileId);
 
   @Operation(summary = "파일 이름 중복 체크", description = "파일 이름의 중복 여부를 확인합니다.")
   @ApiResponses({

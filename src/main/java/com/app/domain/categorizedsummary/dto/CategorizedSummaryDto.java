@@ -23,7 +23,7 @@ public class CategorizedSummaryDto {
         private List<Long> categoryIdList;
 
         @Schema(description = "요약 ID", example = "1")
-        private Integer summaryId;
+        private Long summaryId;
     }
 
     @Getter
@@ -39,7 +39,7 @@ public class CategorizedSummaryDto {
         private List<Long> categoryId;
 
         @Schema(description = "요약 ID", example = "1")
-        private Integer summaryId;
+        private Long summaryId;
 
         public static PostResponse of(List<Long> categorizedSummaryIdList, CategorizedSummaryDto.Post categorizedSummaryPostDto){
             return PostResponse.builder()
@@ -56,6 +56,10 @@ public class CategorizedSummaryDto {
     @AllArgsConstructor
     @Schema(name = "CategorizedSummaryResponse", description = "카테고리화 요약 응답 DTO")
     public static class Response {
+
+        @Schema(description = "요약 ID", example = "1")
+        private Long summaryId;
+
         @Schema(description = "카테고리화 요약 ID", example = "1")
         private Long categorizedSummaryId;
 
@@ -94,6 +98,7 @@ public class CategorizedSummaryDto {
                 .orElse(null);
 
             return Response.builder()
+                .summaryId(categorizedSummary.getSummary().getSummaryId())
                 .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
                 .summaryTitle(categorizedSummary.getSummary().getSummaryTitle())
                 .summaryContent(categorizedSummary.getSummary().getSummaryContent())

@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public class SummaryFileService { //Service 추후 분할 예정
 
 
-    private String base_url = "http://44.210.94.241:5000";
+    private String base_url = "http://3.35.231.206:5000";
   
     @Autowired
     private RestTemplate restTemplate;
@@ -191,7 +191,7 @@ public class SummaryFileService { //Service 추후 분할 예정
     }
 
 
-    public void UploadS3(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, AiGenerateSummaryDto aiGenerateSummaryDto, int fileId) {
+    public void UploadS3(AiGenerateSummaryFromAiDto aiGenerateSummaryFromAiDto, AiGenerateSummaryDto aiGenerateSummaryDto, Long fileId) {
         File tempFile = null;
 
         try { // 요점정리 PDF 생성

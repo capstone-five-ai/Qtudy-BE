@@ -27,21 +27,21 @@ public class FileController implements FileApi {
     FileService fileService;
 
     @PatchMapping("/updateFile/{fileId}") //사용자가 생성한 파일 이름 update
-    public ResponseEntity<String> updateFile(@PathVariable int fileId, @Valid @RequestBody UpdateFileRequestDto updateFileRequestDto){
+    public ResponseEntity<String> updateFile(@PathVariable Long fileId, @Valid @RequestBody UpdateFileRequestDto updateFileRequestDto){
         fileService.updateFile(fileId, updateFileRequestDto);
 
         return new ResponseEntity<>("Sucess",HttpStatus.OK);
     }
 
     @PostMapping("/downloadPdf/{fileId}") // 문제 다운로드
-    public ResponseEntity<DownloadPdfResponseDto> downloadProblemPdf( @PathVariable int fileId, @RequestBody DownloadPdfRequestDto downloadPdfRequestDto) {
+    public ResponseEntity<DownloadPdfResponseDto> downloadProblemPdf( @PathVariable Long fileId, @RequestBody DownloadPdfRequestDto downloadPdfRequestDto) {
         String fileUrl = fileService.downloadFile(fileId, downloadPdfRequestDto);
 
         return new ResponseEntity<>(new DownloadPdfResponseDto(fileUrl), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteFile/{fileId}") // 문제파일 삭제
-    public ResponseEntity<String> deleteProblemFile(@PathVariable int fileId){
+    public ResponseEntity<String> deleteProblemFile(@PathVariable Long fileId){
         fileService.DeleteProblemFile(fileId);
 
         return ResponseEntity.ok("Sucess");

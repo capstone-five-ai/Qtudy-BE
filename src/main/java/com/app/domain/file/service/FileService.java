@@ -58,7 +58,7 @@ public class FileService {
         return fileListResponseDtoList;
     }*/
 
-    public void updateFile( int fileId, UpdateFileRequestDto updateFileRequestDto){
+    public void updateFile( Long fileId, UpdateFileRequestDto updateFileRequestDto){
         String newFileName = updateFileRequestDto.getNewFileName();
 
 
@@ -69,7 +69,7 @@ public class FileService {
         fileRepository.save(file);
     }
 
-    public String downloadFile( int fileId, DownloadPdfRequestDto downloadPdfRequestDto){
+    public String downloadFile( Long fileId, DownloadPdfRequestDto downloadPdfRequestDto){
         PdfType pdfType = downloadPdfRequestDto.getPdfType();
         String UrlKey = null;
 
@@ -103,7 +103,7 @@ public class FileService {
 
 
     @Transactional
-    public void DeleteProblemFile(int fileId) {
+    public void DeleteProblemFile(long fileId) {
         File file = fileRepository.findById(fileId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FILE));
 

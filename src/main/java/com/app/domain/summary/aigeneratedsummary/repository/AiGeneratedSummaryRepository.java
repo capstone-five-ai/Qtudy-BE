@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface AiGeneratedSummaryRepository extends JpaRepository<AiGeneratedSummary,Integer> {
+public interface AiGeneratedSummaryRepository extends JpaRepository<AiGeneratedSummary,Long> {
 
-    Optional<AiGeneratedSummary> findBySummaryFile_FileId(int fileId);
+    Optional<AiGeneratedSummary> findBySummaryFile_FileId(long fileId);
 }
