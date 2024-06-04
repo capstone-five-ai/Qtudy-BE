@@ -6,7 +6,8 @@
 ![KakaoTalk_20240604_212902262_03](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/d1fe6d08-6a6e-48bd-b0b8-b96bda0143db)
 ![KakaoTalk_20240604_212902262_04](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/e150be69-f40c-4ad9-b30c-757d818e5937)
 ![KakaoTalk_20240604_212902262_05](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/31460b8b-a42a-48f7-9914-b30ccdc9b3a1)
-![KakaoTalk_20240604_212902262_06](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/97186d96-fa64-4f30-8721-874d6ba56fc0)
+![KakaoTalk_20240604_212902262_06](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/362be302-461a-450e-97af-291481289a41)
+![KakaoTalk_20240604_212902262_07](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/0db18fae-24d7-444a-858f-a4d43c2a1e36)
 
 
 **"큐터디"는 강력한 학습 도구 서비스입니다**
