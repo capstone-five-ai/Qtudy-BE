@@ -228,7 +228,7 @@ public class CategoryDto {
         public static CategorizedSummaryResponse of(CategorizedSummary categorizedSummary) {
             return CategorizedSummaryResponse.builder()
                 .categorizedSummaryId(categorizedSummary.getCategorizedSummaryId())
-                .summaryGeneratedBy(categorizedSummary.getSummary() instanceof MemberSavedSummary ?
+                .summaryGeneratedBy(categorizedSummary.getSummary().isMemberSavedSummary() ?
                     GeneratedType.MEMBER : GeneratedType.AI)
                 .summaryTitle(categorizedSummary.getSummary().getSummaryTitle())
                 .summaryContent(categorizedSummary.getSummary().getSummaryContent())
