@@ -56,7 +56,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/categorized-problem/{categorizedProblemId}",
                         "/api/categorized-summary/{categorizedSummaryID}",
                         "/api/problem/getFileProblems/{fileId}",
-                        "/api/summary/getSummary/{fileId}"
+                        "/api/summary/getSummary/{fileId}",
+                        "/api/fake/**"
                 ); // 인증 인터셉터를 동작시키지 않을 예외적인 uri 작성
 
         registry.addInterceptor(adminAuthorizationInterceptor) //인증 인터셉터 다음 인가 인터셉터 실행

@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 public class CategoryDto {
 
     @Getter
+    @AllArgsConstructor
     @Schema(name = "CategoryRequestDto", description = "카테고리 요청 DTO")
     public static class RequestDto {
         @NotBlank

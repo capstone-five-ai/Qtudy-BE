@@ -54,6 +54,9 @@ dependencies {
 	testImplementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
 	testImplementation 'com.knuddels:jtokkit:1.0.0'
 	testImplementation 'com.fasterxml.jackson.module:jackson-module-jsonSchema-jakarta:2.15.0'
+
+	// Rest Assured
+	testImplementation 'io.rest-assured:rest-assured:4.5.1'
 }
 
 dependencyManagement {
