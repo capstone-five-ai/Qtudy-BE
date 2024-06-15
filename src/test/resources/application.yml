@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+jpa:
+  hibernate:
+    ddl-auto: create
+  show-sql: true
+  properties:
+    hibernate:
+      format_sql: true
+
+token:
+  secret: 123456789
+  access-token-expiration-time: 900000  # 15? 1000(ms) x 60(s) x 15(m)
+  refresh-token-expiration-time: 1209600000 # 2? 1000(ms) x 60 (s) x 60(m) x 24(h) x 14(d)
+
+cloud:
+  aws: #AWS S3 ??
+    credentials:
+      accessKey: 123456789
+      secretKey: 123456789
+    region:
+      static: 123456789
+    s3:
+      bucket: 123456789
+
+kakao:
+  client:
+    id: 123456789
+    secret: 123456789

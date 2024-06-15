@@ -1,7 +1,15 @@
 # 큐터디
-![image](https://github.com/googoo9918/TIL/assets/102513932/b86bc53f-3182-41b0-b975-264cdb8a64dd)
-![Qtudy_image](https://github.com/googoo9918/TIL/assets/102513932/87e0447f-3430-4a94-8f07-19fe536c1527)
 ![KakaoTalk_20240521_211608567](https://github.com/googoo9918/TIL/assets/102513932/4e44a605-5df8-4480-aa0d-e16be990fb3c)
+![KakaoTalk_20240604_212902262](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/c65eb1f1-4c16-4d64-8806-66ea2c2b53ef)
+![KakaoTalk_20240604_212902262_01](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/209a7e74-7f27-4239-91b4-c8f6dda58558)
+![KakaoTalk_20240604_212902262_02](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/c7f4e20b-eb0e-49d1-8f5a-4f24641c9898)
+![KakaoTalk_20240604_212902262_03](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/d1fe6d08-6a6e-48bd-b0b8-b96bda0143db)
+![KakaoTalk_20240604_212902262_04](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/e150be69-f40c-4ad9-b30c-757d818e5937)
+![KakaoTalk_20240604_212902262_05](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/31460b8b-a42a-48f7-9914-b30ccdc9b3a1)
+![KakaoTalk_20240604_212902262_06](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/362be302-461a-450e-97af-291481289a41)
+![KakaoTalk_20240604_212902262_07](https://github.com/capstone-five-ai/Qtudy-BE/assets/102513932/0db18fae-24d7-444a-858f-a4d43c2a1e36)
+
+
 **"큐터디"는 강력한 학습 도구 서비스입니다**
 - 배포링크 : [큐터디](https://www.qtudy.com)
 
@@ -76,5 +84,4 @@
 ### Software Architecture
 - ![소프트웨어 아키텍쳐 drawio](https://github.com/googoo9918/TIL/assets/102513932/6c6eb670-226f-4ec0-9550-c990b8c8292d)
 ### API 명세
-- [API 명세서1](https://documenter.getpostman.com/view/23682054/2s9YeD8t2S)
-- [API 명세서2](https://documenter.getpostman.com/view/31108336/2s9YeEaroJ)
+- [API 명세](https://api.qtudy.com/swagger-ui/index.html)
