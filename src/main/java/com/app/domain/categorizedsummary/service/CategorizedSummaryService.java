@@ -17,6 +17,7 @@ import com.app.global.error.exception.EntityNotFoundException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -104,6 +105,8 @@ public class CategorizedSummaryService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORIZED_SUMMARY_NOT_EXISTS));
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "categorizedSummary", key = "#categoryId")
     public Page<CategorizedSummary> findCategorziedSummarysByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedSummaryRepository.findByCategoryCategoryId(categoryId, pageRequest);
