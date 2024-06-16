@@ -21,7 +21,7 @@ import java.util.List;
 @DiscriminatorValue("SUMMARY")
 public class SummaryFile extends File {
 
-    @OneToMany(mappedBy = "summaryFile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "summaryFile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AiGeneratedSummary> aiQuestions;
 
     @Column(name = "SUMMARY_AMOUNT", nullable = false)

@@ -32,7 +32,7 @@ public abstract class File extends BaseEntity {
     //@Column(name = "MEMBER_ID") //추후에 Members 엔티티와 연결
     //private String memberId;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
