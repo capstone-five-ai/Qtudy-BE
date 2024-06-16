@@ -20,6 +20,7 @@ public class CategorizedProblemDto {
 
     @Getter
     @Schema(name = "CategorizedProblemPost", description = "새 카테고리화 문제 생성 요청 DTO")
+    @AllArgsConstructor
     public static class Post {
 
         @Schema(description = "카테고리 ID 목록", example = "[1, 2]")
@@ -31,6 +32,7 @@ public class CategorizedProblemDto {
 
     @Getter
     @Schema(name = "CategorizedProblemPatch", description = "카테고리화 문제 수정 요청 DTO")
+    @AllArgsConstructor
     public static class Patch{
         @Schema(description = "문제 이름", example = "수정된 문제 이름")
         private String problemName;

@@ -8,6 +8,7 @@ public class SummaryDto {
 
     @Getter
     @Schema(name = "SummaryPatchDto", description = "요약 수정 요청 DTO")
+    @AllArgsConstructor
     public static class Patch {
         @Schema(description = "요약 제목", example = "새로운 요약 제목")
         private String summaryTitle;
