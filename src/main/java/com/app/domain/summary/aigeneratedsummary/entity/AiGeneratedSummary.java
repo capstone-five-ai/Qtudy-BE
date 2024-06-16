@@ -4,7 +4,6 @@ package com.app.domain.summary.aigeneratedsummary.entity;
 import com.app.domain.summary.entity.Summary;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class AiGeneratedSummary extends Summary {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "FILE_ID")
     private SummaryFile summaryFile;
 }
