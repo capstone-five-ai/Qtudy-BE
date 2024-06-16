@@ -11,6 +11,7 @@ public class MemberSavedSummaryDto {
 
     @Getter
     @Schema(name = "MemberSavedSummaryPostDto", description = "새 요약 생성 요청 DTO")
+    @AllArgsConstructor
     public static class Post {
         @NotBlank(message = "제목을 입력해주세요")
         @Schema(description = "요약 제목", example = "요약 제목")
@@ -23,6 +24,7 @@ public class MemberSavedSummaryDto {
 
     @Getter
     @Schema(name = "MemberSavedSummaryPatchDto", description = "요약 수정 요청 DTO")
+    @AllArgsConstructor
     public static class Patch {
         @Schema(description = "요약 제목", example = "새로운 요약 제목")
         private String summaryTitle;
