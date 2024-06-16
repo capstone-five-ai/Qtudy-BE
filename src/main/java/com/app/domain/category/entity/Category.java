@@ -33,10 +33,10 @@ public class Category extends BaseEntity {
     @Column(nullable = false, length = 10)
     private CategoryType categoryType;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<CategorizedSummary> categorizedSummaries;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<CategorizedProblem> categorizedProblems;
 
     public void updateMember(Member member) {
