@@ -40,7 +40,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/qtudy-server:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/qtudy-server:latest
 
       - name: EC2 서버에 배포
         uses: appleboy/ssh-action@master
@@ -51,6 +51,6 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker stop $(sudo docker ps -a -q)
-            sudo docker pull ${{secrets.DOCKER_USERNAME}}/qtudy-server:${{ github.sha }}
+            sudo docker pull ${{secrets.DOCKER_USERNAME}}/qtudy-server
             sudo docker run -d -p 8080:8080 --name qtudy-server-container ${{secrets.DOCKER_USERNAME}}/qtudy-server
             sudo docker image prune -f
