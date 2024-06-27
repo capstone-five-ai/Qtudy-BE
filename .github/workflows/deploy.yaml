@@ -1,9 +1,6 @@
 name: deploy
 
 on:
-#  pull_request:
-#    branches: [dev]
-#    types: [closed]
   push:
     branches: [refactor/cd-flow]
 
@@ -11,7 +8,6 @@ jobs:
   deploy:
 
     runs-on: ubuntu-latest
-#    if: github.event.pull_request.merged
 
     steps:
       - name: 체크아웃
