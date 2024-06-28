@@ -13,7 +13,7 @@ jobs:
       - name: 체크아웃
         uses: actions/checkout@v4
         with:
-            submodules: true
+            submodules: recursive
             token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: JDK 11 설치
