@@ -1,15 +1,13 @@
 name: deploy
 
 on:
-  pull_request:
+  push:
     branches: [dev]
-    types: [closed]
 
 jobs:
   deploy:
 
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged
 
     steps:
       - name: 체크아웃
@@ -42,7 +40,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/qtudy-server:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/qtudy-server:latest
 
       - name: EC2 서버에 배포
         uses: appleboy/ssh-action@master
@@ -53,6 +51,7 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker stop $(sudo docker ps -a -q)
-            sudo docker pull ${{secrets.DOCKER_USERNAME}}/qtudy-server
-            sudo docker run -d -p 8080:8080 --name qtudy-server-container ${{secrets.DOCKER_USERNAME}}/qtudy-server
+            sudo docker rm $(sudo docker ps -a -q)
+            sudo docker pull ${{secrets.DOCKERHUB_USERNAME}}/qtudy-server
+            sudo docker run -d -p 8080:8080 --name qtudy-server-container ${{secrets.DOCKERHUB_USERNAME}}/qtudy-server
             sudo docker image prune -f
