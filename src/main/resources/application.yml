@@ -1,3 +1,8 @@
 spring:
+  config:
+    import:
+      - classpath:/application-deploy.yml
+      - classpath:/application-local.yml
+      - classpath:/application-stage.yml
   profiles:
     active: local
