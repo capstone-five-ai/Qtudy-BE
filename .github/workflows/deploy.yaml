@@ -51,6 +51,7 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker stop $(sudo docker ps -a -q)
+            sudo docker rm $(sudo docker ps -a -q)
             sudo docker pull ${{secrets.DOCKERHUB_USERNAME}}/qtudy-server
             sudo docker run -d -p 8080:8080 --name qtudy-server-container ${{secrets.DOCKERHUB_USERNAME}}/qtudy-server
             sudo docker image prune -f
