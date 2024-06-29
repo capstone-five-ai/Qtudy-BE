@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./docker
-          file: Dockerfile-stg
+          file: ./docker/Dockerfile-stg
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/qtudy-server:latest
 
