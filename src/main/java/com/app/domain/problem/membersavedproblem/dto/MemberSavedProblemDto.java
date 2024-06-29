@@ -13,6 +13,7 @@ public class MemberSavedProblemDto {
 
     @Getter
     @Schema(name = "MemberSavedProblemPost", description = "새 문제 생성 요청 DTO")
+    @AllArgsConstructor
     public static class Post {
 
         @NotBlank
@@ -34,6 +35,7 @@ public class MemberSavedProblemDto {
 
     @Getter
     @Schema(name = "MemberSavedProblemPatch", description = "문제 수정 요청 DTO")
+    @AllArgsConstructor
     public static class Patch {
         @Schema(description = "문제의 이름", example = "수정된 문제 이름")
         private String problemName;
