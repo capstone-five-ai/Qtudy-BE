@@ -2,7 +2,7 @@ name: deploy on prod server
 
 on:
   push:
-    branches: [test/main-cd]
+    branches: [main]
 
 jobs:
   deploy:
