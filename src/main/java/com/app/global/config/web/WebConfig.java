@@ -49,14 +49,15 @@ public class WebConfig implements WebMvcConfigurer {
                         "/oauth/kakao/callback",
                         "/api/problem/getFileProblems",
                         "/api/summary/getSummary",
-                        "/api/member-saved-problem/{memberSavedProblemId}",
-                        "/api/member-saved-summary/{memberSavedSummaryID}",
+                        "/api/member-saved-problem/{problemId}",
+                        "/api/member-saved-summary/{summaryId}",
                         "/api/category/list",
                         "/api/category/{categoryId}",
                         "/api/categorized-problem/{categorizedProblemId}",
                         "/api/categorized-summary/{categorizedSummaryID}",
                         "/api/problem/getFileProblems/{fileId}",
-                        "/api/summary/getSummary/{fileId}"
+                        "/api/summary/getSummary/{fileId}",
+                        "/api/fake/**"
                 ); // 인증 인터셉터를 동작시키지 않을 예외적인 uri 작성
 
         registry.addInterceptor(adminAuthorizationInterceptor) //인증 인터셉터 다음 인가 인터셉터 실행

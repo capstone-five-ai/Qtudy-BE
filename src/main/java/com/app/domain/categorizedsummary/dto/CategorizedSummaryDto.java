@@ -18,6 +18,7 @@ public class CategorizedSummaryDto {
 
     @Getter
     @Schema(name = "CategorizedSummaryPost", description = "새 카테고리화 요약 생성 요청 DTO")
+    @AllArgsConstructor
     public static class Post {
         @Schema(description = "카테고리 ID 목록", example = "[1, 2]")
         private List<Long> categoryIdList;

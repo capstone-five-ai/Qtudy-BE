@@ -54,6 +54,9 @@ dependencies {
 	testImplementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
 	testImplementation 'com.knuddels:jtokkit:1.0.0'
 	testImplementation 'com.fasterxml.jackson.module:jackson-module-jsonSchema-jakarta:2.15.0'
+
+	// Rest Assured
+	testImplementation 'io.rest-assured:rest-assured:4.5.1'
 }
 
 dependencyManagement {
@@ -67,9 +70,16 @@ tasks.named('test') {
 }
 
 processResources.dependsOn('copySecret')
+processResources.dependsOn('copySecretToBuild')
 
 tasks.register('copySecret', Copy) {
 	from './BE_config' // 서브 모듈 디렉토리 경로
 	include "*.yml"  // 설정 파일 복사
 	into 'src/main/resources'  // 붙여넣을 위치
+}
+
+tasks.register('copySecretToBuild', Copy) {
+	from './BE_config' // 서브 모듈 디렉토리 경로
+	include "*.yml"  // 설정 파일 복사
+	into '$buildDir/resources/main'  // 붙여넣을 위치
 }
