@@ -53,9 +53,9 @@ jobs:
           host: ${{ secrets.PROD_SERVER_HOST }}
           username: ${{ secrets.PROD_SERVER_USERNAME }}
           key: ${{ secrets.PROD_SERVER_PEM_KEY }}
-          envs:
-            DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-            DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          script: |
-            chmod +x /home/${{ secrets.PROD_SERVER_USERNAME }}/scripts/zero-downtime-deploy.sh
-            /home/${{ secrets.PROD_SERVER_USERNAME }}/scripts/zero-downtime-deploy.sh
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        script: |
+          chmod +x /home/${{ secrets.PROD_SERVER_USERNAME }}/scripts/zero-downtime-deploy.sh
+          /home/${{ secrets.PROD_SERVER_USERNAME }}/scripts/zero-downtime-deploy.sh
