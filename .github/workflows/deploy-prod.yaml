@@ -2,7 +2,7 @@ name: deploy on prod server
 
 on:
   push:
-    branches: [feat/blue-green]
+    branches: [main]
 
 jobs:
   deploy:
