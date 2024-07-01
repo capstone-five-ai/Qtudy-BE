@@ -86,8 +86,8 @@ jobs:
             sleep 10
 
             # 헬스 체크를 통해 새 컨테이너가 정상적으로 실행 중인지 확인
-            until [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:$NEW_PORT/actuator/health)" == "200"]]; do
-              echo "Waiting for the new container to respond with HTTP 200 or 404..."
+            until [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:$NEW_PORT/actuator/health)" == "200" ]]; do
+              echo "Waiting for the new container to respond with HTTP 200..."
               sleep 2
             done
 
