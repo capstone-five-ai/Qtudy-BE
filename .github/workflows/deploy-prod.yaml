@@ -101,8 +101,5 @@ jobs:
             sudo docker stop $OLD_CONTAINER
             sudo docker rm $OLD_CONTAINER
 
-            # 실행 중인 Docker 컨테이너 확인
-            sudo docker ps
-
             # 사용하지 않는 Docker 이미지 정리
             sudo docker image prune -f
