@@ -40,7 +40,6 @@ public class CategorizedSummaryService {
 
     private final SummaryRepository summaryRepository;
 
-    @CacheEvict(value = "categorizedSummary", key = "#categoryId")
     public CategorizedSummary createCategorizedSummary(Long categoryId, Long summaryId) {
         checkForDuplicateCategorizedProblem(categoryId, summaryId);
 
@@ -76,7 +75,6 @@ public class CategorizedSummaryService {
         return summaryService.createSummaryPdf(summaryId);
     }
 
-    @CacheEvict(value = "categorizedSummary", key = "#categorizedSummary.category.categoryId")
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, SummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         summaryService.updateSummary(
@@ -87,7 +85,6 @@ public class CategorizedSummaryService {
         return categorizedSummaryRepository.save(categorizedSummary);
     }
 
-    @CacheEvict(value = "categorizedSummary", key = "#categorizedSummary.category.categoryId")
     public void deleteCategorizedSummary(Long categorizedSummaryId) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 
@@ -110,7 +107,7 @@ public class CategorizedSummaryService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "categorizedSummary", key = "#categoryId")
+//    @Cacheable(value = "categorizedSummary", key = "#categoryId")
     public Page<CategorizedSummary> findCategorziedSummarysByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedSummaryRepository.findByCategoryCategoryId(categoryId, pageRequest);

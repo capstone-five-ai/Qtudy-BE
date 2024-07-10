@@ -46,7 +46,6 @@ public class CategorizedProblemService {
 
     private final ProblemService problemService;
 
-    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public CategorizedProblem createCategorizedProblem(Long categoryId, Long problemId) {
         checkForDuplicateCategorizedProblem(categoryId, problemId);
 
@@ -229,8 +228,6 @@ public class CategorizedProblemService {
         }
     }
 
-
-    @CacheEvict(value = "categorizedProblem", key = "#categorizedProblem.category.categoryId")
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
         problemService.updateProblem(
@@ -241,13 +238,12 @@ public class CategorizedProblemService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "categorizedProblem", key = "#categoryId")
+//    @Cacheable(value = "categorizedProblem", key = "#categoryId")
     public Page<CategorizedProblem> findCategorizedProblemsByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
-    @CacheEvict(value = "categorizedProblem", key = "#categorizedProblem.category.categoryId")
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
         categorizedProblemRepository.deleteById(categorizedProblemID);
