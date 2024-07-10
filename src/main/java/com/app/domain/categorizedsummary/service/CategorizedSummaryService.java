@@ -17,6 +17,7 @@ import com.app.global.error.exception.EntityNotFoundException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +40,7 @@ public class CategorizedSummaryService {
 
     private final SummaryRepository summaryRepository;
 
+    @CacheEvict(value = "categorizedSummary", key = "#categoryId")
     public CategorizedSummary createCategorizedSummary(Long categoryId, Long summaryId) {
         checkForDuplicateCategorizedProblem(categoryId, summaryId);
 
@@ -74,6 +76,7 @@ public class CategorizedSummaryService {
         return summaryService.createSummaryPdf(summaryId);
     }
 
+    @CacheEvict(value = "categorizedSummary", key = "#categoryId")
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, SummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         summaryService.updateSummary(
@@ -84,6 +87,7 @@ public class CategorizedSummaryService {
         return categorizedSummaryRepository.save(categorizedSummary);
     }
 
+    @CacheEvict(value = "categorizedSummary", key = "#categoryId")
     public void deleteCategorizedSummary(Long categorizedSummaryId) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 

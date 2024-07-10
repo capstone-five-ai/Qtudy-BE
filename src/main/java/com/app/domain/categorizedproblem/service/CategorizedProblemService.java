@@ -6,11 +6,9 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
-import com.app.domain.problem.aigeneratedproblem.service.AiGeneratedProblemService;
 import com.app.domain.problem.entity.Problem;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
 import com.app.domain.problem.membersavedproblem.mapper.MemberSavedProblemMapper;
-import com.app.domain.problem.membersavedproblem.service.MemberSavedProblemService;
 import com.app.domain.problem.service.ProblemService;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import com.app.global.config.ENUM.ProblemType;
@@ -27,6 +25,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,8 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategorizedProblemService {
     private final CategoryService categoryService;
 
-    private final MemberSavedProblemService memberSavedProblemService;
-
     private final MemberService memberService;
 
     private final MemberSavedProblemMapper memberSavedProblemMapper;
@@ -49,6 +46,7 @@ public class CategorizedProblemService {
 
     private final ProblemService problemService;
 
+    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public CategorizedProblem createCategorizedProblem(Long categoryId, Long problemId) {
         checkForDuplicateCategorizedProblem(categoryId, problemId);
 
@@ -232,7 +230,7 @@ public class CategorizedProblemService {
     }
 
 
-
+    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
         problemService.updateProblem(
@@ -249,6 +247,7 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
+    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
         categorizedProblemRepository.deleteById(categorizedProblemID);
@@ -256,7 +255,7 @@ public class CategorizedProblemService {
         Problem problem = categorizedProblem.getProblem();
         Long problemId = problem.getProblemId();
         if (problem.isMemberSavedProblem() && !isProblemUsedInOtherCategorizedProblems(problemId)) {
-            memberSavedProblemService.deleteProblem(problemId);
+            problemService.deleteProblem(problemId);
         }
     }
 
