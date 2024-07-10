@@ -1,6 +1,7 @@
 package com.app.domain.problem.service;
 
 import com.app.domain.problem.entity.Problem;
+import com.app.domain.problem.membersavedproblem.entity.MemberSavedProblem;
 import com.app.domain.problem.repository.ProblemRepository;
 import com.app.global.error.ErrorCode;
 import com.app.global.error.exception.EntityNotFoundException;
@@ -36,6 +37,12 @@ public class ProblemService {
     public Problem findVerifiedProblemByProblemId(Long problemId) {
         return problemRepository.findById(problemId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROBLEM_NOT_EXISTS));
+    }
+
+    public void deleteProblem(Long problemId){
+        Problem problem = findVerifiedProblemByProblemId(problemId);
+
+        problemRepository.deleteById(problemId);
     }
 
 }

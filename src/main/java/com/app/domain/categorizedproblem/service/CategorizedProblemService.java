@@ -6,11 +6,9 @@ import com.app.domain.category.entity.Category;
 import com.app.domain.category.service.CategoryService;
 import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
-import com.app.domain.problem.aigeneratedproblem.service.AiGeneratedProblemService;
 import com.app.domain.problem.entity.Problem;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
 import com.app.domain.problem.membersavedproblem.mapper.MemberSavedProblemMapper;
-import com.app.domain.problem.membersavedproblem.service.MemberSavedProblemService;
 import com.app.domain.problem.service.ProblemService;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
 import com.app.global.config.ENUM.ProblemType;
@@ -39,8 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CategorizedProblemService {
     private final CategoryService categoryService;
-
-    private final MemberSavedProblemService memberSavedProblemService;
 
     private final MemberService memberService;
 
@@ -259,7 +255,7 @@ public class CategorizedProblemService {
         Problem problem = categorizedProblem.getProblem();
         Long problemId = problem.getProblemId();
         if (problem.isMemberSavedProblem() && !isProblemUsedInOtherCategorizedProblems(problemId)) {
-            memberSavedProblemService.deleteProblem(problemId);
+            problemService.deleteProblem(problemId);
         }
     }
 
