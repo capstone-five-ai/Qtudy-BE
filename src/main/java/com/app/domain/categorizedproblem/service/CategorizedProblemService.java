@@ -27,6 +27,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +50,7 @@ public class CategorizedProblemService {
 
     private final ProblemService problemService;
 
+    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public CategorizedProblem createCategorizedProblem(Long categoryId, Long problemId) {
         checkForDuplicateCategorizedProblem(categoryId, problemId);
 
@@ -232,7 +234,7 @@ public class CategorizedProblemService {
     }
 
 
-
+    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
         problemService.updateProblem(
@@ -249,6 +251,7 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
+    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
         categorizedProblemRepository.deleteById(categorizedProblemID);
