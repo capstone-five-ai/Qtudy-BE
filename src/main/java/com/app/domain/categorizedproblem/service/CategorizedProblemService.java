@@ -45,8 +45,6 @@ public class CategorizedProblemService {
 
     private final MemberSavedProblemMapper memberSavedProblemMapper;
 
-    private final AiGeneratedProblemService aiGeneratedProblemService;
-
     private final CategorizedProblemRepository categorizedProblemRepository;
 
     private final ProblemService problemService;
@@ -237,7 +235,7 @@ public class CategorizedProblemService {
 
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
-        memberSavedProblemService.updateProblem(
+        problemService.updateProblem(
                 memberSavedProblemMapper.problemPatchDtoToProblem(problemPatchDto),
                 categorizedProblem.getProblem().getProblemId()
         );
