@@ -76,7 +76,7 @@ public class CategorizedSummaryService {
         return summaryService.createSummaryPdf(summaryId);
     }
 
-    @CacheEvict(value = "categorizedSummary", key = "#categoryId")
+    @CacheEvict(value = "categorizedSummary", key = "#categorizedSummary.category.categoryId")
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, SummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         summaryService.updateSummary(
@@ -87,7 +87,7 @@ public class CategorizedSummaryService {
         return categorizedSummaryRepository.save(categorizedSummary);
     }
 
-    @CacheEvict(value = "categorizedSummary", key = "#categoryId")
+    @CacheEvict(value = "categorizedSummary", key = "#categorizedSummary.category.categoryId")
     public void deleteCategorizedSummary(Long categorizedSummaryId) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 

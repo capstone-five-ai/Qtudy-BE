@@ -230,7 +230,7 @@ public class CategorizedProblemService {
     }
 
 
-    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
+    @CacheEvict(value = "categorizedProblem", key = "#categorizedProblem.category.categoryId")
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
         problemService.updateProblem(
@@ -247,7 +247,7 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
-    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
+    @CacheEvict(value = "categorizedProblem", key = "#categorizedProblem.category.categoryId")
     public void deleteCategorizedProblem(Long categorizedProblemID){
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
         categorizedProblemRepository.deleteById(categorizedProblemID);
