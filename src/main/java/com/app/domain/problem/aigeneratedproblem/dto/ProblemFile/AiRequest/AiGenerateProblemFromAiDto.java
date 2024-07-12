@@ -25,4 +25,8 @@ public class AiGenerateProblemFromAiDto {
 
     @Schema(description = "문제 해설", example = "문제 해설 예시")
     private String problemCommentary;
+
+    public static AiGenerateProblemFromAiDto create(String problemName, List<String> problemChoices, String problemAnswer, String problemCommentary) {
+        return new AiGenerateProblemFromAiDto(problemName, problemChoices, problemAnswer, problemCommentary);
+    }
 }
