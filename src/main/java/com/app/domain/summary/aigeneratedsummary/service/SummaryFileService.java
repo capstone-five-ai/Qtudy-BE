@@ -207,7 +207,7 @@ public class SummaryFileService { //Service 추후 분할 예정
 
 
         } catch (IOException e) {
-            throw new BusinessException(ErrorCode.NOT_UPLOAD_PROBLEM);
+            e.printStackTrace();
         } finally {
             if (tempFile != null) {
                 tempFile.delete();  // 방금 생성한 파일 삭제
