@@ -2,8 +2,8 @@ package com.app.integration.problem.membersavedproblem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.app.fake.FakeSignUpRequest;
 import com.app.global.config.ENUM.ProblemType;
-import com.app.integration.dto.FakeSignUpRequest;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;

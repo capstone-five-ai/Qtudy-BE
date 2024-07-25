@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.app.domain.category.contsant.CategoryType;
 import com.app.domain.category.dto.CategoryDto.RequestDto;
+import com.app.fake.FakeSignUpRequest;
 import com.app.global.config.ENUM.ProblemType;
-import com.app.integration.dto.FakeSignUpRequest;
 import com.app.domain.categorizedproblem.dto.CategorizedProblemDto;
 import com.app.domain.problem.membersavedproblem.dto.MemberSavedProblemDto;
 import io.restassured.RestAssured;
