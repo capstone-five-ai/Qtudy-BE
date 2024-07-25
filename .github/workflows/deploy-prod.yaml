@@ -53,10 +53,53 @@ jobs:
           host: ${{ secrets.PROD_SERVER_HOST }}
           username: ${{ secrets.PROD_SERVER_USERNAME }}
           key: ${{ secrets.PROD_SERVER_PEM_KEY }}
-          envs: GITHUB_SHA
+          envs: GITHUB_SHA, DOCKERHUB_USERNAME
           script: |
-            sudo docker stop $(sudo docker ps -a -q)
-            sudo docker rm $(sudo docker ps -a -q)
-            sudo docker pull ${{secrets.DOCKERHUB_USERNAME}}/qtudy-server:prod
-            sudo docker run -d -p 8080:8080 --name qtudy-server-container ${{secrets.DOCKERHUB_USERNAME}}/qtudy-server:prod
+            # 현재 활성화된 Nginx 설정 파일 확인
+            CURRENT_CONF=$(sudo readlink /etc/nginx/sites-enabled/current)
+            echo "Current Nginx configuration: $CURRENT_CONF"
+            if [[ "$CURRENT_CONF" == *"blue" ]]; then
+              NEW_CONF="/etc/nginx/sites-available/green"
+              OLD_CONTAINER="blue-container"
+              NEW_CONTAINER="green-container"
+              NEW_PORT=8081
+            else
+              NEW_CONF="/etc/nginx/sites-available/blue"
+              OLD_CONTAINER="green-container"
+              NEW_CONTAINER="blue-container"
+              NEW_PORT=8080
+            fi
+
+            echo "New Nginx configuration: $NEW_CONF"
+            echo "Old container: $OLD_CONTAINER"
+            echo "New container: $NEW_CONTAINER"
+            echo "New port: $NEW_PORT"
+
+            # 새 Docker 이미지 가져오기
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/qtudy-server:prod
+
+            # 새로운 컨테이너 실행
+            sudo docker run -d -p $NEW_PORT:8080 --name $NEW_CONTAINER ${{ secrets.DOCKERHUB_USERNAME }}/qtudy-server:prod
+
+            # 새로운 컨테이너가 준비될 때까지 대기
+            echo "Waiting for the new container to be ready..."
+            sleep 10
+
+            # 헬스 체크를 통해 새 컨테이너가 정상적으로 실행 중인지 확인
+            until [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:$NEW_PORT/actuator/health)" == "200" ]]; do
+              echo "Waiting for the new container to respond with HTTP 200..."
+              sleep 2
+            done
+
+            echo "New container is ready. Switching Nginx configuration."
+
+            # Nginx 설정 파일 교체 및 재시작
+            sudo ln -sf $NEW_CONF /etc/nginx/sites-enabled/current
+            sudo systemctl reload nginx
+
+            # 이전 컨테이너 중지 및 제거
+            sudo docker stop $OLD_CONTAINER
+            sudo docker rm $OLD_CONTAINER
+
+            # 사용하지 않는 Docker 이미지 정리
             sudo docker image prune -f
