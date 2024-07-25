@@ -247,15 +247,9 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
-
-    public void deleteCategorizedProblem(Long categorizedProblemID){
+    @CacheEvict(value = "categorizedProblem", key = "#result")
+    public Long deleteCategorizedProblem(Long categorizedProblemID) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
-        Long categoryId = categorizedProblem.getCategory().getCategoryId();
-        deleteAndEvictCache(categorizedProblem, categoryId);
-    }
-
-    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
-    public void deleteAndEvictCache(CategorizedProblem categorizedProblem, Long categoryId) {
         categorizedProblemRepository.deleteById(categorizedProblem.getCategorizedProblemId());
 
         Problem problem = categorizedProblem.getProblem();
@@ -263,6 +257,7 @@ public class CategorizedProblemService {
         if (problem.isMemberSavedProblem() && !isProblemUsedInOtherCategorizedProblems(problemId)) {
             problemService.deleteProblem(problemId);
         }
+        return categorizedProblem.getCategory().getCategoryId();
     }
 
     private boolean isProblemUsedInOtherCategorizedProblems(Long problemId) {
