@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.app.domain.category.dto.CategoryDto;
 import com.app.domain.category.dto.CategoryDto.RequestDto;
 import com.app.domain.category.contsant.CategoryType;
-import com.app.integration.dto.FakeSignUpRequest;
+import com.app.fake.FakeSignUpRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

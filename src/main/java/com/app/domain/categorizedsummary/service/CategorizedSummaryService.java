@@ -75,6 +75,7 @@ public class CategorizedSummaryService {
         return summaryService.createSummaryPdf(summaryId);
     }
 
+    @CacheEvict(value = "categorizedSummary", key = "#result.getCategory().getCategoryId()")
     public CategorizedSummary updateCategorizedSummary(Long categorizedSummaryId, SummaryDto.Patch summaryPatchDto) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
         summaryService.updateSummary(
@@ -85,7 +86,8 @@ public class CategorizedSummaryService {
         return categorizedSummaryRepository.save(categorizedSummary);
     }
 
-    public void deleteCategorizedSummary(Long categorizedSummaryId) {
+    @CacheEvict(value = "categorizedSummary", key = "#result")
+    public Long deleteCategorizedSummary(Long categorizedSummaryId) {
         CategorizedSummary categorizedSummary = findVerifiedCategorizedSummaryByCategorizedSummaryId(categorizedSummaryId);
 
         categorizedSummaryRepository.deleteById(categorizedSummaryId);
@@ -95,6 +97,8 @@ public class CategorizedSummaryService {
         if (summary.isMemberSavedSummary() && !isSummaryUsedInOtherCategorizedSummarys(summaryId)) {
             summaryRepository.deleteById(summaryId);
         }
+        Long categoryId = categorizedSummary.getCategory().getCategoryId();
+        return categoryId;
     }
 
     private boolean isSummaryUsedInOtherCategorizedSummarys(Long summaryId){
@@ -107,7 +111,7 @@ public class CategorizedSummaryService {
     }
 
     @Transactional(readOnly = true)
-//    @Cacheable(value = "categorizedSummary", key = "#categoryId")
+    @Cacheable(value = "categorizedSummary", key = "#categoryId")
     public Page<CategorizedSummary> findCategorziedSummarysByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedSummaryRepository.findByCategoryCategoryId(categoryId, pageRequest);

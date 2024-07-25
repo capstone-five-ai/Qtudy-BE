@@ -1,4 +1,4 @@
-package com.app.integration.fake;
+package com.app.fake;
 
 import com.app.domain.member.constant.MemberType;
 import com.app.domain.member.constant.Role;
@@ -6,7 +6,6 @@ import com.app.domain.member.entity.Member;
 import com.app.domain.member.service.MemberService;
 import com.app.global.jwt.dto.JwtTokenDto;
 import com.app.global.jwt.service.TokenManager;
-import com.app.integration.dto.FakeSignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Profile(value = {"local", "test"})
 @RestController
-public class FakeSignUpController {
+public class FakeLoginController {
 
     private final MemberService memberService;
     private final TokenManager tokenManager;

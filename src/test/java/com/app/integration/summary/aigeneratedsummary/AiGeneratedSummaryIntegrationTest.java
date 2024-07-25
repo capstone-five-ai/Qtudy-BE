@@ -3,7 +3,7 @@ import com.app.domain.summary.aigeneratedsummary.dto.Summary.Response.SummaryRes
 import com.app.domain.summary.aigeneratedsummary.entity.AiGeneratedSummary;
 import com.app.domain.summary.aigeneratedsummary.entity.SummaryFile;
 import com.app.domain.summary.aigeneratedsummary.service.AiGeneratedSummaryService;
-import com.app.integration.dto.FakeSignUpRequest;
+import com.app.fake.FakeSignUpRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

@@ -1,4 +1,4 @@
-package com.app.integration.dto;
+package com.app.fake;
 
 import lombok.Builder;
 import lombok.Getter;

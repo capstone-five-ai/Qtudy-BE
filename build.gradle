@@ -51,7 +51,7 @@ dependencies {
 
 	// Spring Boot Actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	
+
 	// GPT 스크립트 테스트 편의성을 위해 추가
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'com.theokanning.openai-gpt3-java:service:0.18.2'

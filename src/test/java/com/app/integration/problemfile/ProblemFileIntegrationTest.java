@@ -1,11 +1,11 @@
 package com.app.integration.problemfile;
 
 import com.app.domain.problem.aigeneratedproblem.dto.ProblemFile.Request.AiGenerateProblemDto;
+import com.app.fake.FakeSignUpRequest;
 import com.app.global.config.ENUM.Amount;
 import com.app.global.config.ENUM.ProblemDifficulty;
 import com.app.global.config.ENUM.ProblemType;
 import com.app.global.config.S3.S3Service;
-import com.app.integration.dto.FakeSignUpRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

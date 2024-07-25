@@ -2,8 +2,8 @@ package com.app.integration.summary.membersavedsummary;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.app.integration.dto.FakeSignUpRequest;
 import com.app.domain.summary.membersavedsummary.dto.MemberSavedSummaryDto;
+import com.app.fake.FakeSignUpRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
