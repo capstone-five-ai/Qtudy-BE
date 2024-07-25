@@ -186,7 +186,7 @@ public class CategorizedProblemService {
     }
 
     @Transactional(readOnly = true)
-//    @Cacheable(value = "categorizedProblem", key = "#categoryId")
+    @Cacheable(value = "categorizedProblem", key = "#categoryId")
     public Page<CategorizedProblem> findCategorizedProblemsByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);

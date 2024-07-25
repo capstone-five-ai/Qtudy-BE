@@ -111,7 +111,7 @@ public class CategorizedSummaryService {
     }
 
     @Transactional(readOnly = true)
-//    @Cacheable(value = "categorizedSummary", key = "#categoryId")
+    @Cacheable(value = "categorizedSummary", key = "#categoryId")
     public Page<CategorizedSummary> findCategorziedSummarysByCategoryId(Long categoryId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return categorizedSummaryRepository.findByCategoryCategoryId(categoryId, pageRequest);
