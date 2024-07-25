@@ -230,7 +230,7 @@ public class CategorizedProblemService {
     }
 
 
-    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
+    @CacheEvict(value = "categorizedProblem", key = "#result.getCategory().getCategoryId()")
     public CategorizedProblem updateCategorizedProblem(Long categorizedProblemId, MemberSavedProblemDto.Patch problemPatchDto) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemId);
         problemService.updateProblem(
@@ -247,16 +247,17 @@ public class CategorizedProblemService {
         return categorizedProblemRepository.findByCategoryCategoryId(categoryId, pageRequest);
     }
 
-    @CacheEvict(value = "categorizedProblem", key = "#categoryId")
-    public void deleteCategorizedProblem(Long categorizedProblemID){
+    @CacheEvict(value = "categorizedProblem", key = "#result")
+    public Long deleteCategorizedProblem(Long categorizedProblemID) {
         CategorizedProblem categorizedProblem = findVerifiedCategorizedProblemByCategorizedProblemId(categorizedProblemID);
-        categorizedProblemRepository.deleteById(categorizedProblemID);
+        categorizedProblemRepository.deleteById(categorizedProblem.getCategorizedProblemId());
 
         Problem problem = categorizedProblem.getProblem();
         Long problemId = problem.getProblemId();
         if (problem.isMemberSavedProblem() && !isProblemUsedInOtherCategorizedProblems(problemId)) {
             problemService.deleteProblem(problemId);
         }
+        return categorizedProblem.getCategory().getCategoryId();
     }
 
     private boolean isProblemUsedInOtherCategorizedProblems(Long problemId) {
